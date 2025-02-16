@@ -8,7 +8,7 @@ public class DataSource {
     private Connection cnx;
     private static DataSource instance;
 
-    private String url = "jdbc:mysql://localhost:3306/hackpack"; // Assure-toi que c'est correct
+    private String url = "jdbc:mysql://localhost:3306/"; // Assure-toi que c'est correct
     private String user = "root"; // Remplace par ton utilisateur MySQL
     private String password = ""; // Mets ton mot de passe ici
 
