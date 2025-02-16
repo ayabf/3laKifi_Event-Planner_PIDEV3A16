@@ -1,21 +1,29 @@
 package controllers;
 
 import Models.CartItem;
+import Models.Order;
 import Models.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import services.CartService;
+import services.OrderService;
 import utils.DataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class CartController {
@@ -79,8 +87,55 @@ public class CartController {
     }
 
     @FXML
-    private void checkout() {
-        System.out.println("Proceeding to Checkout...");
+    private void validateCart() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderForm.fxml"));
+            Parent root = loader.load();
+
+            OrderFormController controller = loader.getController();
+            controller.setCartDetails(1, 1, calculateTotalPrice()); // Passer les détails
+
+            Stage stage = new Stage();
+            stage.setTitle("Validation de la commande");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir le formulaire de commande.");
+        }
+    }
+
+
+
+
+
+
+
+    private double calculateTotalPrice() {
+        return cartItems.stream().mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
+    }
+
+
+
+
+    private void openOrderForm(int orderId, double totalPrice) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderForm.fxml"));
+            Parent root = loader.load();
+
+            // Passer l'ID de la commande et le totalPrice au contrôleur de la page de commande
+            OrderController orderController = loader.getController();
+            orderController.setOrderDetails(orderId, totalPrice);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Détails de la Commande");
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir le formulaire de commande.");
+        }
     }
 
     // ✅ Classe interne `CartItemCell` pour afficher l'image et les informations du produit
@@ -244,6 +299,23 @@ public class CartController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    private double getTotalPriceFromCart(int cartId) {
+        String query = "SELECT total_price FROM cart WHERE cart_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, cartId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("total_price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de la récupération du prix total du panier !");
+        }
+        return 0.0; // Valeur par défaut en cas d'erreur
     }
 
 }

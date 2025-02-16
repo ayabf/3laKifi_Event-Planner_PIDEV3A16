@@ -28,7 +28,7 @@
     </HBox>
 
     <!-- Bouton de paiement -->
-    <Button text="Proceed to Checkout" fx:id="checkoutButton" onAction="#checkout"
+    <Button text="validate cart" fx:id="validateCartButton" onAction="#validateCart"
             layoutX="400" layoutY="460"
             style="-fx-background-color: #009688; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 10;"/>
 </AnchorPane>
