@@ -5,6 +5,8 @@ public class Comments {
     private int comment_id,publication_id,id_user;
     private String content;
     private LocalDateTime comment_date;
+    private String publicationTitle;
+    private String username;
 
     public Comments() {
     }
@@ -14,6 +16,13 @@ public class Comments {
         this.id_user = id_user;
         this.comment_date = comment_date;
     }
+
+    public Comments(String publicationTitle, String username, String content) {
+        this.publicationTitle = publicationTitle;
+        this.username = username;
+        this.content = content;
+    }
+
 
     public Comments(int comment_id, int publication_id, int id_user, String content, LocalDateTime comment_date) {
         this.comment_id = comment_id;
@@ -46,4 +55,14 @@ public class Comments {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return " Publication: " + publicationTitle +
+                "\n Utilisateur: " + username +
+                "\n Commentaire: \"" + content + "\"" +
+                "\n--------------------------------------";
+    }
+
+
 }
