@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="550.0" prefWidth="652.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AddEventController">
+    <children>
+        <Label layoutX="45.0" layoutY="30.0" text="Add Event">
+            <font>
+                <Font name="System Bold" size="20.0" />
+            </font>
+        </Label>
+
+        <!-- Champ de texte pour le nom de l'événement -->
+        <Label layoutX="45.0" layoutY="80.0" text="Name:" />
+        <TextField fx:id="nameTextField" layoutX="170.0" layoutY="75.0" prefHeight="25.0" prefWidth="400.0" />
+
+        <!-- Champ de texte pour la description -->
+        <Label layoutX="45.0" layoutY="125.0" text="Description:" />
+        <TextArea fx:id="descriptionTextArea" layoutX="170.0" layoutY="120.0" prefHeight="80.0" prefWidth="400.0" />
+
+        <!-- Sélection de la ville -->
+        <Label layoutX="45.0" layoutY="220.0" text="City:" />
+        <ComboBox fx:id="cityComboBox" layoutX="170.0" layoutY="215.0" prefHeight="25.0" prefWidth="200.0" />
+
+        <!-- Sélection de la date de début -->
+        <Label layoutX="45.0" layoutY="265.0" text="Start Date:" />
+        <DatePicker fx:id="startDatePicker" layoutX="170.0" layoutY="260.0" prefHeight="25.0" prefWidth="200.0" />
+
+        <!-- Sélection de la date de fin -->
+        <Label layoutX="45.0" layoutY="310.0" text="End Date:" />
+        <DatePicker fx:id="endDatePicker" layoutX="170.0" layoutY="305.0" prefHeight="25.0" prefWidth="200.0" />
+
+        <!-- Nombre de participants -->
+        <Label layoutX="45.0" layoutY="355.0" text="Capacity:" />
+        <TextField fx:id="capacityTextField" layoutX="170.0" layoutY="350.0" prefHeight="25.0" prefWidth="100.0" />
+
+        <!-- Sélection d'une image -->
+        <Label layoutX="45.0" layoutY="440.0" prefHeight="18.0" prefWidth="78.0" text="Event Image" />
+        <ImageView fx:id="eventImageView" fitHeight="100.0" fitWidth="150.0" layoutX="170.0" layoutY="400.0" />
+        <Button fx:id="addImageButton" layoutX="337.0" layoutY="437.0" mnemonicParsing="false" onAction="#chooseImage" text="Choisir une image" />
+
+        <!-- Boutons d'action -->
+        <Button layoutX="253.0" layoutY="520.0" mnemonicParsing="false" onAction="#addEvent" text="Ajouter" />
+        <Button layoutX="393.0" layoutY="520.0" mnemonicParsing="false" onAction="#cancel" text="Annuler" />
+    </children>
+</AnchorPane>

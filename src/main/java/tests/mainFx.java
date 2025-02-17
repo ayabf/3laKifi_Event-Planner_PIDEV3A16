@@ -16,6 +16,16 @@ public class mainFx extends Application {
 
     @Override
     public void start(Stage stage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/EventManagement.fxml"));
+            Parent root = loader.load();
+            Scene sc = new Scene(root);
+            //stage.setTitle("Ajouter");
+            stage.setScene(sc);
+            stage.show();
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
 
     }
 }
