@@ -108,8 +108,10 @@ public class EventManagementController {
     /**
      * Configure la barre de recherche pour filtrer les événements dynamiquement.
      */
+
     private void setupSearchFunctionality() {
         FilteredList<Event> filteredData = new FilteredList<>(eventList, b -> true);
+
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(event -> {
@@ -137,12 +139,16 @@ public class EventManagementController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddEvent.fxml"));
             Parent root = loader.load();
+
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.showAndWait(); // Attendre que l'utilisateur ferme la fenêtre
 
             // Rafraîchir la table après ajout
             loadEventData();
+            //NEW
+            // 🔥 Nouvelle ligne : Réinitialiser la recherche après mise à jour des données
+            setupSearchFunctionality();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -163,6 +169,6 @@ public class EventManagementController {
     }
 
     public void updateEvent(ActionEvent actionEvent) {
-        
+
     }
 }

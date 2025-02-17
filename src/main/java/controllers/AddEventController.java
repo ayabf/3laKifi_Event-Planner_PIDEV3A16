@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 public class AddEventController {
 
@@ -70,6 +71,8 @@ public class AddEventController {
     private File selectedImageFile; // Stocke l'image sélectionnée
 
     private final ServiceEvent serviceEvent = new ServiceEvent(); // Service pour l'ajout en BD
+
+
 
     @FXML
     void initialize() {
@@ -162,6 +165,8 @@ public class AddEventController {
             // Enregistrement en BD
             serviceEvent.ajouter(newEvent);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès !");
+
+
 
             // Fermer la fenêtre après ajout
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
