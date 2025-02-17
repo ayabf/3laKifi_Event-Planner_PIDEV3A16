@@ -2,8 +2,14 @@ package controllers;
 
 import Models.Order;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import services.OrderService;
 import utils.DataSource;
 
@@ -75,32 +81,76 @@ public class OrderListController {
         VBox card = new VBox();
         card.setStyle("-fx-border-color: black; -fx-padding: 10; -fx-spacing: 5; -fx-background-color: #f9f9f9;");
 
-        // Création des labels
         Label totalLabel = new Label("Total: $" + String.format("%.2f", order.getTotalPrice()));
         Label statusLabel = new Label("Statut: " + order.getStatus());
         Label eventDateLabel = new Label("Date de l'événement: " + order.getEventDate().toString());
         Label addressLabel = new Label("Adresse: " + order.getExactAddress());
 
-        // 🎨 Appliquer une couleur selon le statut
+        // 🎨 Appliquer la couleur du statut
         switch (order.getStatus().toUpperCase()) {
             case "PENDING":
-                statusLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;"); // 🔶 Jaune
+                statusLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
                 break;
             case "CONFIRMED":
-                statusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;"); // ✅ Vert
+                statusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
                 break;
             case "CANCELLED":
-                statusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;"); // ❌ Rouge
+                statusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
                 break;
             default:
-                statusLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold;"); // ⚪ Par défaut
+                statusLabel.setStyle("-fx-text-fill: black; -fx-font-weight: bold;");
         }
 
-        // Ajouter les éléments à la carte
-        card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel);
+        // 🔄 Bouton de modification
+        Button editButton = new Button("Modifier");
+        editButton.setOnAction(event -> openEditOrderPage(order));
+        Button cancelButton = new Button("Annuler");
+        cancelButton.setStyle("-fx-background-color: red; -fx-text-fill: white;"); // Style rouge
+        cancelButton.setOnAction(event -> cancelOrder(order));
+
+        card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel, editButton, cancelButton);
 
         return card;
     }
+    private void openEditOrderPage(Order order) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderEdit.fxml"));
+            Parent root = loader.load();
+
+            // Passer la commande sélectionnée au contrôleur
+            OrderEditController controller = loader.getController();
+            controller.setOrder(order);
+
+            Stage stage = new Stage();
+            stage.setTitle("Modifier Commande");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir la page de modification.");
+        }
+    }
+
+    private void cancelOrder(Order order) {
+        try {
+            orderService.annulerCommande(order.getOrderId());
+            showAlert("Commande annulée", "Votre commande a été annulée.");
+            loadOrders(); // Rafraîchir la liste
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'annuler la commande.");
+        }
+    }
+
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
 
 }

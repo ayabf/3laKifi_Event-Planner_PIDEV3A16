@@ -39,22 +39,21 @@ public class OrderService implements IService<Order> {
             System.out.println("✅ Commande ajoutée avec succès !");
         }
     }
-    @Override
     public void modifier(Order order) throws SQLException {
-        String query = "UPDATE `order` SET total_price = ?, event_date = ?, exact_address = ?, payment_method = ?, status = ? WHERE order_id = ?";
+        String query = "UPDATE `order` SET event_date = ?, exact_address = ? WHERE order_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDouble(1, order.getTotalPrice());
-            stmt.setString(2, order.getEventDate().toString());
-            stmt.setString(3, order.getExactAddress());
-            stmt.setString(4, order.getPaymentMethod());
-            stmt.setString(5, order.getStatus());
-            stmt.setInt(6, order.getOrderId());
+            stmt.setString(1, order.getEventDate().toString());
+            stmt.setString(2, order.getExactAddress());
+            stmt.setInt(3, order.getOrderId());
 
             stmt.executeUpdate();
             System.out.println("✅ Commande mise à jour avec succès !");
         }
     }
+
+
 
     @Override
     public void supprimer(int id) throws SQLException {
@@ -149,6 +148,18 @@ public class OrderService implements IService<Order> {
         }
         return orderList;
     }
+    public void annulerCommande(int orderId) throws SQLException {
+        String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, "CANCELLED"); // ✅ Bien mettre une chaîne de caractères
+            stmt.setInt(2, orderId);
+            stmt.executeUpdate();
+            System.out.println("✅ Commande annulée avec succès !");
+        }
+    }
+
 
 
     public boolean commandeExisteDeja(int cartId) throws SQLException {
