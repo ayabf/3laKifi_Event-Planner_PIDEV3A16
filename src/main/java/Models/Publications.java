@@ -19,12 +19,20 @@ public class Publications {
         this.publication_date = publication_date;
     }
 
-    public Publications(int publication_id, String title, String description, String image_url, LocalDate publication_date) {
+    public Publications(int publication_id, int id_user, String title, String description, String image_url) {
+        this.publication_id = publication_id;
+        this.id_user = id_user;
+        this.title = title;
+        this.description = description;
+        this.image_url = image_url;
+    }
+
+    public Publications(int publication_id, String title, String description, String image_url) {
         this.publication_id = publication_id;
         this.title = title;
         this.description = description;
         this.image_url = image_url;
-        this.publication_date = publication_date;
+
     }
 
     public Publications(String title, String description, String image_url) {
@@ -86,5 +94,18 @@ public class Publications {
 
     public void setComments(List<Comments> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "Publications{" +
+                "publication_id=" + publication_id +
+                ", id_user=" + id_user +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", publication_date=" + publication_date +
+                ", comments=" + comments +
+                '}';
     }
 }
