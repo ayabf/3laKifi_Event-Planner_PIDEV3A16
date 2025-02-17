@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="center" hgap="10" prefHeight="410.0" prefWidth="436.0" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="controllers.AjouterProductController">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <Label text="Product Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+    <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+    <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <TextField fx:id="txtDescription" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+    <Label text="Price:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    <Label text="Stock ID:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <TextField fx:id="txtStockId" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+    <Label text="Image URL:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+    <TextField fx:id="txtImageUrl" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+    <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    <TextField fx:id="txtCategory" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+    <Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+    <TextField fx:id="txtUserId" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+    <Button fx:id="btnAddProduct" onAction="#ajouterProduct" text="Add Product" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+    <Button fx:id="btnAfficherProducts" onAction="#afficherProducts" text="Afficher Products" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+    <columnConstraints>
+        <ColumnConstraints />
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+        <RowConstraints />
+    </rowConstraints>
+</GridPane>

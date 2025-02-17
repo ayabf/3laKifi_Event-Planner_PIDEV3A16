@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ModifierStockController"
+          hgap="10" vgap="10" alignment="center">
+
+    <Label text="Stock ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+    <TextField fx:id="txtStockId" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+    <Label text="Available Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <TextField fx:id="txtAvailableQuantity" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+    <Label text="Minimum Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextField fx:id="txtMinimumQuantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+    <Label text="Last Update:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <TextField fx:id="txtLastUpdate" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <Label text="User ID:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+    <TextField fx:id="txtUserId" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+    <Button fx:id="btnModifyStock" text="Modify Stock" GridPane.columnIndex="1" GridPane.rowIndex="5" onAction="#modifyStock" />
+
+</GridPane>
