@@ -81,14 +81,15 @@ public class CartService implements IService<Cart> {
         return null;
     }
 
-    // 5️⃣ Récupérer tous les paniers (`getAll(T t)`)
     @Override
-    public List<Cart> getAll(Cart cart) throws SQLException {
+    public List<Cart> getAll() throws SQLException {
         List<Cart> carts = new ArrayList<>();
         String query = "SELECT c.*, u.username, u.email FROM cart c " +
                 "JOIN user u ON c.user_id = u.id_user";
+
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
+
             while (rs.next()) {
                 User user = new User(
                         rs.getInt("user_id"),
@@ -105,6 +106,7 @@ public class CartService implements IService<Cart> {
         }
         return carts;
     }
+
     public void updateCartItem(int cartId, int productId, int newQuantity, double productPrice) throws SQLException {
         // ✅ Vérifier que la connexion est active
         Connection conn = DataSource.getInstance().getConnection();

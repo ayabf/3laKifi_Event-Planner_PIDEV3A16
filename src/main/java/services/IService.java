@@ -17,7 +17,7 @@ public interface IService <T> {
     public void modifier(T t) throws SQLException;
     public void supprimer(int id) throws SQLException;
     public T getOne(T t) throws SQLException;
-    public List<T> getAll(T t) throws SQLException;
+    public List<T> getAll() throws SQLException;
 }
 
 

@@ -1,10 +1,17 @@
 package controllers;
 
+import Models.Order;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import services.OrderService;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OrderFormController {
     @FXML private TextField eventDateField;
@@ -43,13 +50,39 @@ public class OrderFormController {
         }
 
         try {
-            orderService.ajouterCommande(cartId, userId, totalPrice, eventDate, address, paymentMethod);
+            Order newOrder = new Order(cartId, userId, "PENDING");
+            newOrder.setTotalPrice(totalPrice);
+            newOrder.setEventDate(LocalDateTime.parse(eventDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            newOrder.setExactAddress(address);
+            newOrder.setPaymentMethod(paymentMethod);
+
+            orderService.ajouter(newOrder);
+
             showAlert("Succès", "Commande validée !");
+
+            // ✅ Ouvre la page des commandes après validation
+            openOrderListPage();
+
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Erreur", "Impossible de valider la commande.");
         }
     }
+
+    private void openOrderListPage() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderList.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Mes Commandes");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir la page des commandes.");
+        }
+    }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
