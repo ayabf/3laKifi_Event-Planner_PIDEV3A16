@@ -163,5 +163,6 @@ public class EventManagementController {
     }
 
     public void updateEvent(ActionEvent actionEvent) {
+        
     }
 }

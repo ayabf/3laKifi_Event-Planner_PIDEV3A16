@@ -54,6 +54,18 @@ public class AddEventController {
 
     @FXML
     private DatePicker startDatePicker;
+    @FXML
+    private ComboBox<Integer> startHourComboBox;
+
+    @FXML
+    private ComboBox<Integer> startMinuteComboBox;
+
+    @FXML
+    private ComboBox<Integer> endHourComboBox;
+
+    @FXML
+    private ComboBox<Integer> endMinuteComboBox;
+
 
     private File selectedImageFile; // Stocke l'image sélectionnée
 
@@ -62,6 +74,31 @@ public class AddEventController {
     @FXML
     void initialize() {
         populateCityComboBox();
+        populateTimeComboBoxes();
+    }
+    // Méthode pour remplir les ComboBox des heures et minutes
+    private void populateTimeComboBoxes() {
+        ObservableList<Integer> hours = FXCollections.observableArrayList();
+        ObservableList<Integer> minutes = FXCollections.observableArrayList();
+
+        for (int i = 0; i < 24; i++) {
+            hours.add(i);
+        }
+
+        for (int i = 0; i < 60; i++) {
+            minutes.add(i);
+        }
+
+        startHourComboBox.setItems(hours);
+        startMinuteComboBox.setItems(minutes);
+        endHourComboBox.setItems(hours);
+        endMinuteComboBox.setItems(minutes);
+
+        // Sélectionner une valeur par défaut
+        startHourComboBox.setValue(12);
+        startMinuteComboBox.setValue(0);
+        endHourComboBox.setValue(12);
+        endMinuteComboBox.setValue(0);
     }
 
     // Remplissage de la ComboBox des villes avec l'énumération City
@@ -74,29 +111,20 @@ public class AddEventController {
     @FXML
     void addEvent(ActionEvent event) {
         try {
-            // Récupération des valeurs des champs
             String name = nameTextField.getText().trim();
             String description = descriptionTextArea.getText().trim();
             City city = cityComboBox.getValue();
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
+            int startHour = startHourComboBox.getValue();
+            int startMinute = startMinuteComboBox.getValue();
+            int endHour = endHourComboBox.getValue();
+            int endMinute = endMinuteComboBox.getValue();
             String capacityText = capacityTextField.getText().trim();
 
-            // Validation des champs
+            // Vérification des champs obligatoires
             if (name.isEmpty() || description.isEmpty() || city == null || startDate == null || endDate == null || capacityText.isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Champs obligatoires", "Veuillez remplir tous les champs.");
-                return;
-            }
-            LocalDateTime startDateTime = startDate.atStartOfDay();
-            LocalDateTime endDateTime = endDate.atStartOfDay();
-
-            // Vérification des dates
-            if (startDate.isBefore(LocalDate.now())) {
-                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de début ne peut pas être dans le passé.");
-                return;
-            }
-            if (endDate.isBefore(startDate)) {
-                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de fin doit être après la date de début.");
                 return;
             }
 
@@ -112,17 +140,30 @@ public class AddEventController {
                 return;
             }
 
-            // Gestion de l'image (par défaut, une image par défaut sera utilisée si aucune n'est choisie)
+            // Vérification des dates
+            LocalDateTime startDateTime = startDate.atTime(startHour, startMinute);
+            LocalDateTime endDateTime = endDate.atTime(endHour, endMinute);
+
+            if (startDateTime.isBefore(LocalDateTime.now())) {
+                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de début ne peut pas être dans le passé.");
+                return;
+            }
+            if (endDateTime.isBefore(startDateTime)) {
+                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de fin doit être après la date de début.");
+                return;
+            }
+
+            // Gestion de l'image
             String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : "default_event.png";
 
             // Création de l'objet Event
             Event newEvent = new Event(name, description, imagePath, startDateTime, endDateTime, capacity, city, 1);
 
-            // Enregistrement dans la BD
+            // Enregistrement en BD
             serviceEvent.ajouter(newEvent);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès !");
 
-            // Fermer la fenêtre après l'ajout
+            // Fermer la fenêtre après ajout
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();
 
@@ -131,6 +172,7 @@ public class AddEventController {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de l'ajout de l'événement.");
         }
     }
+
 
     @FXML
     void cancel(ActionEvent event) {
