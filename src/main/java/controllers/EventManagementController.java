@@ -147,7 +147,7 @@ public class EventManagementController {
             // Rafraîchir la table après ajout
             loadEventData();
             //NEW
-            // 🔥 Nouvelle ligne : Réinitialiser la recherche après mise à jour des données
+            // 🔥 Nouvelle ligne : Réinitialiser la recherche après mise à jour des données: u can remove if u want
             setupSearchFunctionality();
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,7 +168,34 @@ public class EventManagementController {
     public void deleteEvent(ActionEvent actionEvent) {
     }
 
-    public void updateEvent(ActionEvent actionEvent) {
+    @FXML
+    void updateEvent(ActionEvent event) {
+        Event selectedEvent = eventTableView.getSelectionModel().getSelectedItem();
 
+        if (selectedEvent == null) {
+            showAlert(Alert.AlertType.WARNING, "Aucun événement sélectionné", "Veuillez sélectionner un événement à modifier.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateEvent.fxml"));
+            Parent root = loader.load();
+
+            // ✅ Récupérer le contrôleur et lui passer l'événement sélectionné
+            UpdateEventController updateEventController = loader.getController();
+            updateEventController.initData(selectedEvent);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.showAndWait(); // Attendre que l'utilisateur ferme la fenêtre
+
+            // ✅ Rafraîchir la table après la mise à jour
+            loadEventData();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre de mise à jour.");
+        }
     }
+
 }
