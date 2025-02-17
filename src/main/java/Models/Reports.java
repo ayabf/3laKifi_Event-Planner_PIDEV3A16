@@ -1,28 +1,28 @@
 package Models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Reports {
-    private int report_id,publication_id,uder_id;
-    private String motif,description;
+    private int report_id,publication_id,user_id;
+    private String description;
     private LocalDate report_date;
     private ReportStatus status;
 
     public Reports() {}
 
-    public Reports(int publication_id, int uder_id, String motif, String description, ReportStatus status) {
+    public Reports(int publication_id, int user_id, String description, ReportStatus status) {
         this.publication_id = publication_id;
-        this.uder_id = uder_id;
-        this.motif = motif;
+        this.user_id = user_id;
         this.description = description;
-        this.status = ReportStatus.EN_ATTENTE;
+        this.status = ReportStatus.PENDING;
     }
 
-    public Reports(int report_id, int publication_id, int uder_id, String motif, String description, ReportStatus status, LocalDate report_date) {
+    public Reports(int report_id, int publication_id, int user_id,
+                   String description, ReportStatus status, LocalDate report_date) {
         this.report_id = report_id;
         this.publication_id = publication_id;
-        this.uder_id = uder_id;
-        this.motif = motif;
+        this.user_id = user_id;
         this.description = description;
         this.status = status;
         this.report_date = report_date;
@@ -32,16 +32,12 @@ public class Reports {
         return report_id;
     }
 
-    public String getMotif() {
-        return motif;
-    }
-
     public int getPublication_id() {
         return publication_id;
     }
 
-    public int getUder_id() {
-        return uder_id;
+    public int getUser_id() {
+        return user_id;
     }
 
     public String getDescription() {
@@ -56,15 +52,19 @@ public class Reports {
         return status;
     }
 
-    public void setMotif(String motif) {
-        this.motif = motif;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
     public void setStatus(ReportStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Reports{" +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
     }
 }

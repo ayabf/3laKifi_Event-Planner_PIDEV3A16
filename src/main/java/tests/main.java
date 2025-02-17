@@ -2,8 +2,11 @@ package tests;
 
 import Models.Comments;
 import Models.Publications;
+import Models.ReportStatus;
+import Models.Reports;
 import services.ServiceComments;
 import services.ServicePublications;
+import services.ServiceReports;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,6 +37,13 @@ public class main {
         //serviceComments.supprimer(username, titrePublication);
         List<Comments> comments = serviceComments.getAllByPublicationTitle("amal");
         System.out.println(comments);*/
+        //test crud reports
+        /*ServiceReports serviceReports = new ServiceReports();
+        serviceReports.ajouter("amal", "killerFrost","spam","enouf");
+        serviceReports.supprimer("amal", "killerFrost");
+        serviceReports.modifier("amal", "KillerFrost","PENDING");
+        List<Reports> allReports = serviceReports.getAll();
+        System.out.println(allReports);*/
 
 
 

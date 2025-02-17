@@ -1,27 +1,21 @@
 package Models;
 
 public enum ReportStatus {
-    EN_ATTENTE("En attente"),
-    VERIFIE("Vérifié"),
-    REJETE("Rejeté");
+    PENDING,  // ✅ En attente
+    APPROVED, // ✅ Approuvé
+    REJECTED, // ✅ Rejeté
+    VALIDE;   // ✅ Validé
 
-    private final String value;
-
-    ReportStatus(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-
-    public static ReportStatus fromString(String text) {
-        for (ReportStatus s : ReportStatus.values()) {
-            if (s.value.equalsIgnoreCase(text)) {
-                return s;
-            }
+    // 🔹 Convertit une chaîne en `ReportStatus` (évite les erreurs de casse)
+    public static ReportStatus fromString(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            return PENDING; // ✅ Valeur par défaut
         }
-        throw new IllegalArgumentException("Statut inconnu : " + text);
+        try {
+            return ReportStatus.valueOf(status.trim().toUpperCase()); // ✅ Supprime espaces et met en majuscules
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ Statut invalide : `" + status + "`. Utilisation de PENDING par défaut.");
+            return PENDING;
+        }
     }
 }
