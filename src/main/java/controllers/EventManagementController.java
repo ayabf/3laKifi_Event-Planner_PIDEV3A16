@@ -165,8 +165,44 @@ public class EventManagementController {
         alert.showAndWait();
     }
 
-    public void deleteEvent(ActionEvent actionEvent) {
+    @FXML
+    void deleteEvent(ActionEvent event) {
+        // 🔍 Récupérer l'événement sélectionné
+        Event selectedEvent = eventTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedEvent == null) {
+            showAlert(Alert.AlertType.WARNING, "Aucun événement sélectionné", "Veuillez sélectionner un événement à supprimer.");
+            return;
+        }
+
+        // 🔥 Demande de confirmation avant suppression
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Supprimer l'événement");
+        confirmation.setHeaderText(null);
+        confirmation.setContentText("Êtes-vous sûr de vouloir supprimer cet événement ?");
+
+        confirmation.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try {
+                    // ✅ Appel au service pour supprimer l'événement
+                    eventServices.supprimer(selectedEvent.getId_event());
+
+                    // ✅ Suppression de l'événement de la liste observable
+                    eventList.remove(selectedEvent);
+
+                    // ✅ Rafraîchir la table
+                    eventTableView.refresh();
+
+                    // ✅ Afficher un message de succès
+                    showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement supprimé avec succès !");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de la suppression de l'événement.");
+                }
+            }
+        });
     }
+
 
     @FXML
     void updateEvent(ActionEvent event) {
@@ -191,6 +227,8 @@ public class EventManagementController {
 
             // ✅ Rafraîchir la table après la mise à jour
             loadEventData();
+            // 🔥 Nouvelle ligne : Réinitialiser la recherche après mise à jour des données: u can remove if u want
+            setupSearchFunctionality();
 
         } catch (IOException e) {
             e.printStackTrace();
