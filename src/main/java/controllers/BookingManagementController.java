@@ -168,19 +168,16 @@ public class BookingManagementController {
     }
 
     @FXML
-    void addBooking(ActionEvent event) {
+    void handleBack() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddBooking.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
             Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Ajouter une réservation");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            Stage stage = (Stage) bookingTableView.getScene().getWindow();
             stage.setScene(scene);
-            stage.showAndWait();
-            loadBookingData();
         } catch (IOException e) {
-            showError("Error loading add booking form", e);
+            showError("Error returning to dashboard", e);
         }
     }
 
@@ -219,20 +216,6 @@ public class BookingManagementController {
             } catch (SQLException e) {
                 showError("Error deleting booking", e);
             }
-        }
-    }
-
-    @FXML
-    void handleBack() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-            Stage stage = (Stage) bookingTableView.getScene().getWindow();
-            stage.setScene(scene);
-        } catch (IOException e) {
-            showError("Error returning to dashboard", e);
         }
     }
 

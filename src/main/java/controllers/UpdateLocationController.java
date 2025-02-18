@@ -1,5 +1,4 @@
 package controllers;
-
 import Models.Location;
 import Models.City;
 import javafx.fxml.FXML;
@@ -67,7 +66,7 @@ public class UpdateLocationController {
         if (location != null) {
             nameField.setText(location.getName());
             villeComboBox.setValue(location.getVille());
-            imageLabel.setText(location.getImageFileName() != null ? location.getImageFileName() : "Aucune image sélectionnée");
+            imageLabel.setText(location.getImageFileName() != null ? location.getImageFileName() : "No image selected");
             capacityField.setText(String.valueOf(location.getCapacity()));
             dimensionField.setText(location.getDimension());
             priceField.setText(String.valueOf(location.getPrice()));
@@ -89,7 +88,7 @@ public class UpdateLocationController {
                     location.setImageData(imageData);
                     location.setImageFileName(selectedImageFile.getName());
                 } catch (IOException e) {
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de lire le fichier image.");
+                    showAlert(Alert.AlertType.ERROR, "Error", "Could not read image file.");
                     return;
                 }
             }
@@ -101,13 +100,13 @@ public class UpdateLocationController {
             // Update location in database
             locationService.modifier(location);
             
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Location modifiée avec succès.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Location updated successfully.");
             closeWindow();
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de modifier la location.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not update location.");
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez entrer des valeurs numériques valides pour la capacité et le prix.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter valid numeric values for capacity and price.");
         }
     }
 

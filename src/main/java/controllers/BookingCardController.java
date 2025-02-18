@@ -5,15 +5,21 @@ import Models.Event;
 import Models.Location;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import services.ServiceBooking;
 import services.ServiceEvent;
 import services.ServiceLocation;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -49,13 +55,8 @@ public class BookingCardController {
 
     private void loadEventAndLocation() {
         try {
-            Event tempEvent = new Event();
-            tempEvent.setId_event(booking.getEvent_id());
-            event = eventService.getOne(tempEvent);
-
-            Location tempLocation = new Location();
-            tempLocation.setId_location(booking.getLocation_id());
-            location = locationService.getOne(tempLocation);
+            event = eventService.getById(booking.getEvent_id());
+            location = locationService.getById(booking.getLocation_id());
         } catch (Exception e) {
             e.printStackTrace();
             showError("Error loading booking details", e);
@@ -65,7 +66,7 @@ public class BookingCardController {
     private void updateCard() {
         if (booking != null && event != null && location != null) {
             eventName.setText(event.getName());
-            locationName.setText(location.getName() + " (" + location.getVille().name() + ")");
+            locationName.setText(location.getName() + " (" + location.getVille()+ ")");
             startDate.setText(booking.getStart_date().format(dateFormatter));
             endDate.setText("Until " + booking.getEnd_date().format(dateFormatter));
             updateStatus();
@@ -89,7 +90,7 @@ public class BookingCardController {
             cancelButton.setDisable(true);
         } else {
             status = "In Progress";
-            iconName = "PLAY_CIRCLE";
+            iconName = "HOURGLASS_HALF";
             styleClass = "in-progress";
             cancelButton.setDisable(true);
         }
@@ -102,11 +103,34 @@ public class BookingCardController {
 
     @FXML
     private void handleView() {
-        // TODO: Implement view booking details
+        if (event != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/EventDetails.fxml"));
+                Parent root = loader.load();
+                
+                EventDetailsController controller = loader.getController();
+                controller.setEvent(event);
+                
+                Stage stage = new Stage();
+                stage.setTitle("Event Details - " + event.getName());
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError("Error showing event details", e);
+            }
+        }
     }
 
     @FXML
     private void handleCancel() {
+        if (LocalDateTime.now().isAfter(booking.getStart_date())) {
+            showError("Cannot cancel booking", new Exception("Cannot cancel a booking that has already started"));
+            return;
+        }
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Cancel Booking");
         alert.setHeaderText("Are you sure you want to cancel this booking?");
@@ -115,9 +139,10 @@ public class BookingCardController {
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
                 bookingService.supprimer(booking.getBooking_id());
-                // Refresh the parent view
+                showInfo("Booking cancelled successfully");
+                // Close the booking card
                 statusContainer.getScene().getWindow().hide();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
                 showError("Error canceling booking", e);
             }
@@ -129,6 +154,14 @@ public class BookingCardController {
         alert.setTitle("Error");
         alert.setHeaderText(message);
         alert.setContentText(e.getMessage());
+        alert.showAndWait();
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 } 

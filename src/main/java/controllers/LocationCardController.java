@@ -1,6 +1,7 @@
 package controllers;
 
 import Models.Location;
+import Models.City;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -100,7 +101,7 @@ public class LocationCardController {
             updateStatus();
 
             // Load image from byte array if available
-            if (location.getImageData() != null && location.getImageData().length > 0) {
+            if (location.getImageFileName() != null && location.getImageData().length > 0) {
                 try {
                     Image image = new Image(new ByteArrayInputStream(location.getImageData()));
                     locationImage.setImage(image);

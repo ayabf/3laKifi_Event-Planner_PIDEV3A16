@@ -30,6 +30,7 @@ public class EventListController {
     @FXML private TableColumn<Event, String> eventStatusColumn;
     @FXML private TableColumn<Event, Void> eventDetailsColumn;
     @FXML private TextField searchField;
+    @FXML private TableColumn<Event, Void> eventActionsColumn;
 
     private final ServiceEvent eventService = new ServiceEvent();
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -69,16 +70,43 @@ public class EventListController {
             });
         });
 
-        // Details button column
-        eventDetailsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button detailsButton = new Button();
+        // Setup actions column with edit and delete buttons
+        setupActionsColumn();
+    }
+
+    private void setupActionsColumn() {
+        eventActionsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button editBtn = new Button("");
+            private final Button deleteBtn = new Button("");
+            private final HBox actionButtons = new HBox(5);
 
             {
-                FontAwesomeIconView icon = new FontAwesomeIconView();
-                icon.setGlyphName("INFO_CIRCLE");
-                icon.setSize("1.5em");
-                detailsButton.setGraphic(icon);
-                detailsButton.getStyleClass().add("action-button");
+                // Edit button
+                FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
+                editIcon.setSize("14");
+                editBtn.setGraphic(editIcon);
+                editBtn.getStyleClass().add("action-button");
+                editBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                editBtn.setTooltip(new Tooltip("Edit Event"));
+                editBtn.setOnAction(event -> {
+                    Event selectedEvent = getTableView().getItems().get(getIndex());
+                    handleEditEvent(selectedEvent);
+                });
+
+                // Delete button
+                FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
+                deleteIcon.setSize("14");
+                deleteBtn.setGraphic(deleteIcon);
+                deleteBtn.getStyleClass().addAll("action-button", "delete-button");
+                deleteBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                deleteBtn.setTooltip(new Tooltip("Delete Event"));
+                deleteBtn.setOnAction(event -> {
+                    Event selectedEvent = getTableView().getItems().get(getIndex());
+                    handleDeleteEvent(selectedEvent);
+                });
+
+                actionButtons.setAlignment(javafx.geometry.Pos.CENTER);
+                actionButtons.getChildren().addAll(editBtn, deleteBtn);
             }
 
             @Override
@@ -87,11 +115,7 @@ public class EventListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(detailsButton);
-                    detailsButton.setOnAction(event -> {
-                        Event selectedEvent = getTableView().getItems().get(getIndex());
-                        showEventDetails(selectedEvent);
-                    });
+                    setGraphic(actionButtons);
                 }
             }
         });
@@ -109,18 +133,34 @@ public class EventListController {
 
     private void setupSearch() {
         FilteredList<Event> filteredData = new FilteredList<>(eventList, p -> true);
+        
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(event -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-
+                
                 String lowerCaseFilter = newValue.toLowerCase();
-                return event.getName().toLowerCase().contains(lowerCaseFilter) ||
-                       event.getDescription().toLowerCase().contains(lowerCaseFilter) ||
-                       event.getCity().name().toLowerCase().contains(lowerCaseFilter);
+                
+                if (event.getName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (event.getDescription().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (event.getCity().name().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (event.getStart_date().format(dateFormatter).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                if (event.getEnd_date().format(dateFormatter).toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return String.valueOf(event.getCapacity()).contains(lowerCaseFilter);
             });
         });
+        
         eventsTable.setItems(filteredData);
     }
 
@@ -160,6 +200,72 @@ public class EventListController {
         } catch (IOException e) {
             showError("Error returning to dashboard", e);
         }
+    }
+
+    @FXML
+    private void handleAddEvent() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddEvent.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Add New Event");
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            stage.setScene(scene);
+            stage.showAndWait();
+            loadEvents();
+        } catch (IOException e) {
+            showError("Error loading add event form", e);
+        }
+    }
+
+    private void handleEditEvent(Event event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateEvent.fxml"));
+            Parent root = loader.load();
+            
+            UpdateEventController controller = loader.getController();
+            controller.setEvent(event);
+            controller.setOnEventUpdated(updatedEvent -> {
+                loadEvents();
+            });
+            
+            Stage stage = new Stage();
+            stage.setTitle("Edit Event - " + event.getName());
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            stage.setScene(scene);
+            stage.showAndWait();
+        } catch (IOException e) {
+            showError("Error loading edit event form", e);
+        }
+    }
+
+    private void handleDeleteEvent(Event event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Event");
+        alert.setHeaderText("Delete " + event.getName());
+        alert.setContentText("Are you sure you want to delete this event? This action cannot be undone.");
+
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                eventService.supprimer(event.getId_event());
+                loadEvents();
+                showInfo("Event deleted successfully");
+            } catch (SQLException e) {
+                showError("Error deleting event", e);
+            }
+        }
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void showError(String message, Exception e) {

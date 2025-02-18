@@ -18,6 +18,8 @@ import services.ServiceBooking;
 import services.ServiceEvent;
 import services.ServiceLocation;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.binding.Bindings;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -57,7 +59,7 @@ public class MyBookingsController {
         eventNameColumn.setCellValueFactory(cellData -> {
             int eventId = cellData.getValue().getEvent_id();
             Event event = eventCache.get(eventId);
-            return javafx.beans.binding.Bindings.createStringBinding(
+            return Bindings.createStringBinding(
                 () -> event != null ? event.getName() : "Unknown Event"
             );
         });
@@ -65,18 +67,18 @@ public class MyBookingsController {
         locationNameColumn.setCellValueFactory(cellData -> {
             int locationId = cellData.getValue().getLocation_id();
             Location location = locationCache.get(locationId);
-            return javafx.beans.binding.Bindings.createStringBinding(
+            return Bindings.createStringBinding(
                 () -> location != null ? location.getName() : "Unknown Location"
             );
         });
 
         startDateColumn.setCellValueFactory(cellData -> 
-            javafx.beans.binding.Bindings.createStringBinding(
+            Bindings.createStringBinding(
                 () -> cellData.getValue().getStart_date().format(dateFormatter)
             ));
 
         endDateColumn.setCellValueFactory(cellData -> 
-            javafx.beans.binding.Bindings.createStringBinding(
+            Bindings.createStringBinding(
                 () -> cellData.getValue().getEnd_date().format(dateFormatter)
             ));
 
@@ -84,7 +86,7 @@ public class MyBookingsController {
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime startDate = cellData.getValue().getStart_date();
             LocalDateTime endDate = cellData.getValue().getEnd_date();
-            return javafx.beans.binding.Bindings.createStringBinding(() -> {
+            return Bindings.createStringBinding(() -> {
                 if (now.isBefore(startDate)) return "Upcoming";
                 if (now.isAfter(endDate)) return "Completed";
                 return "Active";

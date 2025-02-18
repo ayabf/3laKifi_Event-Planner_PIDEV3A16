@@ -16,6 +16,14 @@
         <Label text="Event List" styleClass="header"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="searchField" promptText="Search events..." prefWidth="250"/>
+        <Button onAction="#handleAddEvent" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Add New Event" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
         <Button onAction="#handleRefresh" styleClass="action-button">
             <graphic>
                 <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
@@ -36,7 +44,7 @@
             <TableColumn fx:id="eventCityColumn" text="City" prefWidth="100"/>
             <TableColumn fx:id="eventCapacityColumn" text="Capacity" prefWidth="100"/>
             <TableColumn fx:id="eventStatusColumn" text="Status" prefWidth="100"/>
-            <TableColumn fx:id="eventDetailsColumn" text="Details" prefWidth="100"/>
+            <TableColumn fx:id="eventActionsColumn" text="Actions" prefWidth="100"/>
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

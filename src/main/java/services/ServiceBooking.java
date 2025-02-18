@@ -74,9 +74,14 @@ public class ServiceBooking implements IService<Booking> {
 
     @Override
     public Booking getOne(Booking booking) throws SQLException {
+        return getById(booking.getBooking_id());
+    }
+
+    // Helper method to get booking by ID
+    public Booking getById(int id) throws SQLException {
         String req = "SELECT * FROM booking WHERE id_booking=?";
         pste = conn.prepareStatement(req);
-        pste.setInt(1, booking.getBooking_id());
+        pste.setInt(1, id);
         ResultSet rs = pste.executeQuery();
         if (rs.next()) {
             return new Booking(

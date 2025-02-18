@@ -9,25 +9,27 @@
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
       fx:controller="controllers.AddEventController" 
       styleClass="root" 
-      stylesheets="@styles/global.css">
+      stylesheets="@styles/global.css, @styles/form-styles.css"
+      prefWidth="800"
+      prefHeight="700">
     
     <!-- Header -->
-    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+    <HBox styleClass="header-bar">
         <padding>
-            <Insets left="30" right="30" top="15" bottom="15"/>
+            <Insets left="30" right="30" top="20" bottom="20"/>
         </padding>
         <HBox alignment="CENTER_LEFT" spacing="15">
-            <FontAwesomeIconView glyphName="CALENDAR" size="2em" fill="WHITE"/>
-            <Label text="Add New Event" styleClass="header-title"/>
+            <FontAwesomeIconView glyphName="CALENDAR_PLUS" size="2em" fill="WHITE"/>
+            <VBox spacing="2">
+                <Label text="Add New Event" styleClass="header-title"/>
+                <Label text="Create a memorable event" styleClass="header-subtitle"/>
+            </VBox>
         </HBox>
         <Region HBox.hgrow="ALWAYS"/>
         <Button onAction="#handleCancel" styleClass="header-button">
             <graphic>
                 <FontAwesomeIconView glyphName="TIMES" size="1.5em" fill="WHITE"/>
             </graphic>
-            <tooltip>
-                <Tooltip text="Close" styleClass="custom-tooltip"/>
-            </tooltip>
         </Button>
     </HBox>
 
@@ -35,112 +37,123 @@
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="custom-scroll-pane">
         <VBox spacing="30" styleClass="form-container">
             <padding>
-                <Insets top="40" right="40" bottom="40" left="40"/>
+                <Insets top="30" right="40" bottom="40" left="40"/>
             </padding>
 
-            <!-- Form Card -->
-            <VBox styleClass="card" spacing="25">
-                <padding>
-                    <Insets top="30" right="30" bottom="30" left="30"/>
-                </padding>
-
+            <!-- Form Content -->
+            <VBox styleClass="form-content" spacing="30">
                 <!-- Image Upload Section -->
-                <VBox spacing="15" alignment="CENTER" styleClass="image-upload-section">
+                <VBox spacing="15" alignment="CENTER">
                     <Label text="Event Image" styleClass="section-label"/>
-                    <StackPane>
-                        <ImageView fx:id="imagePreview" fitHeight="200" fitWidth="300" 
-                                 preserveRatio="true" styleClass="image-preview"/>
+                    <StackPane styleClass="image-upload-container">
+                        <ImageView fx:id="imagePreview" fitHeight="250" fitWidth="700" 
+                                 preserveRatio="true"/>
                         <Button fx:id="imageButton" styleClass="upload-button">
                             <graphic>
                                 <VBox alignment="CENTER" spacing="10">
                                     <FontAwesomeIconView glyphName="UPLOAD" size="2em"/>
                                     <Label text="Choose Image" styleClass="upload-text"/>
+                                    <Label text="Recommended size: 1920x1080px" styleClass="upload-hint"/>
                                 </VBox>
                             </graphic>
                         </Button>
                     </StackPane>
                 </VBox>
 
-                <!-- Event Details Section -->
-                <VBox spacing="20">
+                <!-- Event Details -->
+                <VBox spacing="25">
                     <Label text="Event Details" styleClass="section-label"/>
                     
-                    <GridPane vgap="20" hgap="20">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="100" prefWidth="150"/>
-                            <ColumnConstraints hgrow="ALWAYS"/>
-                        </columnConstraints>
-
-                        <!-- Name Field -->
-                        <VBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                    <!-- Name and Description -->
+                    <VBox spacing="20">
+                        <VBox spacing="8">
                             <Label text="Event Name" styleClass="field-label"/>
-                            <TextField fx:id="nameField" promptText="Enter event name"/>
+                            <TextField fx:id="nameField" promptText="Enter a catchy event name" 
+                                     styleClass="form-field"/>
                         </VBox>
-
-                        <!-- Description Field -->
-                        <VBox spacing="5" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                        
+                        <VBox spacing="8">
                             <Label text="Description" styleClass="field-label"/>
-                            <TextArea fx:id="descriptionArea" wrapText="true" prefRowCount="3" 
-                                    promptText="Enter event description"/>
+                            <TextArea fx:id="descriptionArea" wrapText="true" prefRowCount="4" 
+                                    promptText="Describe your event in detail" 
+                                    styleClass="form-field"/>
                         </VBox>
+                    </VBox>
 
-                        <!-- Date/Time Section -->
-                        <VBox spacing="5" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                    <!-- Date/Time Section -->
+                    <HBox spacing="20">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
                             <Label text="Start Date &amp; Time" styleClass="field-label"/>
                             <HBox spacing="10">
-                                <DatePicker fx:id="startDatePicker" styleClass="date-picker"/>
+                                <DatePicker fx:id="startDatePicker" prefWidth="250" 
+                                          promptText="Select start date"
+                                          styleClass="form-field"/>
                                 <TextField fx:id="startTimeField" promptText="HH:mm" 
-                                         prefWidth="100" styleClass="time-field"/>
+                                         styleClass="form-field, time-field"/>
                             </HBox>
                         </VBox>
 
-                        <VBox spacing="5" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
                             <Label text="End Date &amp; Time" styleClass="field-label"/>
                             <HBox spacing="10">
-                                <DatePicker fx:id="endDatePicker" styleClass="date-picker"/>
+                                <DatePicker fx:id="endDatePicker" prefWidth="250" 
+                                          promptText="Select end date"
+                                          styleClass="form-field"/>
                                 <TextField fx:id="endTimeField" promptText="HH:mm" 
-                                         prefWidth="100" styleClass="time-field"/>
+                                         styleClass="form-field, time-field"/>
                             </HBox>
                         </VBox>
+                    </HBox>
 
-                        <!-- Capacity & City -->
-                        <VBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="0">
+                    <!-- Capacity & City -->
+                    <HBox spacing="20">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
                             <Label text="Capacity" styleClass="field-label"/>
-                            <TextField fx:id="capacityField" promptText="Number of attendees"/>
+                            <TextField fx:id="capacityField" promptText="Maximum number of attendees" 
+                                     styleClass="form-field"/>
                         </VBox>
 
-                        <VBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
                             <Label text="City" styleClass="field-label"/>
-                            <ComboBox fx:id="cityComboBox" maxWidth="Infinity"/>
+                            <ComboBox fx:id="cityComboBox" maxWidth="Infinity" promptText="Select city"
+                                    styleClass="form-field"/>
                         </VBox>
-                    </GridPane>
-                </VBox>
+                    </HBox>
 
-                <!-- Action Buttons -->
-                <HBox spacing="15" alignment="CENTER_RIGHT">
-                    <Button text="Cancel" onAction="#handleCancel" styleClass="button, secondary">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
-                        </graphic>
-                    </Button>
-                    <Button fx:id="addButton" text="Create Event" onAction="#handleAdd" styleClass="button, primary">
-                        <graphic>
-                            <FontAwesomeIconView glyphName="CHECK" size="1.2em"/>
-                        </graphic>
-                    </Button>
-                </HBox>
+                    <!-- Action Buttons -->
+                    <HBox spacing="15" alignment="CENTER_RIGHT">
+                        <padding>
+                            <Insets top="20"/>
+                        </padding>
+                        <Button text="Cancel" onAction="#handleCancel" 
+                                styleClass="button, secondary">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="addButton" text="Create Event" onAction="#handleAdd" 
+                                styleClass="button, primary">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="CHECK" size="1.2em"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                </VBox>
             </VBox>
         </VBox>
     </ScrollPane>
 
     <!-- Footer -->
     <HBox styleClass="footer-bar" alignment="CENTER">
-        <VBox alignment="CENTER">
+        <padding>
+            <Insets top="15" bottom="15"/>
+        </padding>
+        <VBox alignment="CENTER" spacing="5">
             <Label styleClass="footer-text" text="© 2024 3laKifi Events. All rights reserved."/>
-            <HBox spacing="20" alignment="CENTER">
-                <Label styleClass="footer-text" text="Privacy Policy"/>
-                <Label styleClass="footer-text" text="Terms of Service"/>
-                <Label styleClass="footer-text" text="Contact Us"/>
+            <HBox spacing="20" alignment="CENTER" styleClass="footer-links">
+                <Label styleClass="footer-link" text="Privacy Policy"/>
+                <Label styleClass="footer-link" text="Terms of Service"/>
+                <Label styleClass="footer-link" text="Contact Us"/>
             </HBox>
         </VBox>
     </HBox>

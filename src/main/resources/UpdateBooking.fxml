@@ -3,38 +3,59 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<VBox spacing="15" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.UpdateBookingController">
+<VBox spacing="20" styleClass="form-container" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.UpdateBookingController">
+    
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="Modifier la réservation" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
+    <Label text="Update Booking" styleClass="header"/>
 
+    <!-- Booking Details -->
     <GridPane vgap="10" hgap="10">
-        <Label text="ID Événement:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
-        <TextField fx:id="eventIdField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="150"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
 
-        <Label text="ID Location:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
-        <TextField fx:id="locationIdField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <!-- Event ID -->
+        <Label text="Event ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="eventIdField" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Date de début:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <!-- Location ID -->
+        <Label text="Location ID:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="locationIdField" editable="false" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Start Date/Time -->
+        <Label text="Start Date:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
         <HBox spacing="10" GridPane.rowIndex="2" GridPane.columnIndex="1">
-            <DatePicker fx:id="startDatePicker"/>
+            <DatePicker fx:id="startDatePicker" prefWidth="150"/>
             <TextField fx:id="startTimeField" promptText="HH:mm" prefWidth="100"/>
         </HBox>
 
-        <Label text="Date de fin:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <!-- End Date/Time -->
+        <Label text="End Date:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
         <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
-            <DatePicker fx:id="endDatePicker"/>
+            <DatePicker fx:id="endDatePicker" prefWidth="150"/>
             <TextField fx:id="endTimeField" promptText="HH:mm" prefWidth="100"/>
         </HBox>
     </GridPane>
 
+    <!-- Action Buttons -->
     <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button text="Annuler" onAction="#handleCancel" 
-                style="-fx-background-color: #cebec9; -fx-text-fill: #533C56;"/>
-        <Button text="Mettre à jour" onAction="#handleUpdate"
-                style="-fx-background-color: #533C56; -fx-text-fill: white;"/>
+        <Button text="Cancel" onAction="#handleClose" styleClass="button, secondary">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+            </graphic>
+        </Button>
+        <Button text="Update" onAction="#handleUpdate" styleClass="button">
+            <graphic>
+                <FontAwesomeIconView glyphName="CHECK" size="1.2em"/>
+            </graphic>
+        </Button>
     </HBox>
 </VBox> 

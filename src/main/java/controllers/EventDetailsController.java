@@ -98,7 +98,7 @@ public class EventDetailsController {
             // Filter locations based on city, capacity, and availability
             List<Location> availableLocations = locations.stream()
                     .peek(location -> System.out.println("Checking location: " + location.getName() 
-                        + " (City: " + location.getVille() 
+                        + " (City: " + location.getVille()
                         + ", Capacity: " + location.getCapacity() + ")"))
                     .filter(location -> {
                         boolean sameCity = location.getVille().toString().equals(event.getCity().toString());
@@ -160,7 +160,8 @@ public class EventDetailsController {
             
             AddBookingController controller = loader.getController();
             controller.setEvent(event);
-            controller.preSelectLocation(location);
+            controller.setServices(bookingService, locationService);
+            controller.setLocation(location);
             
             Stage stage = new Stage();
             stage.setTitle("Book Location - " + location.getName());

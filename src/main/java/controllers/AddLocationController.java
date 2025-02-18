@@ -1,171 +1,222 @@
 package controllers;
 
-import Models.Location;
-import Models.City;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import services.ServiceLocation;
-
+import Models.Location;
+import Models.City;
+import services.LocationService;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.nio.file.Files;
+
+interface LocationRefreshable {
+    void refreshLocations();
+}
 
 public class AddLocationController {
-    @FXML
-    private TextField nameField;
-    @FXML
-    private ComboBox<City> villeComboBox;
-    @FXML
-    private Button imageButton;
-    @FXML
-    private ImageView imagePreview;
-    @FXML
-    private TextField capacityField;
-    @FXML
-    private TextField dimensionField;
-    @FXML
-    private TextField priceField;
+    @FXML private Label formTitle;
+    @FXML private TextField nameField;
+    @FXML private TextField addressField;
+    @FXML private ComboBox<City> cityComboBox;
+    @FXML private TextField capacityField;
+    @FXML private ComboBox<String> statusComboBox;
+    @FXML private TextArea descriptionArea;
+    @FXML private TextField dimensionField;
+    @FXML private TextField priceField;
+    @FXML private ImageView locationImage;
+    @FXML private Button uploadButton;
+    @FXML private Button saveButton;
 
-    private final ServiceLocation locationService = new ServiceLocation();
-    private File selectedImageFile;
+    private LocationService locationService;
+    private LocationRefreshable parentController;
+    private Location locationToEdit;
+    private byte[] selectedImageData;
+    private String selectedImageFileName;
 
     @FXML
-    void initialize() {
-        // Initialize the city combo box
-        villeComboBox.getItems().addAll(City.values());
-        
-        // Initialize the image selection button
-        imageButton.setOnAction(event -> handleImageSelection());
-        
-        // Set default image for preview
-        imagePreview.setImage(null);
+    public void initialize() {
+        // Initialize city combo box with enum values
+        cityComboBox.getItems().addAll(City.values());
+
+        // Initialize status combo box
+        statusComboBox.getItems().addAll("Active", "Inactive", "Under Maintenance");
+
+        // Setup image upload
+        uploadButton.setOnAction(e -> handleImageUpload());
+
+        // Setup input validation
+        setupValidation();
     }
 
-    private void handleImageSelection() {
+    public void setLocationService(LocationService locationService) {
+        this.locationService = locationService;
+    }
+
+    public void setParentController(LocationRefreshable controller) {
+        this.parentController = controller;
+    }
+
+    public void setLocationForEdit(Location location) {
+        this.locationToEdit = location;
+        formTitle.setText("Edit Location");
+        saveButton.setText("Save Changes");
+
+        // Populate fields
+        nameField.setText(location.getName());
+        addressField.setText(location.getAddress());
+        cityComboBox.setValue(location.getVille());
+        capacityField.setText(String.valueOf(location.getCapacity()));
+        statusComboBox.setValue(location.getStatus());
+        descriptionArea.setText(location.getDescription());
+        dimensionField.setText(location.getDimension());
+        priceField.setText(String.valueOf(location.getPrice()));
+
+        // Load image if exists
+        if (location.getImageData() != null && location.getImageData().length > 0) {
+            selectedImageData = location.getImageData();
+            selectedImageFileName = location.getImageFileName();
+            loadImage(location.getImageData());
+        }
+    }
+
+    @FXML
+    private void handleSave() {
+        if (!validateInput()) {
+            return;
+        }
+
+        try {
+            Location location = new Location(
+                locationToEdit != null ? locationToEdit.getId_location() : 0,
+                nameField.getText(),
+                addressField.getText(),
+                cityComboBox.getValue(),
+                Integer.parseInt(capacityField.getText()),
+                statusComboBox.getValue(),
+                descriptionArea.getText(),
+                dimensionField.getText(),
+                Double.parseDouble(priceField.getText()),
+                selectedImageData,
+                selectedImageFileName
+            );
+
+            boolean success;
+            if (locationToEdit != null) {
+                success = locationService.update(location);
+            } else {
+                success = locationService.add(location);
+            }
+
+            if (success) {
+                parentController.refreshLocations();
+                handleClose();
+            } else {
+                showError("Error", "Could not save location");
+            }
+        } catch (NumberFormatException e) {
+            showError("Invalid Input", "Please enter valid numbers for capacity and price");
+        }
+    }
+
+    @FXML
+    private void handleClose() {
+        ((Stage) saveButton.getScene().getWindow()).close();
+    }
+
+    private void handleImageUpload() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Location Image");
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
-        
-        File file = fileChooser.showOpenDialog(imageButton.getScene().getWindow());
-        if (file != null) {
-            selectedImageFile = file;
-            // Update the image preview
+
+        File selectedFile = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
+        if (selectedFile != null) {
             try {
-                Image image = new Image(file.toURI().toString());
-                imagePreview.setImage(image);
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'aperçu de l'image.");
+                // Read the image file into a byte array
+                selectedImageData = Files.readAllBytes(selectedFile.toPath());
+                selectedImageFileName = selectedFile.getName();
+
+                // Load and display image
+                loadImage(selectedImageData);
+            } catch (IOException e) {
+                showError("Error", "Could not load image: " + e.getMessage());
             }
         }
     }
 
-    @FXML
-    void handleAdd() {
+    private void loadImage(byte[] imageData) {
         try {
-            // Validate input fields
-            if (!validateInputs()) {
-                return;
-            }
-
-            // Read the image file into a byte array
-            byte[] imageData = null;
-            String imageFileName = null;
-            if (selectedImageFile != null) {
-                try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
-                    imageData = new byte[(int) selectedImageFile.length()];
-                    fis.read(imageData);
-                    imageFileName = selectedImageFile.getName();
-                } catch (IOException e) {
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de lire le fichier image.");
-                    return;
-                }
-            }
-
-            // Create new location
-            Location location = new Location(
-                nameField.getText(),
-                villeComboBox.getValue(),
-                imageData,
-                imageFileName,
-                Integer.parseInt(capacityField.getText()),
-                dimensionField.getText(),
-                Double.parseDouble(priceField.getText())
-            );
-
-            // Add location to database
-            locationService.ajouter(location);
-            
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Location ajoutée avec succès.");
-            closeWindow();
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter la location.");
-            e.printStackTrace();
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez entrer des valeurs numériques valides pour la capacité et le prix.");
+            Image image = new Image(new java.io.ByteArrayInputStream(imageData));
+            locationImage.setImage(image);
+        } catch (Exception e) {
+            showError("Error", "Could not display image: " + e.getMessage());
         }
     }
 
-    private boolean validateInputs() {
+    private boolean validateInput() {
         if (nameField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Le nom est requis.");
+            showError("Invalid Input", "Name is required");
             return false;
         }
-        if (villeComboBox.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La ville est requise.");
+        if (addressField.getText().isEmpty()) {
+            showError("Invalid Input", "Address is required");
             return false;
         }
-        if (selectedImageFile == null) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Une image est requise.");
+        if (cityComboBox.getValue() == null) {
+            showError("Invalid Input", "City is required");
+            return false;
+        }
+        if (capacityField.getText().isEmpty()) {
+            showError("Invalid Input", "Capacity is required");
             return false;
         }
         if (dimensionField.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La dimension est requise.");
+            showError("Invalid Input", "Dimension is required");
+            return false;
+        }
+        if (priceField.getText().isEmpty()) {
+            showError("Invalid Input", "Price is required");
             return false;
         }
         try {
-            int capacity = Integer.parseInt(capacityField.getText());
-            if (capacity <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Validation", "La capacité doit être supérieure à 0.");
-                return false;
-            }
+            Integer.parseInt(capacityField.getText());
+            Double.parseDouble(priceField.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "La capacité doit être un nombre valide.");
+            showError("Invalid Input", "Please enter valid numbers for capacity and price");
             return false;
         }
-        try {
-            double price = Double.parseDouble(priceField.getText());
-            if (price <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Validation", "Le prix doit être supérieur à 0.");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Le prix doit être un nombre valide.");
+        if (statusComboBox.getValue() == null) {
+            showError("Invalid Input", "Status is required");
             return false;
         }
         return true;
     }
 
-    @FXML
-    void handleCancel() {
-        closeWindow();
+    private void setupValidation() {
+        // Allow only numbers in capacity field
+        capacityField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                capacityField.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        // Allow only numbers and decimal point in price field
+        priceField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*\\.?\\d*")) {
+                priceField.setText(oldValue);
+            }
+        });
     }
 
-    private void closeWindow() {
-        Stage stage = (Stage) nameField.getScene().getWindow();
-        stage.close();
-    }
-
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
+    private void showError(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
     }

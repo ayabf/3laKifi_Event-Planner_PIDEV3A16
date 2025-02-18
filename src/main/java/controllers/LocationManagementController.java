@@ -1,148 +1,230 @@
 package controllers;
 
-import Models.Location;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import services.ServiceLocation;
-
+import Models.Location;
+import Models.City;
+import services.LocationService;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.binding.Bindings;
 
-public class LocationManagementController {
+public class LocationManagementController implements LocationRefreshable {
+    @FXML private TableView<Location> locationsTable;
+    @FXML private TableColumn<Location, String> nameColumn;
+    @FXML private TableColumn<Location, String> addressColumn;
+    @FXML private TableColumn<Location, String> cityColumn;
+    @FXML private TableColumn<Location, Integer> capacityColumn;
+    @FXML private TableColumn<Location, String> statusColumn;
+    @FXML private TableColumn<Location, Double> priceColumn;
+    @FXML private TableColumn<Location, Void> actionsColumn;
+    @FXML private TextField searchField;
+    @FXML private Label totalLocationsLabel;
+    @FXML private Label activeLocationsLabel;
+
+    private LocationService locationService;
+    private ObservableList<Location> locationsList;
+
     @FXML
-    private FlowPane locationsContainer;
-    @FXML
-    private TextField searchField;
+    public void initialize() {
+        locationService = new LocationService();
+        locationsList = FXCollections.observableArrayList();
 
-    private final ServiceLocation locationService = new ServiceLocation();
+        // Initialize table columns
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        cityColumn.setCellValueFactory(cellData -> 
+            Bindings.createStringBinding(
+                () -> cellData.getValue().getVille().name()
+            ));
+        capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        
+        // Setup actions column
+        setupActionsColumn();
 
-    @FXML
-    void initialize() {
-        loadLocationData();
-        setupSearchFunctionality();
-    }
+        // Load locations
+        refreshLocations();
 
-    private void loadLocationData() {
-        try {
-            List<Location> locations = locationService.getAll();
-            displayLocations(locations);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les locations.");
-            e.printStackTrace();
-        }
-    }
-
-    private void displayLocations(List<Location> locations) {
-        locationsContainer.getChildren().clear();
-        for (Location location : locations) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationCard.fxml"));
-                Parent locationCard = loader.load();
-                
-                LocationCardController controller = loader.getController();
-                controller.setLocation(location);
-                
-                // Add event handlers for edit and delete
-                controller.setOnEdit(e -> updateLocation(location));
-                controller.setOnDelete(e -> deleteLocation(location));
-                
-                locationsContainer.getChildren().add(locationCard);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void setupSearchFunctionality() {
+        // Setup search functionality
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            try {
-                List<Location> allLocations = locationService.getAll();
-                List<Location> filteredLocations = allLocations.stream()
-                    .filter(location -> 
-                        location.getName().toLowerCase().contains(newValue.toLowerCase()) ||
-                        location.getVille().name().toLowerCase().contains(newValue.toLowerCase()) ||
-                        location.getDimension().toLowerCase().contains(newValue.toLowerCase()))
-                    .collect(Collectors.toList());
-                displayLocations(filteredLocations);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            filterLocations(newValue);
+        });
+    }
+
+    private void setupActionsColumn() {
+        actionsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button editBtn = new Button("");
+            private final Button deleteBtn = new Button("");
+            private final HBox actionButtons = new HBox(2);
+
+            {
+                // Edit button
+                FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
+                editIcon.setSize("14");
+                editBtn.setGraphic(editIcon);
+                editBtn.getStyleClass().add("action-button");
+                editBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                editBtn.setTooltip(new Tooltip("Edit Location"));
+                editBtn.setOnAction(event -> {
+                    Location location = getTableView().getItems().get(getIndex());
+                    handleEditLocation(location);
+                });
+
+                // Delete button
+                FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
+                deleteIcon.setSize("14");
+                deleteBtn.setGraphic(deleteIcon);
+                deleteBtn.getStyleClass().addAll("action-button", "delete-button");
+                deleteBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                deleteBtn.setTooltip(new Tooltip("Delete Location"));
+                deleteBtn.setOnAction(event -> {
+                    Location location = getTableView().getItems().get(getIndex());
+                    handleDeleteLocation(location);
+                });
+
+                actionButtons.setAlignment(javafx.geometry.Pos.CENTER);
+                actionButtons.getChildren().addAll(editBtn, deleteBtn);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(actionButtons);
+                }
             }
         });
     }
 
     @FXML
-    void addLocation() {
+    private void handleAddLocation() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Ajouter une location");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
+            VBox addLocationView = loader.load();
             
-            // Refresh the view after adding
-            loadLocationData();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Add New Location");
+            stage.setScene(new Scene(addLocationView));
+            
+            AddLocationController controller = loader.getController();
+            controller.setLocationService(locationService);
+            controller.setParentController(this);
+            
+            stage.showAndWait();
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre d'ajout.");
-            e.printStackTrace();
+            showError("Error opening add location window", e.getMessage());
         }
     }
 
-    private void updateLocation(Location location) {
+    private void handleEditLocation(Location location) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateLocation.fxml"));
-            Parent root = loader.load();
-            
-            UpdateLocationController controller = loader.getController();
-            controller.setLocation(location);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
+            VBox editLocationView = loader.load();
             
             Stage stage = new Stage();
-            stage.setTitle("Modifier la location");
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Edit Location");
+            stage.setScene(new Scene(editLocationView));
             
-            // Refresh the view after updating
-            loadLocationData();
+            AddLocationController controller = loader.getController();
+            controller.setLocationService(locationService);
+            controller.setParentController(this);
+            controller.setLocationForEdit(location);
+            
+            stage.showAndWait();
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre de modification.");
-            e.printStackTrace();
+            showError("Error opening edit location window", e.getMessage());
         }
     }
 
-    private void deleteLocation(Location location) {
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.setTitle("Confirmation");
-        confirmDialog.setHeaderText("Supprimer la location");
-        confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cette location ?");
+    private void handleDeleteLocation(Location location) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Location");
+        alert.setHeaderText("Delete " + location.getName());
+        alert.setContentText("Are you sure you want to delete this location? This action cannot be undone.");
 
-        Optional<ButtonType> result = confirmDialog.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                locationService.supprimer(location.getId_location());
-                loadLocationData();
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "La location a été supprimée avec succès.");
-            } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer la location.");
-                e.printStackTrace();
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            if (locationService.delete(location.getId_location())) {
+                refreshLocations();
+                showInfo("Location deleted successfully");
+            } else {
+                showError("Error", "Could not delete location");
             }
         }
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
+    @FXML
+    private void handleRefresh() {
+        refreshLocations();
+    }
+
+    @Override
+    public void refreshLocations() {
+        List<Location> locations = locationService.getAll();
+        locationsList.setAll(locations);
+        locationsTable.setItems(locationsList);
+        updateStatistics();
+    }
+
+    private void filterLocations(String searchText) {
+        if (searchText == null || searchText.isEmpty()) {
+            locationsTable.setItems(locationsList);
+        } else {
+            ObservableList<Location> filteredList = FXCollections.observableArrayList();
+            locationsList.forEach(location -> {
+                if (matchesSearch(location, searchText.toLowerCase())) {
+                    filteredList.add(location);
+                }
+            });
+            locationsTable.setItems(filteredList);
+        }
+    }
+
+    private boolean matchesSearch(Location location, String searchText) {
+        return location.getName().toLowerCase().contains(searchText) ||
+               location.getAddress().toLowerCase().contains(searchText) ||
+               location.getVille().name().toLowerCase().contains(searchText);
+    }
+
+    private void updateStatistics() {
+        totalLocationsLabel.setText(String.valueOf(locationService.getTotalCount()));
+        activeLocationsLabel.setText(String.valueOf(locationService.getActiveCount()));
+    }
+
+    private void showError(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void loadLocations() {
+        List<Location> locations = locationService.getAll();
+        locationsList.setAll(locations);
+        locationsTable.setItems(locationsList);
     }
 } 

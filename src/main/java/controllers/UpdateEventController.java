@@ -41,6 +41,11 @@ public class UpdateEventController {
     private final ServiceEvent eventService = new ServiceEvent();
     private File selectedImageFile;
     private boolean imageChanged = false;
+    private java.util.function.Consumer<Event> onEventUpdated;
+
+    public void setOnEventUpdated(java.util.function.Consumer<Event> callback) {
+        this.onEventUpdated = callback;
+    }
 
     @FXML
     void initialize() {
@@ -124,6 +129,11 @@ public class UpdateEventController {
 
             // Update event in database
             eventService.modifier(event);
+            
+            // Notify listeners about the update
+            if (onEventUpdated != null) {
+                onEventUpdated.accept(event);
+            }
             
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement modifié avec succès.");
             closeWindow();

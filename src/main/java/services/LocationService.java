@@ -7,14 +7,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceLocation {
+public class LocationService {
     private Connection conn;
 
-    public ServiceLocation() {
+    public LocationService() {
         this.conn = DataSource.getInstance().getConnection();
     }
 
-    public void ajouter(Location location) throws SQLException {
+    public boolean add(Location location) {
         String query = "INSERT INTO location (name, address, city, capacity, status, description, dimension, price, image_data, image_filename) " +
                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,11 +35,15 @@ public class ServiceLocation {
                 if (rs.next()) {
                     location.setId_location(rs.getInt(1));
                 }
+                return true;
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error adding location: " + e.getMessage());
         }
+        return false;
     }
 
-    public void modifier(Location location) throws SQLException {
+    public boolean update(Location location) {
         String query = "UPDATE location SET name=?, address=?, city=?, capacity=?, " +
                       "status=?, description=?, dimension=?, price=?, image_data=?, image_filename=? " +
                       "WHERE id_location=?";
@@ -56,31 +60,25 @@ public class ServiceLocation {
             pst.setString(10, location.getImageFileName());
             pst.setInt(11, location.getId_location());
 
-            pst.executeUpdate();
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("❌ Error updating location: " + e.getMessage());
         }
+        return false;
     }
 
-    public void supprimer(int id) throws SQLException {
+    public boolean delete(int id) {
         String query = "DELETE FROM location WHERE id_location=?";
         try (PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setInt(1, id);
-            pst.executeUpdate();
+            return pst.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("❌ Error deleting location: " + e.getMessage());
         }
+        return false;
     }
 
-    public Location getOne(Location location) throws SQLException {
-        String query = "SELECT * FROM location WHERE id_location=?";
-        try (PreparedStatement pst = conn.prepareStatement(query)) {
-            pst.setInt(1, location.getId_location());
-            ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
-                return extractLocationFromResultSet(rs);
-            }
-        }
-        return null;
-    }
-
-    public Location getById(int id) throws SQLException {
+    public Location getById(int id) {
         String query = "SELECT * FROM location WHERE id_location=?";
         try (PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setInt(1, id);
@@ -88,11 +86,13 @@ public class ServiceLocation {
             if (rs.next()) {
                 return extractLocationFromResultSet(rs);
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error getting location: " + e.getMessage());
         }
         return null;
     }
 
-    public List<Location> getAll() throws SQLException {
+    public List<Location> getAll() {
         List<Location> locations = new ArrayList<>();
         String query = "SELECT * FROM location ORDER BY name";
         try (Statement st = conn.createStatement();
@@ -100,28 +100,34 @@ public class ServiceLocation {
             while (rs.next()) {
                 locations.add(extractLocationFromResultSet(rs));
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error getting locations: " + e.getMessage());
         }
         return locations;
     }
 
-    public int getTotalCount() throws SQLException {
+    public int getTotalCount() {
         String query = "SELECT COUNT(*) FROM location";
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error getting total count: " + e.getMessage());
         }
         return 0;
     }
 
-    public int getActiveCount() throws SQLException {
+    public int getActiveCount() {
         String query = "SELECT COUNT(*) FROM location WHERE status='Active'";
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
+        } catch (SQLException e) {
+            System.out.println("❌ Error getting active count: " + e.getMessage());
         }
         return 0;
     }

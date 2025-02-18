@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.beans.binding.Bindings;
 
 import java.io.IOException;
 import java.net.URL;
@@ -63,12 +64,12 @@ public class AdminDashboardController {
         eventNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         eventDateColumn.setCellValueFactory(cellData -> {
             LocalDateTime date = cellData.getValue().getStart_date();
-            return javafx.beans.binding.Bindings.createStringBinding(
+            return Bindings.createStringBinding(
                 () -> date.format(dateFormatter)
             );
         });
         eventCityColumn.setCellValueFactory(cellData -> 
-            javafx.beans.binding.Bindings.createStringBinding(
+            Bindings.createStringBinding(
                 () -> cellData.getValue().getCity().name()
             ));
         eventCapacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
@@ -76,7 +77,7 @@ public class AdminDashboardController {
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime startDate = cellData.getValue().getStart_date();
             LocalDateTime endDate = cellData.getValue().getEnd_date();
-            return javafx.beans.binding.Bindings.createStringBinding(() -> {
+            return Bindings.createStringBinding(() -> {
                 if (now.isBefore(startDate)) return "Upcoming";
                 if (now.isAfter(endDate)) return "Completed";
                 return "In Progress";
@@ -87,17 +88,12 @@ public class AdminDashboardController {
     private void initializeLocationTable() {
         locationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         locationCityColumn.setCellValueFactory(cellData ->
-            javafx.beans.binding.Bindings.createStringBinding(
+            Bindings.createStringBinding(
                 () -> cellData.getValue().getVille().name()
             ));
         locationCapacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
         locationPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        locationStatusColumn.setCellValueFactory(cellData -> {
-            // You might want to check bookings to determine if the location is currently booked
-            return javafx.beans.binding.Bindings.createStringBinding(
-                () -> "Available" // Default to available, you can implement actual availability check
-            );
-        });
+        locationStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
     }
     
     private void loadTableData() {

@@ -42,7 +42,7 @@ public class AddEventController {
     private Button addButton;
 
     private final ServiceEvent eventService = new ServiceEvent();
-    private int userId = 1; // TODO: Get this from the logged-in user's session
+    private int userId = 1;  // Default user ID until user management is integrated
     private File selectedImageFile;
     private Event eventToEdit;
 
@@ -55,6 +55,10 @@ public class AddEventController {
         
         // Set default image for preview
         imagePreview.setImage(null);
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     private void handleImageSelection() {
@@ -181,7 +185,7 @@ public class AddEventController {
             
             closeWindow();
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter l'événement.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter l'événement: " + e.getMessage());
             e.printStackTrace();
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez entrer un nombre valide pour la capacité.");

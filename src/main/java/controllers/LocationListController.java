@@ -11,71 +11,85 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import services.ServiceLocation;
-import services.ServiceBooking;
+import services.LocationService;
 import javafx.scene.layout.HBox;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.binding.Bindings;
+
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.util.Optional;
 
-public class LocationListController {
+public class LocationListController implements LocationRefreshable {
     @FXML private TableView<Location> locationsTable;
-    @FXML private TableColumn<Location, String> locationNameColumn;
-    @FXML private TableColumn<Location, String> locationCityColumn;
-    @FXML private TableColumn<Location, Integer> locationCapacityColumn;
-    @FXML private TableColumn<Location, String> locationDimensionColumn;
-    @FXML private TableColumn<Location, Double> locationPriceColumn;
-    @FXML private TableColumn<Location, String> locationStatusColumn;
-    @FXML private TableColumn<Location, Void> locationDetailsColumn;
+    @FXML private TableColumn<Location, String> nameColumn;
+    @FXML private TableColumn<Location, String> addressColumn;
+    @FXML private TableColumn<Location, String> cityColumn;
+    @FXML private TableColumn<Location, Integer> capacityColumn;
+    @FXML private TableColumn<Location, String> dimensionColumn;
+    @FXML private TableColumn<Location, Double> priceColumn;
+    @FXML private TableColumn<Location, String> statusColumn;
+    @FXML private TableColumn<Location, Void> actionsColumn;
     @FXML private TextField searchField;
+    @FXML private Label totalLocationsLabel;
+    @FXML private Label activeLocationsLabel;
 
-    private final ServiceLocation locationService = new ServiceLocation();
-    private final ServiceBooking bookingService = new ServiceBooking();
+    private final LocationService locationService = new LocationService();
     private ObservableList<Location> locationList = FXCollections.observableArrayList();
 
     @FXML
-    void initialize() {
+    public void initialize() {
         initializeColumns();
         loadLocations();
         setupSearch();
+        updateStatistics();
     }
 
     private void initializeColumns() {
-        locationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        locationCityColumn.setCellValueFactory(cellData -> 
-            javafx.beans.binding.Bindings.createStringBinding(
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        cityColumn.setCellValueFactory(cellData -> 
+            Bindings.createStringBinding(
                 () -> cellData.getValue().getVille().name()
             ));
-        locationCapacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
-        locationDimensionColumn.setCellValueFactory(new PropertyValueFactory<>("dimension"));
-        locationPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        locationStatusColumn.setCellValueFactory(cellData -> {
-            Location location = cellData.getValue();
-            return javafx.beans.binding.Bindings.createStringBinding(() -> {
-                try {
-                    return bookingService.isLocationAvailable(
-                        location.getId_location(),
-                        LocalDateTime.now(),
-                        LocalDateTime.now().plusHours(1)
-                    ) ? "Available" : "Booked";
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    return "Unknown";
-                }
-            });
-        });
+        capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
+        dimensionColumn.setCellValueFactory(new PropertyValueFactory<>("dimension"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Details button column
-        locationDetailsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button detailsButton = new Button();
+        // Setup actions column with edit and delete buttons
+        actionsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button editBtn = new Button();
+            private final Button deleteBtn = new Button();
+            private final HBox actionButtons = new HBox(5);
 
             {
-                FontAwesomeIconView icon = new FontAwesomeIconView();
-                icon.setGlyphName("INFO_CIRCLE");
-                icon.setSize("1.5em");
-                detailsButton.setGraphic(icon);
-                detailsButton.getStyleClass().add("action-button");
+                // Edit button
+                FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
+                editIcon.setSize("14");
+                editBtn.setGraphic(editIcon);
+                editBtn.getStyleClass().add("action-button");
+                editBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                editBtn.setTooltip(new Tooltip("Edit Location"));
+                editBtn.setOnAction(event -> {
+                    Location location = getTableView().getItems().get(getIndex());
+                    handleEditLocation(location);
+                });
+
+                // Delete button
+                FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
+                deleteIcon.setSize("14");
+                deleteBtn.setGraphic(deleteIcon);
+                deleteBtn.getStyleClass().addAll("action-button", "delete-button");
+                deleteBtn.setStyle("-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px; -fx-padding: 2;");
+                deleteBtn.setTooltip(new Tooltip("Delete Location"));
+                deleteBtn.setOnAction(event -> {
+                    Location location = getTableView().getItems().get(getIndex());
+                    handleDeleteLocation(location);
+                });
+
+                actionButtons.setAlignment(javafx.geometry.Pos.CENTER);
+                actionButtons.getChildren().addAll(editBtn, deleteBtn);
             }
 
             @Override
@@ -84,24 +98,80 @@ public class LocationListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(detailsButton);
-                    detailsButton.setOnAction(event -> {
-                        Location selectedLocation = getTableView().getItems().get(getIndex());
-                        showLocationDetails(selectedLocation);
-                    });
+                    setGraphic(actionButtons);
                 }
             }
         });
     }
 
-    private void loadLocations() {
+    @FXML
+    private void handleAddLocation() {
         try {
-            locationList.clear();
-            locationList.addAll(locationService.getAll());
-            locationsTable.setItems(locationList);
-        } catch (SQLException e) {
-            showError("Error loading locations", e);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
+            Parent root = loader.load();
+            
+            AddLocationController controller = loader.getController();
+            controller.setLocationService(locationService);
+            controller.setParentController(this);
+            
+            Stage stage = new Stage();
+            stage.setTitle("Add New Location");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            stage.setScene(scene);
+            
+            stage.showAndWait();
+            refreshLocations();
+        } catch (IOException e) {
+            showError("Error opening add location window", e);
         }
+    }
+
+    private void handleEditLocation(Location location) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
+            Parent root = loader.load();
+            
+            AddLocationController controller = loader.getController();
+            controller.setLocationService(locationService);
+            controller.setParentController(this);
+            controller.setLocationForEdit(location);
+            
+            Stage stage = new Stage();
+            stage.setTitle("Edit Location");
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            stage.setScene(scene);
+            
+            stage.showAndWait();
+            refreshLocations();
+        } catch (IOException e) {
+            showError("Error opening edit location window", e);
+        }
+    }
+
+    private void handleDeleteLocation(Location location) {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Delete Location");
+        confirmDialog.setHeaderText("Delete " + location.getName());
+        confirmDialog.setContentText("Are you sure you want to delete this location? This action cannot be undone.");
+        confirmDialog.getDialogPane().getStyleClass().add("dialog-pane");
+
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (locationService.delete(location.getId_location())) {
+                refreshLocations();
+                showInfo("Location deleted successfully");
+            } else {
+                showError("Error", "Could not delete location");
+            }
+        }
+    }
+
+    private void loadLocations() {
+        locationList.clear();
+        locationList.addAll(locationService.getAll());
+        locationsTable.setItems(locationList);
     }
 
     private void setupSearch() {
@@ -121,32 +191,24 @@ public class LocationListController {
         locationsTable.setItems(filteredData);
     }
 
-    private void showLocationDetails(Location location) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationDetails.fxml"));
-            Parent root = loader.load();
-            
-            LocationDetailsController controller = loader.getController();
-            controller.setLocation(location);
-            
-            Stage stage = new Stage();
-            stage.setTitle("Location Details - " + location.getName());
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            showError("Error showing location details", e);
-        }
+    private void updateStatistics() {
+        totalLocationsLabel.setText(String.valueOf(locationService.getTotalCount()));
+        activeLocationsLabel.setText(String.valueOf(locationService.getActiveCount()));
     }
 
     @FXML
-    void handleRefresh() {
+    private void handleRefresh() {
+        refreshLocations();
+    }
+
+    @Override
+    public void refreshLocations() {
         loadLocations();
+        updateStatistics();
     }
 
     @FXML
-    void handleBack() {
+    private void handleBack() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
             Parent root = loader.load();
@@ -159,12 +221,28 @@ public class LocationListController {
         }
     }
 
-    private void showError(String message, Exception e) {
+    private void showError(String header, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
-        alert.setHeaderText(message);
+        alert.setHeaderText(header);
         alert.setContentText(e.getMessage());
         alert.showAndWait();
         e.printStackTrace();
+    }
+
+    private void showError(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 } 
