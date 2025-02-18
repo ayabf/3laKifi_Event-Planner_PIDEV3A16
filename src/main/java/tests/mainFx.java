@@ -31,11 +31,14 @@ public class mainFx extends Application {
             // Vérifie le bon chemin du fichier FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/cart.fxml"));
             Parent root = loader.load();
+            root.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 600, 600); // 🌟 Taille plus grande
             stage.setTitle("Shopping Cart");
             stage.setScene(scene);
+            stage.setMaximized(false); // 🌟 Plein écran
             stage.show();
+
 
         } catch (IOException e) {
             System.err.println("❌ Erreur : Impossible de charger cart.fxml !");

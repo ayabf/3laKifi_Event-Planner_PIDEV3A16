@@ -8,6 +8,7 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.CartController"
             prefHeight="500.0" prefWidth="600.0"
+            stylesheets="@css/styles.css"
             style="-fx-background-color: #F4F4F4;">
 
     <!-- Titre -->
