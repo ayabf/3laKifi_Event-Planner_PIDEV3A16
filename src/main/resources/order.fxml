@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.OrderController"
+            fx:controller="controllers.OrderListController"
             stylesheets="@css/styles.css"
-            prefWidth="700" prefHeight="400">
+            prefWidth="800" prefHeight="600">
 
-    <VBox spacing="10" layoutX="20" layoutY="20">
-        <Label text="Mes Commandes" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <VBox spacing="15" layoutX="20" layoutY="20">
+        <!-- ✅ Titre -->
+        <Label text="Mes Commandes" styleClass="label-title" />
 
-        <!-- Liste des commandes -->
-        <TableView fx:id="orderTable">
-            <columns>
-                <TableColumn text="ID" fx:id="orderIdColumn"/>
-                <TableColumn text="Date" fx:id="orderDateColumn"/>
-                <TableColumn text="Prix Total" fx:id="orderTotalColumn"/>
-                <TableColumn text="Méthode de Paiement" fx:id="orderPaymentColumn"/>
-                <TableColumn text="Statut" fx:id="orderStatusColumn"/>
-            </columns>
-        </TableView>
+        <!-- ✅ Barre de recherche -->
+        <TextField fx:id="searchField" promptText="Rechercher une commande..."
+                   onKeyReleased="#searchOrders"
+                   styleClass="text-field-search"/>
 
-        <!-- Bouton pour voir les détails -->
-        <HBox spacing="10">
-            <Button text="Voir Détails" fx:id="viewOrderDetailsButton" onAction="#viewOrderDetails"
-                    style="-fx-background-color: #007BFF; -fx-text-fill: white; -fx-font-size: 14px;"/>
-            <Button text="Annuler Commande" fx:id="cancelOrderButton" onAction="#cancelOrder"
-                    style="-fx-background-color: #DC3545; -fx-text-fill: white; -fx-font-size: 14px;"/>
-        </HBox>
+        <!-- ✅ Liste des commandes sous forme de cartes -->
+        <ScrollPane fitToWidth="true" prefHeight="500" styleClass="scroll-pane">
+            <content>
+                <VBox fx:id="orderListContainer" styleClass="order-list-container">
+                    <!-- Les commandes seront ajoutées dynamiquement ici -->
+                </VBox>
+            </content>
+        </ScrollPane>
     </VBox>
 
 </AnchorPane>

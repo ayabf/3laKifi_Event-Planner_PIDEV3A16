@@ -13,6 +13,9 @@
 
     <VBox spacing="10" layoutX="50" layoutY="20">
         <Label text="Mes Commandes" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+        <TextField fx:id="searchField" promptText="Rechercher une commande..."
+                   onKeyReleased="#searchOrders"
+                   style="-fx-font-size: 14px; -fx-padding: 5px; -fx-border-radius: 5px;"/>
 
         <ScrollPane fitToWidth="true" prefHeight="350">
             <VBox fx:id="orderListContainer" spacing="10">

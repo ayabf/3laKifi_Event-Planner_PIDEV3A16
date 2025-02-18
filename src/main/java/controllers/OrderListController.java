@@ -2,6 +2,8 @@ package controllers;
 
 import Models.Order;
 import Models.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -24,6 +26,36 @@ public class OrderListController {
     private VBox orderListContainer; // Un VBox où on affiche les commandes
 
     private final OrderService orderService = new OrderService();
+    @FXML
+    private TextField searchField; // Ajoute cette variable si elle n'existe pas déjà
+    private ObservableList<Order> allOrders = FXCollections.observableArrayList();
+
+    @FXML
+    private void searchOrders() {
+        String keyword = searchField.getText().toLowerCase().trim();
+
+        if (allOrders == null || allOrders.isEmpty()) {
+            return;
+        }
+
+        ObservableList<Order> filteredOrders = allOrders.filtered(order ->
+                order.getStatus().toLowerCase().contains(keyword) ||
+                        order.getExactAddress().toLowerCase().contains(keyword) ||
+                        (order.getEventDate() != null && order.getEventDate().toString().contains(keyword)) ||
+                        String.valueOf(order.getTotalPrice()).contains(keyword)
+        );
+
+        displayOrders(filteredOrders);
+    }
+    private void displayOrders(ObservableList<Order> orders) {
+        orderListContainer.getChildren().clear();
+
+        for (Order order : orders) {
+            VBox orderCard = createOrderCard(order);
+            orderListContainer.getChildren().add(orderCard);
+        }
+    }
+
 
     private User currentUser;
     @FXML
@@ -51,6 +83,14 @@ public class OrderListController {
                 orderListContainer.getChildren().add(orderCard);
             }
             System.out.println("🔄 Rafraîchissement des commandes effectué !");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du chargement des commandes !");
+        }
+        try {
+            allOrders.clear();
+            allOrders.addAll(orderService.getAll());
+            displayOrders(allOrders);
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("❌ Erreur lors du chargement des commandes !");
@@ -132,6 +172,9 @@ public class OrderListController {
 
         return card;
     }
+
+
+
     private void openStatusEditDialog(Order order) {
         TextInputDialog dialog = new TextInputDialog(order.getStatus());
         dialog.setTitle("Modification du Statut");

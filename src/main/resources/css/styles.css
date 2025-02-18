@@ -181,14 +181,12 @@
 
 /* 📦 Style des cartes de commandes */
 .order-card {
-    -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-padding: 15;
-    -fx-border-color: #ddd;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
-    -fx-min-width: 400px;
-    -fx-min-height: 180px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 10px;
+    -fx-border-color: #DDDDDD;
+    -fx-border-width: 1px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
 }
 
 /* Effet au survol */
@@ -257,9 +255,20 @@
 .order-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
+    -fx-text-fill: #333333;
 }
-
+.order-price {
+    -fx-font-size: 14px;
+    -fx-text-fill: #444444;
+}
+.order-address {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+.order-status {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
 /* Statut */
 .order-status {
     -fx-font-weight: bold;
@@ -312,3 +321,95 @@
 .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
+/* ✅ Style général */
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Arial";
+}
+
+/* ✅ Style du titre */
+.label-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+/* ✅ Barre de recherche */
+.text-field-search {
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #ccc;
+    -fx-background-color: #ffffff;
+}
+
+/* ✅ Style du ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+/* ✅ Conteneur des commandes */
+.order-list-container {
+    -fx-spacing: 15px;
+    -fx-padding: 10px;
+}
+
+/* ✅ Carte d'une commande */
+.order-card {
+    -fx-background-color: #ffffff;
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+/* ✅ Texte dans la carte */
+.order-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+}
+
+/* ✅ Boutons */
+.button-primary {
+    -fx-background-color: #6C5CE7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 5px;
+}
+.button-primary:hover {
+    -fx-background-color: #5A4BC4;
+}
+.button-danger {
+    -fx-background-color: #DC3545;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-border-radius: 5px;
+}
+.button-danger {
+    -fx-background-color: #D63031;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 5px;
+}
+.button-danger:hover {
+    -fx-background-color: #C02929;
+}
+/* ✅ Statuts */
+.status-confirmed {
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+}
+
+.status-pending {
+    -fx-text-fill: orange;
+    -fx-font-weight: bold;
+}
+
+.status-cancelled {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
