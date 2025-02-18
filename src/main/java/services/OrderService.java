@@ -1,11 +1,10 @@
 package services;
 
 import Models.Order;
+import Models.User;
 import utils.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class OrderService implements IService<Order> {
     public OrderService() {
         this.connection = DataSource.getInstance().getConnection();
     }
+
     @Override
     public void ajouter(Order order) throws SQLException {
         if (commandeExisteDeja(order.getCartId())) {
@@ -31,7 +31,7 @@ public class OrderService implements IService<Order> {
             stmt.setInt(1, order.getCartId());
             stmt.setInt(2, order.getUserId());
             stmt.setDouble(3, order.getTotalPrice());
-            stmt.setString(4, order.getEventDate().toString());
+            stmt.setTimestamp(4, Timestamp.valueOf(order.getEventDate())); // ✅ Correct
             stmt.setString(5, order.getExactAddress());
             stmt.setString(6, order.getPaymentMethod());
 
@@ -39,19 +39,29 @@ public class OrderService implements IService<Order> {
             System.out.println("✅ Commande ajoutée avec succès !");
         }
     }
+
+
     public void modifier(Order order) throws SQLException {
         String query = "UPDATE `order` SET event_date = ?, exact_address = ? WHERE order_id = ?";
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, order.getEventDate().toString());
+            stmt.setTimestamp(1, Timestamp.valueOf(order.getEventDate()));
             stmt.setString(2, order.getExactAddress());
             stmt.setInt(3, order.getOrderId());
 
-            stmt.executeUpdate();
-            System.out.println("✅ Commande mise à jour avec succès !");
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Commande mise à jour dans la base !");
+                System.out.println("📅 Nouvelle Date: " + order.getEventDate());
+                System.out.println("📍 Nouvelle Adresse: " + order.getExactAddress());
+            } else {
+                System.out.println("❌ Aucune commande mise à jour !");
+            }
         }
     }
+
+
 
 
 
@@ -89,6 +99,7 @@ public class OrderService implements IService<Order> {
         return null;
     }
 
+
     @Override
     public List<Order> getAll() throws SQLException {
         List<Order> orderList = new ArrayList<>();
@@ -99,9 +110,6 @@ public class OrderService implements IService<Order> {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                double totalPrice = rs.getDouble("total_price");
-                System.out.println("💰 Prix récupéré depuis la base: " + totalPrice); // Debugging
-
                 Order order = new Order(
                         rs.getInt("order_id"),
                         rs.getInt("cart_id"),
@@ -109,9 +117,9 @@ public class OrderService implements IService<Order> {
                         rs.getString("status"),
                         rs.getString("payment_method"),
                         rs.getString("exact_address"),
-                        rs.getTimestamp("event_date").toLocalDateTime(),
-                        rs.getTimestamp("ordered_at").toLocalDateTime(),
-                        totalPrice // Vérifie bien que tu assignes la valeur ici
+                        rs.getTimestamp("event_date") != null ? rs.getTimestamp("event_date").toLocalDateTime() : null, // ✅ Vérification
+                        rs.getTimestamp("ordered_at") != null ? rs.getTimestamp("ordered_at").toLocalDateTime() : null,
+                        rs.getDouble("total_price")
                 );
 
                 orderList.add(order);
@@ -160,7 +168,37 @@ public class OrderService implements IService<Order> {
         }
     }
 
+    public void updateStatus(int orderId, String newStatus) throws SQLException {
+        String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
+        Connection conn = DataSource.getInstance().getConnection(); // Récupère une nouvelle connexion
 
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, newStatus);
+            stmt.setInt(2, orderId);
+            stmt.executeUpdate();
+            System.out.println("✅ Statut mis à jour pour la commande " + orderId + " -> " + newStatus);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Erreur lors de la mise à jour du statut.");
+        }
+    }
+
+    public void modifierStatutCommande(int orderId, String newStatus, User user) throws SQLException {
+        if (!user.getRole().equalsIgnoreCase("admin")) { // ✅ Vérification du rôle
+            System.out.println("⛔ Accès refusé : Seul un administrateur peut modifier le statut !");
+            return;
+        }
+
+        String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, newStatus);
+            stmt.setInt(2, orderId);
+            stmt.executeUpdate();
+            System.out.println("✅ Statut de la commande mis à jour avec succès !");
+        }
+    }
 
     public boolean commandeExisteDeja(int cartId) throws SQLException {
         String query = "SELECT COUNT(*) FROM `order` WHERE cart_id = ?";

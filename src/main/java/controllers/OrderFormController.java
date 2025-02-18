@@ -6,18 +6,35 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
+import javafx.scene.control.Alert;
 
-import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+
+import java.sql.SQLException;
+
 public class OrderFormController {
-    @FXML private TextField eventDateField;
     @FXML private TextField addressField;
     @FXML private ComboBox<String> paymentMethodBox;
     @FXML private Button validateOrderButton;
+    @FXML private DatePicker eventDatePicker;
+    @FXML private Spinner<Integer> eventHourSpinner;
+    @FXML private Spinner<Integer> eventMinuteSpinner;
+    @FXML private Label totalPriceLabel;
+    @FXML private Button timePickerButton;
+
+
+    @FXML
+    private Label selectedTimeLabel;
+    private int selectedHour = 12;
+    private int selectedMinute = 0;
 
     private int cartId;
     private int userId;
@@ -25,7 +42,17 @@ public class OrderFormController {
 
     private final OrderService orderService = new OrderService(); // Initialisation du service
 
-    @FXML private Label totalPriceLabel; // Assurez-vous que ce label est bien lié dans le FXML
+    @FXML
+    public void initialize() {
+        if (eventHourSpinner != null && eventMinuteSpinner != null) {
+            eventHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
+            eventMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 30));
+        } else {
+            System.err.println("⚠ `eventHourSpinner` ou `eventMinuteSpinner` n'est pas initialisé !");
+        }
+    }
+
+
 
     public void setCartDetails(int cartId, int userId, double totalPrice) {
         this.cartId = cartId;
@@ -40,34 +67,38 @@ public class OrderFormController {
 
     @FXML
     private void validateOrder() {
-        String eventDate = eventDateField.getText();
+        LocalDate selectedDate = eventDatePicker.getValue();
         String address = addressField.getText();
         String paymentMethod = paymentMethodBox.getValue();
 
-        if (eventDate.isEmpty() || address.isEmpty() || paymentMethod == null) {
+        if (selectedDate == null || address.isEmpty() || paymentMethod == null) {
             showAlert("Erreur", "Veuillez remplir tous les champs !");
             return;
         }
+        LocalDateTime eventDateTime = LocalDateTime.of(selectedDate, LocalTime.of(selectedHour, selectedMinute));
+        System.out.println("📅 Date sauvegardée : " + eventDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+
+        // 📌 Créer et enregistrer la commande
+        Order newOrder = new Order(cartId, userId, "PENDING");
+        newOrder.setTotalPrice(totalPrice);
+        newOrder.setEventDate(eventDateTime);
+        newOrder.setExactAddress(address);
+        newOrder.setPaymentMethod(paymentMethod);
 
         try {
-            Order newOrder = new Order(cartId, userId, "PENDING");
-            newOrder.setTotalPrice(totalPrice);
-            newOrder.setEventDate(LocalDateTime.parse(eventDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            newOrder.setExactAddress(address);
-            newOrder.setPaymentMethod(paymentMethod);
-
             orderService.ajouter(newOrder);
-
             showAlert("Succès", "Commande validée !");
-
-            // ✅ Ouvre la page des commandes après validation
             openOrderListPage();
-
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Erreur", "Impossible de valider la commande.");
         }
     }
+
+
+
+
 
     private void openOrderListPage() {
         try {
@@ -91,5 +122,46 @@ public class OrderFormController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
+    @FXML
+    private void openTimePicker() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Sélectionner l'heure");
+
+        VBox content = new VBox();
+        content.setSpacing(10);
+
+        // Liste déroulante pour l'heure (0-23)
+        ComboBox<Integer> hourBox = new ComboBox<>();
+        for (int i = 0; i < 24; i++) {
+            hourBox.getItems().add(i);
+        }
+        hourBox.setValue(selectedHour);
+
+        // Liste déroulante pour les minutes (0-59, par pas de 5)
+        ComboBox<Integer> minuteBox = new ComboBox<>();
+        for (int i = 0; i < 60; i += 5) {
+            minuteBox.getItems().add(i);
+        }
+        minuteBox.setValue(selectedMinute);
+
+        HBox timeSelection = new HBox(10, new Label("Heure:"), hourBox, new Label("Minute:"), minuteBox);
+        content.getChildren().add(timeSelection);
+
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                selectedHour = hourBox.getValue();
+                selectedMinute = minuteBox.getValue();
+                selectedTimeLabel.setText(String.format("Heure sélectionnée: %02d:%02d", selectedHour, selectedMinute));
+            }
+        });
+    }
+
+
+
 
 }

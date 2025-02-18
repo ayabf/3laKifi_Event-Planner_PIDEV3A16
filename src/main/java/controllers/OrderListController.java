@@ -1,22 +1,20 @@
 package controllers;
 
 import Models.Order;
+import Models.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
 import utils.DataSource;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +25,22 @@ public class OrderListController {
 
     private final OrderService orderService = new OrderService();
 
+    private User currentUser;
     @FXML
     public void initialize() {
-        loadOrders();
+        // 👤 Ajouter un utilisateur admin en dur pour tester
+        User adminUser = new User(99, "123456789", false, null, "Test", "Admin", "admin_test", "admin123", "admin", "Rue des Admins, Paris", null);
+        setCurrentUser(adminUser); // ✅ Simule un admin connecté
+
+        loadOrders(); // Charger les commandes
     }
 
-    private void loadOrders() {
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+        System.out.println("👤 Utilisateur connecté : " + currentUser.getUsername() + " | Rôle : " + currentUser.getRole());
+    }
+
+    public void loadOrders() {  // Modifier "private" en "public"
         try {
             List<Order> orders = orderService.getAll();
             orderListContainer.getChildren().clear();
@@ -42,6 +50,7 @@ public class OrderListController {
                 VBox orderCard = createOrderCard(order);
                 orderListContainer.getChildren().add(orderCard);
             }
+            System.out.println("🔄 Rafraîchissement des commandes effectué !");
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("❌ Erreur lors du chargement des commandes !");
@@ -83,7 +92,8 @@ public class OrderListController {
 
         Label totalLabel = new Label("Total: $" + String.format("%.2f", order.getTotalPrice()));
         Label statusLabel = new Label("Statut: " + order.getStatus());
-        Label eventDateLabel = new Label("Date de l'événement: " + order.getEventDate().toString());
+        Label eventDateLabel = new Label("Date de l'événement: " +
+                order.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         Label addressLabel = new Label("Adresse: " + order.getExactAddress());
 
         // 🎨 Appliquer la couleur du statut
@@ -107,19 +117,65 @@ public class OrderListController {
         Button cancelButton = new Button("Annuler");
         cancelButton.setStyle("-fx-background-color: red; -fx-text-fill: white;"); // Style rouge
         cancelButton.setOnAction(event -> cancelOrder(order));
+        if (currentUser != null && currentUser.getRole().equalsIgnoreCase("admin")) {
+            ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
+            statusChoiceBox.getItems().addAll("PENDING", "CONFIRMED", "CANCELLED", "DELIVERED");
+            statusChoiceBox.setValue(order.getStatus()); // Valeur actuelle du statut
+
+            Button saveStatusButton = new Button("✅ Sauvegarder Statut");
+            saveStatusButton.setOnAction(event -> updateOrderStatus(order, statusChoiceBox.getValue()));
+
+            card.getChildren().addAll(statusChoiceBox, saveStatusButton);
+        }
 
         card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel, editButton, cancelButton);
 
         return card;
     }
+    private void openStatusEditDialog(Order order) {
+        TextInputDialog dialog = new TextInputDialog(order.getStatus());
+        dialog.setTitle("Modification du Statut");
+        dialog.setHeaderText("Modifier le statut de la commande #" + order.getOrderId());
+        dialog.setContentText("Nouveau statut:");
+
+        // ⚠️ Vérification si l'admin a bien entré un statut valide
+        dialog.showAndWait().ifPresent(newStatus -> {
+            if (!newStatus.equalsIgnoreCase("PENDING") && !newStatus.equalsIgnoreCase("CONFIRMED") &&
+                    !newStatus.equalsIgnoreCase("CANCELLED")) {
+                showAlert("Erreur", "Statut invalide ! Utilisez : PENDING, CONFIRMED ou CANCELLED.");
+                return;
+            }
+
+            try {
+                orderService.modifierStatutCommande(order.getOrderId(), newStatus, currentUser);
+                showAlert("Succès", "Statut mis à jour !");
+                loadOrders(); // Rafraîchir la liste
+            } catch (SQLException e) {
+                e.printStackTrace();
+                showAlert("Erreur", "Impossible de modifier le statut.");
+            }
+        });
+    }
+    private void updateOrderStatus(Order order, String newStatus) {
+        try {
+            orderService.updateStatus(order.getOrderId(), newStatus);
+            showAlert("Succès", "Le statut a été mis à jour avec succès !");
+            loadOrders(); // Rafraîchir la liste des commandes
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de modifier le statut.");
+        }
+    }
+
     private void openEditOrderPage(Order order) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderEdit.fxml"));
             Parent root = loader.load();
 
-            // Passer la commande sélectionnée au contrôleur
+            // Obtenir le contrôleur et lui passer l'ordre + le parent
             OrderEditController controller = loader.getController();
             controller.setOrder(order);
+            controller.setParentController(this);  // Passer l'instance actuelle de OrderListController
 
             Stage stage = new Stage();
             stage.setTitle("Modifier Commande");
@@ -130,6 +186,7 @@ public class OrderListController {
             showAlert("Erreur", "Impossible d'ouvrir la page de modification.");
         }
     }
+
 
     private void cancelOrder(Order order) {
         try {
@@ -150,7 +207,35 @@ public class OrderListController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    public void refreshOrders() {
+        orderListContainer.getChildren().clear(); // Vider l'affichage
+        loadOrders(); // Recharger la liste depuis la base
+        System.out.println("🔄 Rafraîchissement de l'affichage des commandes !");
+    }
 
+
+    public void updateOrderDisplay(Order updatedOrder) {
+        for (Node node : orderListContainer.getChildren()) {
+            if (node instanceof VBox) {
+                VBox orderCard = (VBox) node;
+                Label eventDateLabel = (Label) orderCard.getChildren().get(2);
+                Label addressLabel = (Label) orderCard.getChildren().get(3);
+
+                // 🔍 Vérification de l'ID
+                if (eventDateLabel.getText().contains(updatedOrder.getOrderId() + "")) {
+                    System.out.println("🔄 Mise à jour visuelle de la commande: " + updatedOrder.getOrderId());
+
+                    // ✅ Mise à jour des labels
+                    eventDateLabel.setText("Date de l'événement: " +
+                            updatedOrder.getEventDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+                    addressLabel.setText("Adresse: " + updatedOrder.getExactAddress());
+
+                    return;
+                }
+            }
+        }
+        System.out.println("⚠ Commande non trouvée dans l'affichage !");
+    }
 
 
 }

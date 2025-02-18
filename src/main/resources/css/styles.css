@@ -1,0 +1,54 @@
+/* Styles pour la carte des commandes */
+.order-card {
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 10;
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 15;
+    -fx-spacing: 8;
+    -fx-background-radius: 10;
+}
+
+/* Style du statut */
+.status-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Couleurs des statuts */
+.status-pending {
+    -fx-text-fill: orange;
+}
+
+.status-confirmed {
+    -fx-text-fill: green;
+}
+
+.status-cancelled {
+    -fx-text-fill: red;
+}
+
+/* Styles des boutons */
+.button-cancel {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+}
+
+.button-edit {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+}
+
+.button-status-save {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+}

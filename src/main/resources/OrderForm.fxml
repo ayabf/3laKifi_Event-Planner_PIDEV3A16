@@ -17,8 +17,17 @@
         <Label text="Prix Total :" />
         <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
-        <Label text="Date de l'événement (yyyy-MM-dd HH:mm:ss) :" />
-        <TextField fx:id="eventDateField" promptText="Ex: 2025-06-15 14:00:00" />
+        <Label text="Date et Heure de l'événement :" />
+        <HBox spacing="10">
+            <DatePicker fx:id="eventDatePicker" promptText="Sélectionner une date" />
+            <Button fx:id="timePickerButton" text="Sélectionner l'heure" onAction="#openTimePicker"/>
+        </HBox>
+        <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
+
+
+
+
+
 
         <Label text="Adresse complète :" />
         <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
@@ -34,9 +43,9 @@
             </items>
         </ComboBox>
 
-
         <Button text="Valider la commande" fx:id="validateOrderButton" onAction="#validateOrder"
                 style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
     </VBox>
 
 </AnchorPane>
+

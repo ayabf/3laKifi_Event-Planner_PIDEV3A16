@@ -2,6 +2,8 @@ package controllers;
 
 import Models.Order;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -9,14 +11,18 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import services.OrderService;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class OrderEditController {
 
-    @FXML private TextField addressField;
-    @FXML private DatePicker eventDatePicker;
-    @FXML private Button saveButton;
+    @FXML
+    private TextField addressField;
+    @FXML
+    private DatePicker eventDatePicker;
+    @FXML
+    private Button saveButton;
 
     private Order currentOrder;  // Commande en cours de modification
     private final OrderService orderService = new OrderService();
@@ -30,6 +36,12 @@ public class OrderEditController {
         eventDatePicker.setValue(order.getEventDate().toLocalDate());
     }
 
+    private OrderListController orderListController;  // Référence au contrôleur parent
+
+    public void setParentController(OrderListController orderListController) {
+        this.orderListController = orderListController;
+    }
+
     @FXML
     private void saveChanges() {
         if (currentOrder == null) {
@@ -37,7 +49,6 @@ public class OrderEditController {
             return;
         }
 
-        // Récupérer les nouvelles valeurs
         String newAddress = addressField.getText();
         LocalDate newEventDate = eventDatePicker.getValue();
 
@@ -46,7 +57,6 @@ public class OrderEditController {
             return;
         }
 
-        // Mettre à jour la commande
         currentOrder.setExactAddress(newAddress);
         currentOrder.setEventDate(newEventDate.atStartOfDay());
 
@@ -54,7 +64,13 @@ public class OrderEditController {
             orderService.modifier(currentOrder);
             showAlert("Succès", "Commande modifiée avec succès !");
 
-            // Fermer la fenêtre après modification
+            // Mettre à jour la liste des commandes via OrderListController existant
+            if (orderListController != null) {
+                orderListController.loadOrders();  // Rafraîchir toute la liste
+                orderListController.updateOrderDisplay(currentOrder);  // Mettre à jour juste cette commande
+            }
+
+            // Fermer la fenêtre de modification
             Stage stage = (Stage) saveButton.getScene().getWindow();
             stage.close();
 
@@ -63,6 +79,9 @@ public class OrderEditController {
             showAlert("Erreur", "Impossible de modifier la commande.");
         }
     }
+
+
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
