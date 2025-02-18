@@ -3,15 +3,17 @@ package controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import models.Product;
 import services.ProductService;
+
 import java.sql.SQLException;
 
 public class ModifierProductController {
 
     @FXML
-    private TextField txtProductId;
+    private TextField txtReference;
 
     @FXML
     private TextField txtName;
@@ -34,17 +36,29 @@ public class ModifierProductController {
     @FXML
     private TextField txtUserId;
 
-    private final ProductService productService = new ProductService();
-    private Product currentProduct;
+    @FXML
+    private Button btnSearchProduct;
 
+    @FXML
+    private Button btnUpdateProduct;
+
+    private final ProductService productService = new ProductService();
+
+    /**
+     * ✅ Searches for a product using its reference
+     */
     @FXML
     void rechercherProduct(ActionEvent event) {
         try {
-            int productId = Integer.parseInt(txtProductId.getText());
-            Product product = productService.getOne(new Product(productId));
+            String reference = txtReference.getText().trim();
+            if (reference.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Validation", "Please enter a product reference.");
+                return;
+            }
 
+            Product product = productService.getByReference(reference);
             if (product != null) {
-                currentProduct = product; // Stocke le produit actuel pour modification
+                // Populate the fields
                 txtName.setText(product.getName());
                 txtDescription.setText(product.getDescription());
                 txtPrice.setText(String.valueOf(product.getPrice()));
@@ -53,56 +67,71 @@ public class ModifierProductController {
                 txtCategory.setText(product.getCategory());
                 txtUserId.setText(String.valueOf(product.getIdUser()));
             } else {
-                showAlert(Alert.AlertType.WARNING, "Avertissement", "Aucun produit trouvé avec cet ID.");
+                showAlert(Alert.AlertType.WARNING, "Error", "No product found with this reference!");
             }
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "L'ID du produit doit être un nombre entier.");
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la récupération du produit : " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Error retrieving product: " + e.getMessage());
         }
     }
 
+    /**
+     * ✅ Updates the product while keeping the reference unchanged
+     */
     @FXML
     void modifierProduct(ActionEvent event) {
-        if (currentProduct == null) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez d'abord rechercher un produit par ID.");
-            return;
-        }
-
         try {
             if (!validateInputs()) {
                 return;
             }
 
-            currentProduct.setName(txtName.getText());
-            currentProduct.setDescription(txtDescription.getText());
-            currentProduct.setPrice(Float.parseFloat(txtPrice.getText()));
-            currentProduct.setStockId(Integer.parseInt(txtStockId.getText()));
-            currentProduct.setImageUrl(txtImageUrl.getText());
-            currentProduct.setCategory(txtCategory.getText());
-            currentProduct.setIdUser(Integer.parseInt(txtUserId.getText()));
+            String reference = txtReference.getText().trim();
+            Product existingProduct = productService.getByReference(reference);
 
-            productService.modifier(currentProduct);
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Produit modifié avec succès !");
-        } catch (SQLException | NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la modification : " + e.getMessage());
+            if (existingProduct == null) {
+                showAlert(Alert.AlertType.WARNING, "Error", "No product found with this reference!");
+                return;
+            }
+
+            // Update values
+            existingProduct.setName(txtName.getText());
+            existingProduct.setDescription(txtDescription.getText());
+            existingProduct.setPrice(Float.parseFloat(txtPrice.getText()));
+            existingProduct.setStockId(Integer.parseInt(txtStockId.getText()));
+            existingProduct.setImageUrl(txtImageUrl.getText());
+            existingProduct.setCategory(txtCategory.getText());
+            existingProduct.setIdUser(Integer.parseInt(txtUserId.getText()));
+
+            // Save modifications
+            productService.modifier(existingProduct);
+
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Product updated successfully!");
+
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Error updating product: " + e.getMessage());
         }
     }
 
+    /**
+     * ✅ Cancels modification and closes the window
+     */
     @FXML
     void annulerModification(ActionEvent event) {
-        txtProductId.getScene().getWindow().hide(); // Ferme la fenêtre
+        txtReference.getScene().getWindow().hide(); // Close the window
     }
 
+    /**
+     * ✅ Validates form inputs before updating
+     */
     private boolean validateInputs() {
-        if (txtName.getText().trim().isEmpty() ||
+        if (txtReference.getText().trim().isEmpty() ||
+                txtName.getText().trim().isEmpty() ||
                 txtDescription.getText().trim().isEmpty() ||
                 txtPrice.getText().trim().isEmpty() ||
                 txtStockId.getText().trim().isEmpty() ||
                 txtImageUrl.getText().trim().isEmpty() ||
                 txtCategory.getText().trim().isEmpty() ||
                 txtUserId.getText().trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Tous les champs doivent être remplis !");
+            showAlert(Alert.AlertType.WARNING, "Validation", "All fields must be filled out.");
             return false;
         }
 
@@ -111,13 +140,16 @@ public class ModifierProductController {
             Integer.parseInt(txtStockId.getText());
             Integer.parseInt(txtUserId.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation", "Prix doit être un nombre, Stock ID et User ID des entiers.");
+            showAlert(Alert.AlertType.WARNING, "Validation", "Price must be a number, Stock ID and User ID must be integers.");
             return false;
         }
 
         return true;
     }
 
+    /**
+     * ✅ Displays alerts
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

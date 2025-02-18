@@ -45,17 +45,18 @@ public class AfficherProductsController {
     @FXML
     private void filterByCategory() {
         String selectedCategory = categoryFilter.getValue();
-        if (selectedCategory != null && !selectedCategory.isEmpty()) {
+        if (selectedCategory == null || selectedCategory.isEmpty()) {
+            loadProducts(null); // Load all products when no category is selected
+        } else {
             try {
-                List<Product> filteredProducts = productService.recupererParCategorie(selectedCategory);
+                List<Product> filteredProducts = productService.getByCategory(selectedCategory);
                 loadFilteredProducts(filteredProducts);
             } catch (SQLException e) {
                 System.out.println("Error filtering products by category: " + e.getMessage());
             }
-        } else {
-            loadProducts(null);
         }
     }
+
 
     private void loadFilteredProducts(List<Product> products) {
         productsContainer.getChildren().clear();
@@ -65,19 +66,27 @@ public class AfficherProductsController {
     }
 
     private void loadProducts(String category) {
-        productsContainer.getChildren().clear();
         try {
-            List<Product> products = (category == null || category.isEmpty())
-                    ? productService.getAll(new Product())
-                    : productService.recupererParCategorie(category);
+            List<Product> products;
 
-            for (Product product : products) {
-                productsContainer.getChildren().add(createProductCard(product));
+            if (category == null || category.isEmpty()) {
+                products = productService.getAll(new Product());  // Pass an empty Product instance
+            } else {
+                products = productService.getByCategory(category);  // Ensure this method is correctly implemented
+            }
+
+            if (products != null) {
+                productsContainer.getChildren().clear(); // Clear the UI container only if products exist
+                for (Product product : products) {
+                    productsContainer.getChildren().add(createProductCard(product));
+                }
             }
         } catch (SQLException e) {
-            System.out.println("Error loading products: " + e.getMessage());
+            System.out.println("❌ Error loading products: " + e.getMessage());
         }
     }
+
+
 
     private VBox createProductCard(Product product) {
         VBox productBox = new VBox(5);

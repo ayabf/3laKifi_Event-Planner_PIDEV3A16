@@ -10,36 +10,48 @@ import java.sql.SQLException;
 public class SupprimerProductController {
 
     @FXML
-    private TextField txtProductId;
+    private TextField txtReference;
 
     private final ProductService productService = new ProductService();
 
+    /**
+     * ✅ Deletes a product using its reference.
+     */
     @FXML
     void supprimerProduct(ActionEvent event) {
         try {
-            int productId = Integer.parseInt(txtProductId.getText());
+            String reference = txtReference.getText().trim();
 
-            // Vérifier si le produit existe avant de supprimer
-            if (productService.getOne(new models.Product(productId)) == null) {
-                showAlert(Alert.AlertType.WARNING, "Avertissement", "Aucun produit trouvé avec cet ID.");
+            if (reference.isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Validation", "Veuillez entrer une référence de produit.");
                 return;
             }
 
-            productService.supprimer(productId);
+            // Vérifier si le produit existe avant de supprimer
+            if (productService.getByReference(reference) == null) {
+                showAlert(Alert.AlertType.WARNING, "Avertissement", "Aucun produit trouvé avec cette référence.");
+                return;
+            }
+
+            productService.supprimerByReference(reference);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Produit supprimé avec succès !");
-            txtProductId.clear();
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "L'ID du produit doit être un nombre entier.");
+            txtReference.clear();
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la suppression : " + e.getMessage());
         }
     }
 
+    /**
+     * ✅ Cancels the deletion and closes the window.
+     */
     @FXML
     void annulerSuppression(ActionEvent event) {
-        txtProductId.getScene().getWindow().hide(); // Ferme la fenêtre
+        txtReference.getScene().getWindow().hide(); // Ferme la fenêtre
     }
 
+    /**
+     * ✅ Displays alerts
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
