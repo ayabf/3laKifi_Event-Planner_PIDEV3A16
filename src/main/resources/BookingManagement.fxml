@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.BookingManagementController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Gestion des Réservations" styleClass="header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="Rechercher..." prefWidth="200"/>
+        <Button text="Ajouter" onAction="#addBooking" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Bookings Table -->
+    <TableView fx:id="bookingTableView" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="80"/>
+            <TableColumn fx:id="eventIdColumn" text="ID Événement" prefWidth="100"/>
+            <TableColumn fx:id="locationIdColumn" text="ID Location" prefWidth="100"/>
+            <TableColumn fx:id="startDateColumn" text="Date de début" prefWidth="150"/>
+            <TableColumn fx:id="endDateColumn" text="Date de fin" prefWidth="150"/>
+            <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="200"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Actualiser" onAction="#loadBookingData" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+            </graphic>
+        </Button>
+        <Button text="Retour" onAction="#handleBack" styleClass="action-button, secondary">
+            <graphic>
+                <FontAwesomeIconView glyphName="ARROW_LEFT" size="1.2em"/>
+            </graphic>
+        </Button>
+    </HBox>
+</VBox> 

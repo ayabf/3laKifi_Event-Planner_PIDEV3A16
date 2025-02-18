@@ -11,41 +11,35 @@ import utils.DataSource;
 
 public class main {
     public static void main(String[] args) {
-        //DataSource.getInstance();
-        ServiceEvent service = new ServiceEvent();
-        Event event = new Event("Mariage Bohème", "Un mariage élégant", "mariage.png",
-                LocalDateTime.now(), LocalDateTime.now().plusHours(4),
-                150, City.TUNIS, 1);
-        //ajouter
         try {
-            service.ajouter(event);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            ServiceEvent se = new ServiceEvent();
+            
+            // Create a new event with null image data for testing
+            Event e1 = new Event(
+                "Test Event",
+                "Test Description",
+                null, // image data
+                null, // image filename
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                100,
+                City.TUNIS,
+                1
+            );
+            
+            // Add the event
+            se.ajouter(e1);
+            System.out.println("Event added successfully!");
+            
+            // Test getting all events
+            System.out.println("All events:");
+            se.getAll().forEach(System.out::println);
+            
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        //modifier
-        try {
-            service.modifier(new Event(2, "Mariage orientale", "Un mariage tres élégant", "mariage.png",
-                    LocalDateTime.now(), LocalDateTime.now().plusHours(4),
-                    150, City.TUNIS, 1));
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        //afficher tout
-        try {
-            System.out.println(service.getAll());
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        //supprimer
-        try {
-            service.supprimer(2);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-
     }
-    }
+}
 
 

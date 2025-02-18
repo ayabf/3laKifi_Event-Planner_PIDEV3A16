@@ -17,15 +17,19 @@ public class mainFx extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/EventsClient.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Landing.fxml"));
             Parent root = loader.load();
-            Scene sc = new Scene(root);
-            //stage.setTitle("Ajouter");
-            stage.setScene(sc);
+            
+            Scene scene = new Scene(root, 1200, 800);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            stage.setTitle("3laKifi Events - Welcome");
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            stage.setScene(scene);
             stage.show();
-        }catch (IOException e){
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error loading FXML: " + e.getMessage());
+            e.printStackTrace();
         }
-
     }
 }

@@ -1,62 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AddEventController">
-    <children>
-        <Label layoutX="45.0" layoutY="30.0" text="Add Event">
-            <font>
-                <Font name="System Bold" size="20.0" />
-            </font>
-        </Label>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="controllers.AddEventController" 
+      styleClass="root" 
+      stylesheets="@styles/global.css">
+    
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="30" right="30" top="15" bottom="15"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <FontAwesomeIconView glyphName="CALENDAR" size="2em" fill="WHITE"/>
+            <Label text="Add New Event" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#handleCancel" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.5em" fill="WHITE"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Close" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
+    </HBox>
 
-        <!-- Champ pour le nom de l'événement -->
-        <Label layoutX="45.0" layoutY="80.0" text="Name:" />
-        <TextField fx:id="nameTextField" layoutX="170.0" layoutY="75.0" prefHeight="25.0" prefWidth="450.0" />
+    <!-- Main Content -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="custom-scroll-pane">
+        <VBox spacing="30" styleClass="form-container">
+            <padding>
+                <Insets top="40" right="40" bottom="40" left="40"/>
+            </padding>
 
-        <!-- Champ pour la description -->
-        <Label layoutX="45.0" layoutY="125.0" text="Description:" />
-        <TextArea fx:id="descriptionTextArea" layoutX="170.0" layoutY="120.0" prefHeight="80.0" prefWidth="450.0" />
+            <!-- Form Card -->
+            <VBox styleClass="card" spacing="25">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
 
-        <!-- Sélection de la ville -->
-        <Label layoutX="45.0" layoutY="220.0" text="City:" />
-        <ComboBox fx:id="cityComboBox" layoutX="170.0" layoutY="215.0" prefHeight="25.0" prefWidth="200.0" />
+                <!-- Image Upload Section -->
+                <VBox spacing="15" alignment="CENTER" styleClass="image-upload-section">
+                    <Label text="Event Image" styleClass="section-label"/>
+                    <StackPane>
+                        <ImageView fx:id="imagePreview" fitHeight="200" fitWidth="300" 
+                                 preserveRatio="true" styleClass="image-preview"/>
+                        <Button fx:id="imageButton" styleClass="upload-button">
+                            <graphic>
+                                <VBox alignment="CENTER" spacing="10">
+                                    <FontAwesomeIconView glyphName="UPLOAD" size="2em"/>
+                                    <Label text="Choose Image" styleClass="upload-text"/>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                    </StackPane>
+                </VBox>
 
-        <!-- Sélection de la date et de l'heure de début -->
-        <Label layoutX="45.0" layoutY="265.0" text="Start Date:" />
-        <DatePicker fx:id="startDatePicker" layoutX="170.0" layoutY="260.0" prefHeight="25.0" prefWidth="200.0" />
-        <Label layoutX="380.0" layoutY="265.0" text="Hour:" />
-        <ComboBox fx:id="startHourComboBox" layoutX="420.0" layoutY="260.0" prefHeight="25.0" prefWidth="60.0" />
-        <Label layoutX="490.0" layoutY="265.0" text="Min:" />
-        <ComboBox fx:id="startMinuteComboBox" layoutX="520.0" layoutY="260.0" prefHeight="25.0" prefWidth="60.0" />
+                <!-- Event Details Section -->
+                <VBox spacing="20">
+                    <Label text="Event Details" styleClass="section-label"/>
+                    
+                    <GridPane vgap="20" hgap="20">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="100" prefWidth="150"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
 
-        <!-- Sélection de la date et de l'heure de fin -->
-        <Label layoutX="45.0" layoutY="310.0" text="End Date:" />
-        <DatePicker fx:id="endDatePicker" layoutX="170.0" layoutY="305.0" prefHeight="25.0" prefWidth="200.0" />
-        <Label layoutX="380.0" layoutY="310.0" text="Hour:" />
-        <ComboBox fx:id="endHourComboBox" layoutX="420.0" layoutY="305.0" prefHeight="25.0" prefWidth="60.0" />
-        <Label layoutX="490.0" layoutY="310.0" text="Min:" />
-        <ComboBox fx:id="endMinuteComboBox" layoutX="520.0" layoutY="305.0" prefHeight="25.0" prefWidth="60.0" />
+                        <!-- Name Field -->
+                        <VBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                            <Label text="Event Name" styleClass="field-label"/>
+                            <TextField fx:id="nameField" promptText="Enter event name"/>
+                        </VBox>
 
-        <!-- Nombre de participants -->
-        <Label layoutX="45.0" layoutY="355.0" text="Capacity:" />
-        <TextField fx:id="capacityTextField" layoutX="170.0" layoutY="350.0" prefHeight="25.0" prefWidth="100.0" />
+                        <!-- Description Field -->
+                        <VBox spacing="5" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                            <Label text="Description" styleClass="field-label"/>
+                            <TextArea fx:id="descriptionArea" wrapText="true" prefRowCount="3" 
+                                    promptText="Enter event description"/>
+                        </VBox>
 
-        <!-- Sélection d'une image -->
-        <Label layoutX="45.0" layoutY="440.0" text="Event Image" />
-        <ImageView fx:id="eventImageView" fitHeight="100.0" fitWidth="150.0" layoutX="170.0" layoutY="400.0" />
-        <Button fx:id="addImageButton" layoutX="337.0" layoutY="437.0" mnemonicParsing="false" onAction="#chooseImage" text="Choose Image" />
+                        <!-- Date/Time Section -->
+                        <VBox spacing="5" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                            <Label text="Start Date &amp; Time" styleClass="field-label"/>
+                            <HBox spacing="10">
+                                <DatePicker fx:id="startDatePicker" styleClass="date-picker"/>
+                                <TextField fx:id="startTimeField" promptText="HH:mm" 
+                                         prefWidth="100" styleClass="time-field"/>
+                            </HBox>
+                        </VBox>
 
-        <!-- Boutons d'action -->
-        <Button layoutX="253.0" layoutY="550.0" mnemonicParsing="false" onAction="#addEvent" text="Add Event" />
-        <Button layoutX="393.0" layoutY="550.0" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
-    </children>
-</AnchorPane>
+                        <VBox spacing="5" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                            <Label text="End Date &amp; Time" styleClass="field-label"/>
+                            <HBox spacing="10">
+                                <DatePicker fx:id="endDatePicker" styleClass="date-picker"/>
+                                <TextField fx:id="endTimeField" promptText="HH:mm" 
+                                         prefWidth="100" styleClass="time-field"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Capacity & City -->
+                        <VBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="0">
+                            <Label text="Capacity" styleClass="field-label"/>
+                            <TextField fx:id="capacityField" promptText="Number of attendees"/>
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <Label text="City" styleClass="field-label"/>
+                            <ComboBox fx:id="cityComboBox" maxWidth="Infinity"/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+
+                <!-- Action Buttons -->
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button text="Cancel" onAction="#handleCancel" styleClass="button, secondary">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="addButton" text="Create Event" onAction="#handleAdd" styleClass="button, primary">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="CHECK" size="1.2em"/>
+                        </graphic>
+                    </Button>
+                </HBox>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Footer -->
+    <HBox styleClass="footer-bar" alignment="CENTER">
+        <VBox alignment="CENTER">
+            <Label styleClass="footer-text" text="© 2024 3laKifi Events. All rights reserved."/>
+            <HBox spacing="20" alignment="CENTER">
+                <Label styleClass="footer-text" text="Privacy Policy"/>
+                <Label styleClass="footer-text" text="Terms of Service"/>
+                <Label styleClass="footer-text" text="Contact Us"/>
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox> 

@@ -1,61 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UpdateEventController">
-    <children>
-        <Label layoutX="45.0" layoutY="30.0" text="Update Event">
-            <font>
-                <Font name="System Bold" size="20.0" />
-            </font>
-        </Label>
+<VBox spacing="15" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.UpdateEventController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
 
-        <!-- Champ pour le nom de l'événement -->
-        <Label layoutX="45.0" layoutY="80.0" text="Name:" />
-        <TextField fx:id="nameTextField" layoutX="170.0" layoutY="75.0" prefHeight="25.0" prefWidth="450.0" />
+    <Label text="Modifier l'événement" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
 
-        <!-- Champ pour la description -->
-        <Label layoutX="45.0" layoutY="125.0" text="Description:" />
-        <TextArea fx:id="descriptionTextArea" layoutX="170.0" layoutY="120.0" prefHeight="80.0" prefWidth="450.0" />
+    <GridPane vgap="10" hgap="10">
+        <Label text="Nom:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <!-- Sélection de la ville -->
-        <Label layoutX="45.0" layoutY="220.0" text="City:" />
-        <ComboBox fx:id="cityComboBox" layoutX="170.0" layoutY="215.0" prefHeight="25.0" prefWidth="200.0" />
+        <Label text="Description:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextArea fx:id="descriptionArea" wrapText="true" prefRowCount="3" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <!-- Sélection de la date et de l'heure de début -->
-        <Label layoutX="45.0" layoutY="265.0" text="Start Date:" />
-        <DatePicker fx:id="startDatePicker" layoutX="170.0" layoutY="260.0" prefHeight="25.0" prefWidth="200.0" />
-        <Label layoutX="380.0" layoutY="265.0" text="Hour:" />
-        <ComboBox fx:id="startHourComboBox" layoutX="420.0" layoutY="260.0" prefHeight="25.0" prefWidth="60.0" />
-        <Label layoutX="490.0" layoutY="265.0" text="Min:" />
-        <ComboBox fx:id="startMinuteComboBox" layoutX="520.0" layoutY="260.0" prefHeight="25.0" prefWidth="60.0" />
+        <Label text="Image:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <HBox spacing="10" GridPane.rowIndex="2" GridPane.columnIndex="1">
+            <Button fx:id="imageButton" text="Choisir une image" 
+                    style="-fx-background-color: #533C56; -fx-text-fill: white;"/>
+            <Label fx:id="imageLabel" text="Aucune image sélectionnée" 
+                   style="-fx-text-fill: #666666;"/>
+        </HBox>
 
-        <!-- Sélection de la date et de l'heure de fin -->
-        <Label layoutX="45.0" layoutY="310.0" text="End Date:" />
-        <DatePicker fx:id="endDatePicker" layoutX="170.0" layoutY="305.0" prefHeight="25.0" prefWidth="200.0" />
-        <Label layoutX="380.0" layoutY="310.0" text="Hour:" />
-        <ComboBox fx:id="endHourComboBox" layoutX="420.0" layoutY="305.0" prefHeight="25.0" prefWidth="60.0" />
-        <Label layoutX="490.0" layoutY="310.0" text="Min:" />
-        <ComboBox fx:id="endMinuteComboBox" layoutX="520.0" layoutY="305.0" prefHeight="25.0" prefWidth="60.0" />
+        <Label text="Date de début:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
+            <DatePicker fx:id="startDatePicker"/>
+            <TextField fx:id="startTimeField" promptText="HH:mm" prefWidth="100"/>
+        </HBox>
 
-        <!-- Nombre de participants -->
-        <Label layoutX="45.0" layoutY="355.0" text="Capacity:" />
-        <TextField fx:id="capacityTextField" layoutX="170.0" layoutY="350.0" prefHeight="25.0" prefWidth="100.0" />
+        <Label text="Date de fin:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <HBox spacing="10" GridPane.rowIndex="4" GridPane.columnIndex="1">
+            <DatePicker fx:id="endDatePicker"/>
+            <TextField fx:id="endTimeField" promptText="HH:mm" prefWidth="100"/>
+        </HBox>
 
-        <!-- Sélection d'une image -->
-        <Label layoutX="45.0" layoutY="440.0" text="Event Image" />
-        <ImageView fx:id="eventImageView" fitHeight="100.0" fitWidth="150.0" layoutX="170.0" layoutY="400.0" />
-        <Button fx:id="changeImageButton" layoutX="337.0" layoutY="437.0" mnemonicParsing="false" onAction="#changeImage" text="Change photo" />
+        <Label text="Capacité:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="capacityField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-        <!-- Bouton de soumission -->
-        <Button fx:id="submitButton" layoutX="300.0" layoutY="550.0" mnemonicParsing="false" onAction="#updateEvent" text="Submit" />
-    </children>
-</AnchorPane>
+        <Label text="Ville:" GridPane.rowIndex="6" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <ComboBox fx:id="cityComboBox" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#handleCancel" 
+                style="-fx-background-color: #cebec9; -fx-text-fill: #533C56;"/>
+        <Button text="Mettre à jour" onAction="#handleUpdate"
+                style="-fx-background-color: #533C56; -fx-text-fill: white;"/>
+    </HBox>
+</VBox> 

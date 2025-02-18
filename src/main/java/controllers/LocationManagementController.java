@@ -1,6 +1,6 @@
 package controllers;
 
-import Models.Event;
+import Models.Location;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,7 +10,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import services.ServiceEvent;
+import services.ServiceLocation;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,45 +18,45 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class EventManagementController {
+public class LocationManagementController {
     @FXML
-    private FlowPane eventsContainer;
+    private FlowPane locationsContainer;
     @FXML
     private TextField searchField;
 
-    private final ServiceEvent eventService = new ServiceEvent();
+    private final ServiceLocation locationService = new ServiceLocation();
 
     @FXML
     void initialize() {
-        loadEventData();
+        loadLocationData();
         setupSearchFunctionality();
     }
 
-    private void loadEventData() {
+    private void loadLocationData() {
         try {
-            List<Event> events = eventService.getAll();
-            displayEvents(events);
+            List<Location> locations = locationService.getAll();
+            displayLocations(locations);
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les événements.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les locations.");
             e.printStackTrace();
         }
     }
 
-    private void displayEvents(List<Event> events) {
-        eventsContainer.getChildren().clear();
-        for (Event event : events) {
+    private void displayLocations(List<Location> locations) {
+        locationsContainer.getChildren().clear();
+        for (Location location : locations) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/EventCard.fxml"));
-                Parent eventCard = loader.load();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationCard.fxml"));
+                Parent locationCard = loader.load();
                 
-                EventCardController controller = loader.getController();
-                controller.setEvent(event);
+                LocationCardController controller = loader.getController();
+                controller.setLocation(location);
                 
                 // Add event handlers for edit and delete
-                controller.setOnEdit(e -> updateEvent(event));
-                controller.setOnDelete(e -> deleteEvent(event));
+                controller.setOnEdit(e -> updateLocation(location));
+                controller.setOnDelete(e -> deleteLocation(location));
                 
-                eventsContainer.getChildren().add(eventCard);
+                locationsContainer.getChildren().add(locationCard);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -66,14 +66,14 @@ public class EventManagementController {
     private void setupSearchFunctionality() {
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             try {
-                List<Event> allEvents = eventService.getAll();
-                List<Event> filteredEvents = allEvents.stream()
-                    .filter(event -> 
-                        event.getName().toLowerCase().contains(newValue.toLowerCase()) ||
-                        event.getDescription().toLowerCase().contains(newValue.toLowerCase()) ||
-                        event.getCity().name().toLowerCase().contains(newValue.toLowerCase()))
+                List<Location> allLocations = locationService.getAll();
+                List<Location> filteredLocations = allLocations.stream()
+                    .filter(location -> 
+                        location.getName().toLowerCase().contains(newValue.toLowerCase()) ||
+                        location.getVille().name().toLowerCase().contains(newValue.toLowerCase()) ||
+                        location.getDimension().toLowerCase().contains(newValue.toLowerCase()))
                     .collect(Collectors.toList());
-                displayEvents(filteredEvents);
+                displayLocations(filteredLocations);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -81,58 +81,58 @@ public class EventManagementController {
     }
 
     @FXML
-    void addEvent() {
+    void addLocation() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddEvent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
-            stage.setTitle("Ajouter un événement");
+            stage.setTitle("Ajouter une location");
             stage.setScene(new Scene(root));
             stage.showAndWait();
             
             // Refresh the view after adding
-            loadEventData();
+            loadLocationData();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre d'ajout.");
             e.printStackTrace();
         }
     }
 
-    private void updateEvent(Event event) {
+    private void updateLocation(Location location) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateEvent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateLocation.fxml"));
             Parent root = loader.load();
             
-            UpdateEventController controller = loader.getController();
-            controller.setEvent(event);
+            UpdateLocationController controller = loader.getController();
+            controller.setLocation(location);
             
             Stage stage = new Stage();
-            stage.setTitle("Modifier l'événement");
+            stage.setTitle("Modifier la location");
             stage.setScene(new Scene(root));
             stage.showAndWait();
             
             // Refresh the view after updating
-            loadEventData();
+            loadLocationData();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre de modification.");
             e.printStackTrace();
         }
     }
 
-    private void deleteEvent(Event event) {
+    private void deleteLocation(Location location) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirmation");
-        confirmDialog.setHeaderText("Supprimer l'événement");
-        confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cet événement ?");
+        confirmDialog.setHeaderText("Supprimer la location");
+        confirmDialog.setContentText("Êtes-vous sûr de vouloir supprimer cette location ?");
 
         Optional<ButtonType> result = confirmDialog.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                eventService.supprimer(event.getId_event());
-                loadEventData();
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "L'événement a été supprimé avec succès.");
+                locationService.supprimer(location.getId_location());
+                loadLocationData();
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "La location a été supprimée avec succès.");
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer l'événement.");
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer la location.");
                 e.printStackTrace();
             }
         }
@@ -145,4 +145,4 @@ public class EventManagementController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-}
+} 

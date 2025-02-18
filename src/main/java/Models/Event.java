@@ -6,23 +6,25 @@ public class Event {
     private int id_event;
     private String name;
     private String description;
-    private String imagepath;
+    private byte[] imageData;
+    private String imageFileName;
     private LocalDateTime start_date;
     private LocalDateTime end_date;
     private int capacity;
-    private City city; //  Enum City
-    private int id_user; // Correspond à la clé étrangère `id_user`
+    private City city;
+    private int id_user;
 
 
     public Event() {}
 
-    public Event(int id_event, String name, String description, String imagepath,
+    public Event(int id_event, String name, String description, byte[] imageData, String imageFileName,
                  LocalDateTime start_date, LocalDateTime end_date, int capacity,
                  City city, int id_user) {
         this.id_event = id_event;
         this.name = name;
         this.description = description;
-        this.imagepath = imagepath;
+        this.imageData = imageData;
+        this.imageFileName = imageFileName;
         this.start_date = start_date;
         this.end_date = end_date;
         this.capacity = capacity;
@@ -30,12 +32,13 @@ public class Event {
         this.id_user = id_user;
     }
 
-    public Event(String name, String description, String imagepath,
+    public Event(String name, String description, byte[] imageData, String imageFileName,
                  LocalDateTime start_date, LocalDateTime end_date, int capacity,
                  City city, int id_user) {
         this.name = name;
         this.description = description;
-        this.imagepath = imagepath;
+        this.imageData = imageData;
+        this.imageFileName = imageFileName;
         this.start_date = start_date;
         this.end_date = end_date;
         this.capacity = capacity;
@@ -67,12 +70,20 @@ public class Event {
         this.description = description;
     }
 
-    public String getImagepath() {
-        return imagepath;
+    public byte[] getImageData() {
+        return imageData;
     }
 
-    public void setImagepath(String imagepath) {
-        this.imagepath = imagepath;
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getImageFileName() {
+        return imageFileName;
+    }
+
+    public void setImageFileName(String imageFileName) {
+        this.imageFileName = imageFileName;
     }
 
     public LocalDateTime getStart_date() {
@@ -121,7 +132,7 @@ public class Event {
                 "id_event=" + id_event +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", imagepath='" + imagepath + '\'' +
+                ", imageFileName='" + imageFileName + '\'' +
                 ", start_date=" + start_date +
                 ", end_date=" + end_date +
                 ", capacity=" + capacity +

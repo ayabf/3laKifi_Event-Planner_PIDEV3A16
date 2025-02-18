@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<AnchorPane styleClass="location-card" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.LocationCardController">
+    <VBox spacing="15" styleClass="card">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        
+        <!-- Status Indicator -->
+        <HBox fx:id="statusContainer" spacing="8" alignment="CENTER_LEFT" styleClass="status-indicator">
+            <FontAwesomeIconView fx:id="statusIconView" size="1.2em"/>
+            <Label fx:id="statusText" styleClass="status-text"/>
+        </HBox>
+        
+        <ImageView fx:id="locationImage" fitHeight="200" fitWidth="300" preserveRatio="true" styleClass="location-image"/>
+        
+        <Label fx:id="locationName" styleClass="subheader"/>
+        
+        <VBox spacing="10">
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em"/>
+                <Label fx:id="locationVille" styleClass="info-text"/>
+            </HBox>
+            
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="USERS" size="1.2em"/>
+                <Label fx:id="locationCapacity" styleClass="info-text"/>
+            </HBox>
+            
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="ARROWS_ALT" size="1.2em"/>
+                <Label fx:id="locationDimension" styleClass="info-text"/>
+            </HBox>
+            
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="MONEY" size="1.2em"/>
+                <Label fx:id="locationPrice" styleClass="info-text"/>
+            </HBox>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="editButton" text="Modifier" onAction="#handleEdit" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="EDIT" size="1.2em"/>
+                </graphic>
+            </Button>
+            <Button fx:id="deleteButton" text="Supprimer" onAction="#handleDelete" styleClass="action-button, secondary">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TRASH" size="1.2em"/>
+                </graphic>
+            </Button>
+            <Button fx:id="detailsButton" text="Détails" onAction="#handleDetails" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" size="1.2em"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</AnchorPane> 

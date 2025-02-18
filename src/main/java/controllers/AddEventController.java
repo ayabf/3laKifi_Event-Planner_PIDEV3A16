@@ -1,202 +1,247 @@
 package controllers;
 
-import Models.City;
 import Models.Event;
-import services.ServiceEvent;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import Models.City;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import services.ServiceEvent;
 
 import java.io.File;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Consumer;
+import java.time.LocalTime;
 
 public class AddEventController {
-
     @FXML
-    private ResourceBundle resources;
-
+    private TextField nameField;
     @FXML
-    private URL location;
-
+    private TextArea descriptionArea;
     @FXML
-    private Button addImageButton;
-
+    private Button imageButton;
     @FXML
-    private TextField capacityTextField;
-
-    @FXML
-    private ComboBox<City> cityComboBox;
-
-    @FXML
-    private TextArea descriptionTextArea;
-
-    @FXML
-    private DatePicker endDatePicker;
-
-    @FXML
-    private ImageView eventImageView;
-
-    @FXML
-    private TextField nameTextField;
-
+    private ImageView imagePreview;
     @FXML
     private DatePicker startDatePicker;
     @FXML
-    private ComboBox<Integer> startHourComboBox;
-
+    private TextField startTimeField;
     @FXML
-    private ComboBox<Integer> startMinuteComboBox;
-
+    private DatePicker endDatePicker;
     @FXML
-    private ComboBox<Integer> endHourComboBox;
-
+    private TextField endTimeField;
     @FXML
-    private ComboBox<Integer> endMinuteComboBox;
+    private TextField capacityField;
+    @FXML
+    private ComboBox<City> cityComboBox;
+    @FXML
+    private Button addButton;
 
-
-    private File selectedImageFile; // Stocke l'image sélectionnée
-
-    private final ServiceEvent serviceEvent = new ServiceEvent(); // Service pour l'ajout en BD
-
-
+    private final ServiceEvent eventService = new ServiceEvent();
+    private int userId = 1; // TODO: Get this from the logged-in user's session
+    private File selectedImageFile;
+    private Event eventToEdit;
 
     @FXML
     void initialize() {
-        populateCityComboBox();
-        populateTimeComboBoxes();
-    }
-    // Méthode pour remplir les ComboBox des heures et minutes
-    private void populateTimeComboBoxes() {
-        ObservableList<Integer> hours = FXCollections.observableArrayList();
-        ObservableList<Integer> minutes = FXCollections.observableArrayList();
-
-        for (int i = 0; i < 24; i++) {
-            hours.add(i);
-        }
-
-        for (int i = 0; i < 60; i++) {
-            minutes.add(i);
-        }
-
-        startHourComboBox.setItems(hours);
-        startMinuteComboBox.setItems(minutes);
-        endHourComboBox.setItems(hours);
-        endMinuteComboBox.setItems(minutes);
-
-        // Sélectionner une valeur par défaut
-        startHourComboBox.setValue(12);
-        startMinuteComboBox.setValue(0);
-        endHourComboBox.setValue(12);
-        endMinuteComboBox.setValue(0);
+        cityComboBox.getItems().addAll(City.values());
+        
+        // Initialize the image selection button
+        imageButton.setOnAction(event -> handleImageSelection());
+        
+        // Set default image for preview
+        imagePreview.setImage(null);
     }
 
-    // Remplissage de la ComboBox des villes avec l'énumération City
-    private void populateCityComboBox() {
-        List<City> cities = Arrays.asList(City.values());
-        ObservableList<City> cityList = FXCollections.observableArrayList(cities);
-        cityComboBox.setItems(cityList);
-    }
-
-    @FXML
-    void addEvent(ActionEvent event) {
-        try {
-            String name = nameTextField.getText().trim();
-            String description = descriptionTextArea.getText().trim();
-            City city = cityComboBox.getValue();
-            LocalDate startDate = startDatePicker.getValue();
-            LocalDate endDate = endDatePicker.getValue();
-            int startHour = startHourComboBox.getValue();
-            int startMinute = startMinuteComboBox.getValue();
-            int endHour = endHourComboBox.getValue();
-            int endMinute = endMinuteComboBox.getValue();
-            String capacityText = capacityTextField.getText().trim();
-
-            // Vérification des champs obligatoires
-            if (name.isEmpty() || description.isEmpty() || city == null || startDate == null || endDate == null || capacityText.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Champs obligatoires", "Veuillez remplir tous les champs.");
-                return;
-            }
-
-            // Vérification de la capacité
-            int capacity;
-            try {
-                capacity = Integer.parseInt(capacityText);
-                if (capacity <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.ERROR, "Capacité invalide", "La capacité doit être un nombre entier positif.");
-                return;
-            }
-
-            // Vérification des dates
-            LocalDateTime startDateTime = startDate.atTime(startHour, startMinute);
-            LocalDateTime endDateTime = endDate.atTime(endHour, endMinute);
-
-            if (startDateTime.isBefore(LocalDateTime.now())) {
-                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de début ne peut pas être dans le passé.");
-                return;
-            }
-            if (endDateTime.isBefore(startDateTime)) {
-                showAlert(Alert.AlertType.ERROR, "Date invalide", "La date de fin doit être après la date de début.");
-                return;
-            }
-
-            // Gestion de l'image
-            String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : "default_event.png";
-
-            // Création de l'objet Event
-            Event newEvent = new Event(name, description, imagePath, startDateTime, endDateTime, capacity, city, 1);
-
-            // Enregistrement en BD
-            serviceEvent.ajouter(newEvent);
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès !");
-
-
-
-            // Fermer la fenêtre après ajout
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors de l'ajout de l'événement.");
-        }
-    }
-
-
-    @FXML
-    void cancel(ActionEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    void chooseImage(ActionEvent event) {
+    private void handleImageSelection() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir une image");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"));
-
-        selectedImageFile = fileChooser.showOpenDialog(new Stage());
-
-        if (selectedImageFile != null) {
-            Image image = new Image(selectedImageFile.toURI().toString());
-            eventImageView.setImage(image);
+        fileChooser.setTitle("Select Event Image");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+        
+        File file = fileChooser.showOpenDialog(imageButton.getScene().getWindow());
+        if (file != null) {
+            selectedImageFile = file;
+            // Update the image preview
+            try {
+                Image image = new Image(file.toURI().toString());
+                imagePreview.setImage(image);
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger l'aperçu de l'image.");
+            }
         }
+    }
+
+    public void setEventForEdit(Event event) {
+        this.eventToEdit = event;
+        
+        // Populate form fields with event data
+        nameField.setText(event.getName());
+        descriptionArea.setText(event.getDescription());
+        startDatePicker.setValue(event.getStart_date().toLocalDate());
+        startTimeField.setText(event.getStart_date().toLocalTime().toString());
+        endDatePicker.setValue(event.getEnd_date().toLocalDate());
+        endTimeField.setText(event.getEnd_date().toLocalTime().toString());
+        capacityField.setText(String.valueOf(event.getCapacity()));
+        cityComboBox.setValue(event.getCity());
+
+        // Update image preview if event has an image
+        if (event.getImageData() != null) {
+            try {
+                // Create a temporary file for the image
+                File tempFile = File.createTempFile("event_image", event.getImageFileName());
+                java.nio.file.Files.write(tempFile.toPath(), event.getImageData());
+                selectedImageFile = tempFile;
+                imagePreview.setImage(new Image(tempFile.toURI().toString()));
+            } catch (IOException e) {
+                showAlert(Alert.AlertType.WARNING, "Image", "Impossible de charger l'image de l'événement.");
+            }
+        }
+
+        // Update the Add button text to "Update"
+        if (addButton != null) {
+            addButton.setText("Update");
+        }
+    }
+
+    @FXML
+    void handleAdd() {
+        try {
+            // Validate input fields
+            if (!validateInputs()) {
+                return;
+            }
+
+            // Read the image file into a byte array
+            byte[] imageData = null;
+            String imageFileName = null;
+            if (selectedImageFile != null) {
+                try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
+                    imageData = new byte[(int) selectedImageFile.length()];
+                    fis.read(imageData);
+                    imageFileName = selectedImageFile.getName();
+                } catch (IOException e) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de lire le fichier image.");
+                    return;
+                }
+            }
+
+            // Create or update event
+            Event event;
+            if (eventToEdit != null) {
+                // Update existing event
+                event = eventToEdit;
+                event.setName(nameField.getText());
+                event.setDescription(descriptionArea.getText());
+                if (imageData != null) {
+                    event.setImageData(imageData);
+                    event.setImageFileName(imageFileName);
+                }
+                event.setStart_date(LocalDateTime.of(
+                    startDatePicker.getValue(),
+                    LocalTime.parse(startTimeField.getText())
+                ));
+                event.setEnd_date(LocalDateTime.of(
+                    endDatePicker.getValue(),
+                    LocalTime.parse(endTimeField.getText())
+                ));
+                event.setCapacity(Integer.parseInt(capacityField.getText()));
+                event.setCity(cityComboBox.getValue());
+                
+                eventService.modifier(event);
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement mis à jour avec succès.");
+            } else {
+                // Create new event
+                event = new Event(
+                    nameField.getText(),
+                    descriptionArea.getText(),
+                    imageData,
+                    imageFileName,
+                    LocalDateTime.of(
+                        startDatePicker.getValue(),
+                        LocalTime.parse(startTimeField.getText())
+                    ),
+                    LocalDateTime.of(
+                        endDatePicker.getValue(),
+                        LocalTime.parse(endTimeField.getText())
+                    ),
+                    Integer.parseInt(capacityField.getText()),
+                    cityComboBox.getValue(),
+                    userId
+                );
+                
+                eventService.ajouter(event);
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès.");
+            }
+            
+            closeWindow();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter l'événement.");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez entrer un nombre valide pour la capacité.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Format de date ou heure invalide.");
+        }
+    }
+
+    private boolean validateInputs() {
+        if (nameField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "Le nom est requis.");
+            return false;
+        }
+        if (descriptionArea.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "La description est requise.");
+            return false;
+        }
+        if (selectedImageFile == null) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "Une image est requise.");
+            return false;
+        }
+        if (startDatePicker.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "La date de début est requise.");
+            return false;
+        }
+        if (endDatePicker.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "La date de fin est requise.");
+            return false;
+        }
+        if (cityComboBox.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "La ville est requise.");
+            return false;
+        }
+        
+        // Validate that end date is after start date
+        LocalDateTime startDateTime = LocalDateTime.of(
+            startDatePicker.getValue(),
+            LocalTime.parse(startTimeField.getText())
+        );
+        LocalDateTime endDateTime = LocalDateTime.of(
+            endDatePicker.getValue(),
+            LocalTime.parse(endTimeField.getText())
+        );
+        
+        if (endDateTime.isBefore(startDateTime)) {
+            showAlert(Alert.AlertType.WARNING, "Validation", "La date de fin doit être après la date de début.");
+            return false;
+        }
+
+        return true;
+    }
+
+    @FXML
+    void handleCancel() {
+        closeWindow();
+    }
+
+    private void closeWindow() {
+        Stage stage = (Stage) nameField.getScene().getWindow();
+        stage.close();
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
@@ -206,4 +251,4 @@ public class AddEventController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-}
+} 

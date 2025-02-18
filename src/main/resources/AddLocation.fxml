@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox spacing="15" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.AddLocationController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Ajouter une location" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
+
+    <GridPane vgap="10" hgap="10">
+        <Label text="Nom:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="nameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Ville:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <ComboBox fx:id="villeComboBox" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Image:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <HBox spacing="10" GridPane.rowIndex="2" GridPane.columnIndex="1" alignment="CENTER_LEFT">
+            <Button fx:id="imageButton" text="Choisir une image" 
+                    style="-fx-background-color: #533C56; -fx-text-fill: white;"/>
+            <ImageView fx:id="imagePreview" fitHeight="50" fitWidth="50" preserveRatio="true" 
+                      style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 0);"/>
+        </HBox>
+
+        <Label text="Capacité:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="capacityField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Dimension:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="dimensionField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Prix:" GridPane.rowIndex="5" GridPane.columnIndex="0" style="-fx-text-fill: #533C56;"/>
+        <TextField fx:id="priceField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Annuler" onAction="#handleCancel" 
+                style="-fx-background-color: #cebec9; -fx-text-fill: #533C56;"/>
+        <Button text="Ajouter" onAction="#handleAdd"
+                style="-fx-background-color: #533C56; -fx-text-fill: white;"/>
+    </HBox>
+</VBox> 

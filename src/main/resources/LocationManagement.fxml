@@ -4,24 +4,24 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="20" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.EventManagementController">
+<VBox spacing="20" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.LocationManagementController">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
     <!-- Header Section -->
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Gestion des Événements" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
+        <Label text="Gestion des Locations" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="searchField" promptText="Rechercher..." prefWidth="200"
                   style="-fx-background-color: white; -fx-border-color: #cebec9; -fx-border-radius: 5;"/>
-        <Button text="Ajouter" onAction="#addEvent"
+        <Button text="Ajouter" onAction="#addLocation"
                 style="-fx-background-color: #533C56; -fx-text-fill: white; -fx-background-radius: 5;"/>
     </HBox>
 
-    <!-- Events Card View -->
+    <!-- Locations Card View -->
     <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background: transparent; -fx-background-color: transparent;">
-        <FlowPane fx:id="eventsContainer" hgap="20" vgap="20" style="-fx-background-color: transparent;">
+        <FlowPane fx:id="locationsContainer" hgap="20" vgap="20" style="-fx-background-color: transparent;">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>

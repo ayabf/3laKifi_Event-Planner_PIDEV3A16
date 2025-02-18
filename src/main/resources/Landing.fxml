@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="controllers.LandingController"
+      styleClass="root" stylesheets="@styles/global.css"
+      spacing="20" alignment="CENTER">
+    
+    <padding>
+        <Insets top="50" right="50" bottom="50" left="50"/>
+    </padding>
+    
+    <!-- Welcome Section -->
+    <VBox alignment="CENTER" spacing="15" styleClass="welcome-section">
+        <FontAwesomeIconView glyphName="CALENDAR" size="4em" styleClass="welcome-icon"/>
+        <Label text="Welcome to 3laKifi Events" styleClass="welcome-header"/>
+        <Label text="Your one-stop platform for event planning and management" styleClass="welcome-subtext"/>
+    </VBox>
+    
+    <!-- Action Buttons -->
+    <HBox spacing="20" alignment="CENTER">
+        <Button onAction="#handleClientDashboard" styleClass="action-button, events-action">
+            <graphic>
+                <HBox spacing="10" alignment="CENTER">
+                    <FontAwesomeIconView glyphName="USER" size="1.5em"/>
+                    <Label text="Client Dashboard" styleClass="button-text"/>
+                </HBox>
+            </graphic>
+        </Button>
+        
+        <Button onAction="#handleAdminDashboard" styleClass="action-button, bookings-action">
+            <graphic>
+                <HBox spacing="10" alignment="CENTER">
+                    <FontAwesomeIconView glyphName="DASHBOARD" size="1.5em"/>
+                    <Label text="Admin Dashboard" styleClass="button-text"/>
+                </HBox>
+            </graphic>
+        </Button>
+    </HBox>
+    
+    <Button fx:id="logoutButton" onAction="#handleLogout" styleClass="text-button">
+        <graphic>
+            <HBox spacing="10" alignment="CENTER">
+                <FontAwesomeIconView glyphName="SIGN_OUT" size="1.2em"/>
+                <Label text="Logout" styleClass="button-text"/>
+            </HBox>
+        </graphic>
+    </Button>
+</VBox> 

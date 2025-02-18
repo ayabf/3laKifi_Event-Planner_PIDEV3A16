@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.LocationListController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Location List" styleClass="header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="Search locations..." prefWidth="250"/>
+        <Button onAction="#handleRefresh" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Refresh" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Locations Table -->
+    <TableView fx:id="locationsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="locationNameColumn" text="Location Name" prefWidth="200"/>
+            <TableColumn fx:id="locationCityColumn" text="City" prefWidth="100"/>
+            <TableColumn fx:id="locationCapacityColumn" text="Capacity" prefWidth="100"/>
+            <TableColumn fx:id="locationDimensionColumn" text="Dimension" prefWidth="100"/>
+            <TableColumn fx:id="locationPriceColumn" text="Price" prefWidth="100"/>
+            <TableColumn fx:id="locationStatusColumn" text="Status" prefWidth="100"/>
+            <TableColumn fx:id="locationDetailsColumn" text="Details" prefWidth="100"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+    <!-- Action Buttons -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Back to Dashboard" onAction="#handleBack" styleClass="action-button, secondary">
+            <graphic>
+                <FontAwesomeIconView glyphName="ARROW_LEFT" size="1.2em"/>
+            </graphic>
+        </Button>
+    </HBox>
+</VBox> 
