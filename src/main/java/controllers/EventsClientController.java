@@ -28,7 +28,9 @@ public class EventsClientController {
     @FXML
     void initialize() {
         loadEvents();
+
     }
+
 
     private void loadEvents() {
         try {
