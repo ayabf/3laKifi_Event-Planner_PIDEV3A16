@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="450.0" prefWidth="520.0" style="-fx-background-color: #F4F4F4; -fx-padding: 20px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CartItemDetailsController">
+
+    <!-- En-tête avec le titre -->
+    <HBox alignment="CENTER" layoutX="20" layoutY="20" prefHeight="38.0" prefWidth="464.0" spacing="10">
+        <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #533C5C;" text="🛍 Détails du Produit Panier" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#handleClose" prefHeight="37.0" prefWidth="42.0" style="-fx-background-color: transparent; -fx-font-size: 18px; -fx-text-fill: #533C5C;                         -fx-padding: 5px; -fx-cursor: hand;" text="✖" />
+    </HBox>
+
+    <VBox alignment="CENTER" layoutX="159.0" layoutY="71.0" spacing="12">
+        <!-- Image du produit -->
+        <ImageView fx:id="productImage" fitHeight="150" fitWidth="150" preserveRatio="true" style="-fx-border-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 3);" />
+
+        <!-- Détails du produit -->
+        <Label fx:id="productName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+        <Label fx:id="productDescription" maxWidth="400" style="-fx-font-size: 14px; -fx-text-fill: #666; -fx-padding: 5px;" wrapText="true" />
+
+        <HBox spacing="10">
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Prix Unitaire :" />
+            <Label fx:id="productPrice" style="-fx-font-size: 16px; -fx-text-fill: #533C5C;" />
+        </HBox>
+
+        <HBox spacing="10">
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Quantité :" />
+            <Label fx:id="productQuantity" style="-fx-font-size: 16px; -fx-text-fill: #533C5C;" />
+        </HBox>
+
+        <HBox spacing="10">
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;" text="Total :" />
+            <Label fx:id="totalItemPrice" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #28A745;" />
+        </HBox>
+    </VBox>
+
+</AnchorPane>

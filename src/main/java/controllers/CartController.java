@@ -18,6 +18,7 @@ import services.CartService;
 import services.OrderService;
 import utils.DataSource;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -41,6 +42,29 @@ public class CartController {
         cartListView.setItems(cartItems);
         cartListView.setCellFactory(param -> new CartItemCell()); // Appliquer la cellule personnalisée
         updateSubtotal();
+        cartListView.setOnMouseClicked(event -> {
+            CartItem selectedItem = cartListView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                openCartItemDetails(selectedItem);
+            }
+        });
+    }
+    private void openCartItemDetails(CartItem cartItem) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/CartItemDetails.fxml"));
+            Parent root = loader.load();
+
+            CartItemDetailsController controller = loader.getController();
+            controller.setCartItemDetails(cartItem); // Passer les infos du produit au contrôleur
+
+            Stage stage = new Stage();
+            stage.setTitle("Détails du panier");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'afficher les détails du panier.");
+        }
     }
 
     private void loadCartItems() {
