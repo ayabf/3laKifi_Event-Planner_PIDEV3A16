@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
@@ -154,23 +155,27 @@ public class OrderListController {
         }
 
         // 🔄 Bouton de modification
-        Button editButton = new Button("Modifier");
+        Button editButton = new Button("Update");
         editButton.setOnAction(event -> openEditOrderPage(order));
-        Button cancelButton = new Button("Annuler");
-        cancelButton.setStyle("-fx-background-color: red; -fx-text-fill: white;"); // Style rouge
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
         cancelButton.setOnAction(event -> cancelOrder(order));
+
         if (currentUser != null && currentUser.getRole().equalsIgnoreCase("admin")) {
             ChoiceBox<String> statusChoiceBox = new ChoiceBox<>();
             statusChoiceBox.getItems().addAll("PENDING", "CONFIRMED", "CANCELLED", "DELIVERED");
             statusChoiceBox.setValue(order.getStatus()); // Valeur actuelle du statut
 
-            Button saveStatusButton = new Button("✅ Sauvegarder Statut");
+            Button saveStatusButton = new Button("Save Status");
             saveStatusButton.setOnAction(event -> updateOrderStatus(order, statusChoiceBox.getValue()));
 
             card.getChildren().addAll(statusChoiceBox, saveStatusButton);
         }
+        HBox buttonBox = new HBox(10, editButton, cancelButton); // Espacement de 10px entre les boutons
+        buttonBox.setStyle("-fx-padding: 10px 0; -fx-alignment: center;");
 
-        card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel, editButton, cancelButton);
+        card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel, buttonBox);
 
         return card;
     }
