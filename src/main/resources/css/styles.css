@@ -349,55 +349,32 @@
 }
 
 /* ✅ Conteneur des commandes */
+/* ✅ Conteneur principal */
 .order-list-container {
-    -fx-spacing: 15px;
-    -fx-padding: 10px;
+    -fx-spacing: 20px; /* Espacement entre les cartes */
+    -fx-padding: 20px; /* Ajoute un padding global */
+    -fx-alignment: center; /* Centrer les commandes */
 }
 
 /* ✅ Carte d'une commande */
 .order-card {
     -fx-background-color: #ffffff;
-    -fx-padding: 15px;
-    -fx-border-radius: 10px;
+    -fx-padding: 20px;
+    -fx-border-radius: 12px;
     -fx-border-color: #dddddd;
     -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 3);
+    -fx-pref-width: 280px; /* Assure une largeur constante */
+    -fx-alignment: center; /* Centre le contenu */
 }
 
-/* ✅ Texte dans la carte */
+/* ✅ Texte de base */
 .order-text {
     -fx-font-size: 14px;
     -fx-text-fill: #555;
 }
 
-/* ✅ Boutons */
-.button-primary {
-    -fx-background-color: #6C5CE7;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 15px;
-    -fx-border-radius: 5px;
-}
-.button-primary:hover {
-    -fx-background-color: #5A4BC4;
-}
-.button-danger {
-    -fx-background-color: #DC3545;
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-border-radius: 5px;
-}
-.button-danger {
-    -fx-background-color: #D63031;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 15px;
-    -fx-border-radius: 5px;
-}
-.button-danger:hover {
-    -fx-background-color: #C02929;
-}
-/* ✅ Statuts */
+/* ✅ Statuts colorés */
 .status-confirmed {
     -fx-text-fill: green;
     -fx-font-weight: bold;
@@ -413,3 +390,41 @@
     -fx-font-weight: bold;
 }
 
+/* ✅ Conteneur des boutons (pour alignement horizontal) */
+.button-box {
+    -fx-spacing: 10px; /* Espacement entre les boutons */
+    -fx-padding: 10px 0;
+    -fx-alignment: center;
+}
+
+/* ✅ Bouton Modifier */
+.button-primary {
+    -fx-background-color: #6C5CE7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-pref-width: 100px; /* Assurer une taille uniforme */
+    -fx-pref-height: 35px;
+}
+
+/* ✅ Bouton Modifier au survol */
+.button-primary:hover {
+    -fx-background-color: #5A4BC4;
+}
+
+/* ✅ Bouton Annuler */
+.button-danger {
+    -fx-background-color: #D63031;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-pref-width: 100px; /* Assurer une taille uniforme */
+    -fx-pref-height: 35px;
+}
+
+/* ✅ Bouton Annuler au survol */
+.button-danger:hover {
+    -fx-background-color: #C02929;
+}

@@ -47,6 +47,7 @@ public class OrderListController {
 
         displayOrders(filteredOrders);
     }
+
     private void displayOrders(ObservableList<Order> orders) {
         orderListContainer.getChildren().clear();
 
@@ -55,6 +56,7 @@ public class OrderListController {
             orderListContainer.getChildren().add(orderCard);
         }
     }
+
 
 
     private User currentUser;
@@ -172,9 +174,6 @@ public class OrderListController {
 
         return card;
     }
-
-
-
     private void openStatusEditDialog(Order order) {
         TextInputDialog dialog = new TextInputDialog(order.getStatus());
         dialog.setTitle("Modification du Statut");

@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-
 <?import javafx.geometry.Insets?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.OrderListController"
-            stylesheets="@css/styles.css"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-            prefWidth="600" prefHeight="400">
+<AnchorPane prefHeight="600" prefWidth="700" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrderListController">
 
-    <VBox spacing="10" layoutX="50" layoutY="20">
-        <Label text="Mes Commandes" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-        <TextField fx:id="searchField" promptText="Rechercher une commande..."
-                   onKeyReleased="#searchOrders"
-                   style="-fx-font-size: 14px; -fx-padding: 5px; -fx-border-radius: 5px;"/>
+    <VBox layoutX="50" layoutY="20" spacing="10" />
+     <Label layoutX="266.0" layoutY="28.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Mes Commandes" />
+     <TextField fx:id="searchField" layoutX="204.0" layoutY="63.0" onKeyReleased="#searchOrders" prefHeight="30.0" prefWidth="291.0" promptText="Rechercher une commande..." style="-fx-font-size: 14px; -fx-padding: 5px; -fx-border-radius: 5px;" />
 
-        <ScrollPane fitToWidth="true" prefHeight="350">
-            <VBox fx:id="orderListContainer" spacing="10">
-                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            </VBox>
-        </ScrollPane>
-    </VBox>
+     <ScrollPane fitToWidth="true" layoutX="82.0" layoutY="180.0" prefHeight="350">
+         <VBox fx:id="orderListContainer" spacing="10">
+             <padding>
+            <Insets bottom="10" left="10" right="10" top="10" />
+         </padding>
+         </VBox>
+     </ScrollPane>
 
 </AnchorPane>
