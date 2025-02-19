@@ -21,7 +21,7 @@ public class mainFx extends Application {
     public void start(Stage stage) {
         try {
             System.out.println("Chargement du fichier FXML...");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProducts.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ModifierProduct.fxml"));
             Parent root = loader.load();
             System.out.println("FXML chargé avec succès !");
 

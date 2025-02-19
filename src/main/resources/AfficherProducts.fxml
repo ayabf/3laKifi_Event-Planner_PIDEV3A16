@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AfficherProductsController" spacing="10">
-    <HBox spacing="10">
-        <Label text="Filter by Category:" />
-        <ComboBox fx:id="categoryFilter" promptText="Select a category" onAction="#filterByCategory"/>
-    </HBox>
+<AnchorPane prefHeight="700" prefWidth="904.0" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AfficherProductsController">
 
-    <FlowPane fx:id="productsContainer" hgap="15" vgap="15">
-        <Label text="Loading products..." />
-    </FlowPane>
-</VBox>
+    <!-- Main Container -->
+    <VBox layoutX="30" layoutY="30" prefWidth="850" spacing="15">
+
+        <!-- Title -->
+        <Label text="Nos Produits"
+               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333;"
+               alignment="CENTER"/>
+
+        <!-- Search & Filter Section -->
+        <HBox spacing="10">
+            <ComboBox fx:id="categoryFilter" promptText="Filtrer par catégorie" onAction="#filterByCategory">
+            </ComboBox>
+            <Button text="🛒 Mon Panier"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+        </HBox>
+
+        <!-- Product List Section -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <FlowPane fx:id="productsContainer" hgap="20" vgap="20" style="-fx-padding: 15px;">
+                <Label text="Chargement des produits..." />
+            </FlowPane>
+        </ScrollPane>
+
+    </VBox>
+
+</AnchorPane>

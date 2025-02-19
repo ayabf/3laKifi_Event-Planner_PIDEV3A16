@@ -2,16 +2,31 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SupprimerProductController" spacing="10">
-    <Label text="Supprimer un Produit" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SupprimerProductController"
+      spacing="15" alignment="CENTER"
+      style="-fx-background-color: #f5f5f5; -fx-padding: 20px; -fx-border-radius: 10px; -fx-border-color: #ccc;">
 
-    <GridPane hgap="10" vgap="10">
-        <Label text="Référence du Produit:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-        <TextField fx:id="txtReference" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+    <!-- Titre -->
+    <Label text="Supprimer un Produit"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <!-- Section de saisie -->
+    <GridPane hgap="10" vgap="10"
+              style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+
+        <Label text="Référence du Produit :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtReference" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                   promptText="Entrez la référence du produit"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px;"/>
     </GridPane>
 
-    <HBox spacing="10">
-        <Button text="Supprimer" onAction="#supprimerProduct" />
-        <Button text="Annuler" onAction="#annulerSuppression" />
+    <!-- Boutons d'actions -->
+    <HBox spacing="15">
+        <Button text="🗑 Supprimer" onAction="#supprimerProduct"
+                style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8; -fx-border-radius: 5px;" />
+
+        <Button text="❌ Annuler" onAction="#annulerSuppression"
+                style="-fx-background-color: #bca2bf; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8; -fx-border-radius: 5px;" />
     </HBox>
+
 </VBox>

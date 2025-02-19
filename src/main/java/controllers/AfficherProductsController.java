@@ -1,17 +1,25 @@
 package controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import models.Product;
 import services.ProductService;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.scene.input.MouseEvent;
+
 
 public class AfficherProductsController {
 
@@ -65,26 +73,48 @@ public class AfficherProductsController {
         }
     }
 
+
+
+    // Inside the method that creates product cards
     private void loadProducts(String category) {
+        productsContainer.getChildren().clear();
         try {
-            List<Product> products;
+            List<Product> products = (category == null || category.isEmpty())
+                    ? productService.getAll(new Product())
+                    : productService.getByCategory(category);
 
-            if (category == null || category.isEmpty()) {
-                products = productService.getAll(new Product());  // Pass an empty Product instance
-            } else {
-                products = productService.getByCategory(category);  // Ensure this method is correctly implemented
-            }
+            for (Product product : products) {
+                VBox productBox = createProductCard(product);
 
-            if (products != null) {
-                productsContainer.getChildren().clear(); // Clear the UI container only if products exist
-                for (Product product : products) {
-                    productsContainer.getChildren().add(createProductCard(product));
-                }
+                // Add click event
+                productBox.setOnMouseClicked((MouseEvent event) -> {
+                    AfficherProductController.setSelectedProduct(product);
+                    afficherProductDetails();
+                });
+
+                productsContainer.getChildren().add(productBox);
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error loading products: " + e.getMessage());
+            System.out.println("Error loading products: " + e.getMessage());
         }
     }
+
+    /**
+     * ✅ Loads the product details page
+     */
+    private void afficherProductDetails() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduct.fxml"));
+            Parent root = loader.load();
+
+            // Get the current scene's window
+            Stage stage = (Stage) productsContainer.getScene().getWindow();
+            stage.setScene(new Scene(root));
+        } catch (IOException e) {
+            System.out.println("Error loading AfficherProduct.fxml: " + e.getMessage());
+        }
+    }
+
 
 
 

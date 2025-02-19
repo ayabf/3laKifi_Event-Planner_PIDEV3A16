@@ -3,15 +3,29 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AfficherStockController"
-      spacing="10" alignment="CENTER">
+      spacing="15" alignment="CENTER"
+      style="-fx-background-color: #f5f5f5; -fx-padding: 20px; -fx-border-radius: 10px; -fx-border-color: #ccc;">
 
-    <Label text="Afficher les Stocks" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <!-- Titre -->
+    <Label text="📦 Afficher les Stocks"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
-    <HBox spacing="10">
-        <Label text="ID Utilisateur:"/>
-        <TextField fx:id="txtUserId" promptText="Entrez l'ID utilisateur"/>
-        <Button text="Rechercher" onAction="#rechercherStocks"/>
+    <!-- Section de Recherche -->
+    <HBox spacing="10"
+          style="-fx-background-color: white; -fx-padding: 10px; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+
+        <Label text="🔍 ID Utilisateur :" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtUserId" promptText="Entrez l'ID utilisateur"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px;"/>
+
+        <Button text="Rechercher" onAction="#rechercherStocks"
+                style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px; -fx-border-radius: 5px;"/>
     </HBox>
 
-    <ListView fx:id="stockListView" prefHeight="300" prefWidth="400"/>
+    <!-- Liste des Stocks -->
+    <ListView fx:id="stockListView" prefHeight="300" prefWidth="500"
+              style="-fx-background-color: white; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);"/>
+
+
+
 </VBox>
