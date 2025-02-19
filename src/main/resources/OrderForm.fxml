@@ -32,17 +32,18 @@
             <Label fx:id="errorDate" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Date invalide !" visible="false" />
 
             <Button fx:id="timePickerButton" onAction="#openTimePicker" text="Sélectionner l'heure" />
+
             <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
             <Label fx:id="errorTime" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Heure invalide !" visible="false" />
         </HBox>
 
         <!-- Adresse -->
-        <Label text="Adresse complète :" />
+        <Label text="Full address:" />
         <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
         <Label fx:id="errorAddress" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Adresse invalide !" visible="false" />
 
         <!-- Méthode de paiement -->
-        <Label text="Méthode de paiement :" />
+        <Label text="Payment method:" />
         <ComboBox fx:id="paymentMethodBox">
             <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -57,9 +58,9 @@
         <!-- Boutons d'action -->
         <HBox spacing="10" alignment="CENTER">
             <Button fx:id="validateOrderButton" onAction="#validateOrder"
-                    style="-fx-background-color: #28a745; -fx-text-fill: white;
+                    style="-fx-background-color: #533C56; -fx-text-fill: white;
                     -fx-font-size: 14px; -fx-padding: 8;"
-                    text="Valider la commande" />
+                    text="Validate the order" />
             <Button onAction="#handleClose"
                     style="-fx-background-color: #93707E; -fx-text-fill: white;
                     -fx-padding: 8px 16px; -fx-font-size: 14px;"

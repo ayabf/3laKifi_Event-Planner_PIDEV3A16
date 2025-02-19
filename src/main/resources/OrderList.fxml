@@ -34,10 +34,10 @@
         <!-- ✅ Boutons "Reload" et "Close" en bas -->
         <HBox spacing="20" alignment="CENTER">
             <Button text="🔄 Reload" onAction="#reloadOrders"
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
+                    style="-fx-background-color: #BCA2BF; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
 
             <Button text="❌ Close" onAction="#closeWindow"
-                    style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
+                    style="-fx-background-color: #CEBEC9; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
         </HBox>
 
     </VBox>
