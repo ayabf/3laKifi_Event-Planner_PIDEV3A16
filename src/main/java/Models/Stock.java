@@ -1,5 +1,5 @@
 // Stock.java (Model)
-package models;
+package Models;
 
 import java.sql.Timestamp;
 

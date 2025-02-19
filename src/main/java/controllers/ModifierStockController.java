@@ -6,7 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import models.Stock;
+import Models.Stock;
 import services.StockService;
 
 import java.io.IOException;

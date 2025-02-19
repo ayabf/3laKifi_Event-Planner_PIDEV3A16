@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import models.Product;
+import Models.Product;
 import java.io.IOException;
 
 public class AfficherProductController {

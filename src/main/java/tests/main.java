@@ -1,7 +1,7 @@
 package tests;
 
 import javafx.application.Application;
-import models.Product;
+import Models.Product;
 import services.ProductService;
 
 import java.sql.SQLException;

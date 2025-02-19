@@ -1,6 +1,6 @@
 package services;
 
-import models.Product;
+import Models.Product;
 import utils.DataSource;
 
 import java.sql.*;
