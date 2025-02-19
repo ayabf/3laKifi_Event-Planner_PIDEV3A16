@@ -1,6 +1,8 @@
 package services;
 
 import Models.Booking;
+import Models.Event;
+import Models.Location;
 import utils.DataSource;
 
 import java.sql.*;
@@ -12,9 +14,13 @@ public class ServiceBooking implements IService<Booking> {
     private Connection conn;
     private Statement ste;
     private PreparedStatement pste;
+    private final ServiceEvent eventService;
+    private final ServiceLocation locationService;
 
     public ServiceBooking() {
         conn = DataSource.getInstance().getConnection();
+        eventService = new ServiceEvent();
+        locationService = new ServiceLocation();
     }
 
     public boolean isLocationAvailable(int locationId, LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
@@ -77,17 +83,18 @@ public class ServiceBooking implements IService<Booking> {
         return getById(booking.getBooking_id());
     }
 
-    // Helper method to get booking by ID
     public Booking getById(int id) throws SQLException {
         String req = "SELECT * FROM booking WHERE id_booking=?";
         pste = conn.prepareStatement(req);
         pste.setInt(1, id);
         ResultSet rs = pste.executeQuery();
         if (rs.next()) {
+            Event event = eventService.getById(rs.getInt("id_event"));
+            Location location = locationService.getById(rs.getInt("id_location"));
             return new Booking(
                 rs.getInt("id_booking"),
-                rs.getInt("id_event"),
-                rs.getInt("id_location"),
+                event,
+                location,
                 rs.getTimestamp("start_date").toLocalDateTime(),
                 rs.getTimestamp("end_date").toLocalDateTime()
             );
@@ -102,10 +109,12 @@ public class ServiceBooking implements IService<Booking> {
         ste = conn.createStatement();
         ResultSet rs = ste.executeQuery(req);
         while (rs.next()) {
+            Event event = eventService.getById(rs.getInt("id_event"));
+            Location location = locationService.getById(rs.getInt("id_location"));
             Booking booking = new Booking(
                 rs.getInt("id_booking"),
-                rs.getInt("id_event"),
-                rs.getInt("id_location"),
+                event,
+                location,
                 rs.getTimestamp("start_date").toLocalDateTime(),
                 rs.getTimestamp("end_date").toLocalDateTime()
             );
@@ -133,10 +142,12 @@ public class ServiceBooking implements IService<Booking> {
         pste.setInt(1, userId);
         ResultSet rs = pste.executeQuery();
         while (rs.next()) {
+            Event event = eventService.getById(rs.getInt("id_event"));
+            Location location = locationService.getById(rs.getInt("id_location"));
             Booking booking = new Booking(
                 rs.getInt("id_booking"),
-                rs.getInt("id_event"),
-                rs.getInt("id_location"),
+                event,
+                location,
                 rs.getTimestamp("start_date").toLocalDateTime(),
                 rs.getTimestamp("end_date").toLocalDateTime()
             );

@@ -2,6 +2,7 @@ package controllers;
 
 import Models.Event;
 import Models.City;
+import Models.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -9,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceEvent;
+import services.ServiceUser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,9 +44,11 @@ public class AddEventController {
     private Button addButton;
 
     private final ServiceEvent eventService = new ServiceEvent();
-    private int userId = 1;  // Default user ID until user management is integrated
+    private final ServiceUser userService = new ServiceUser();
+    private int userId = 1; // TODO: Get this from the logged-in user's session
     private File selectedImageFile;
     private Event eventToEdit;
+    private User currentUser;
 
     @FXML
     void initialize() {
@@ -55,10 +59,25 @@ public class AddEventController {
         
         // Set default image for preview
         imagePreview.setImage(null);
+        
+        // Load current user
+        try {
+            currentUser = userService.getById(userId);
+            if (currentUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information");
+            }
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information: " + e.getMessage());
+        }
     }
 
     public void setUserId(int userId) {
         this.userId = userId;
+        try {
+            currentUser = userService.getById(userId);
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information: " + e.getMessage());
+        }
     }
 
     private void handleImageSelection() {
@@ -130,7 +149,7 @@ public class AddEventController {
                     fis.read(imageData);
                     imageFileName = selectedImageFile.getName();
                 } catch (IOException e) {
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de lire le fichier image.");
+                    showAlert(Alert.AlertType.ERROR, "Error", "Could not read image file.");
                     return;
                 }
             }
@@ -158,9 +177,14 @@ public class AddEventController {
                 event.setCity(cityComboBox.getValue());
                 
                 eventService.modifier(event);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement mis à jour avec succès.");
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Event updated successfully.");
             } else {
                 // Create new event
+                if (currentUser == null) {
+                    showAlert(Alert.AlertType.ERROR, "Error", "No user information available");
+                    return;
+                }
+                
                 event = new Event(
                     nameField.getText(),
                     descriptionArea.getText(),
@@ -176,21 +200,21 @@ public class AddEventController {
                     ),
                     Integer.parseInt(capacityField.getText()),
                     cityComboBox.getValue(),
-                    userId
+                    currentUser
                 );
                 
                 eventService.ajouter(event);
-                showAlert(Alert.AlertType.INFORMATION, "Succès", "Événement ajouté avec succès.");
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Event added successfully.");
             }
             
             closeWindow();
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ajouter l'événement: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not save event: " + e.getMessage());
             e.printStackTrace();
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez entrer un nombre valide pour la capacité.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid number for capacity.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Format de date ou heure invalide.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Invalid date or time format.");
         }
     }
 

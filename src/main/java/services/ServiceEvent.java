@@ -2,6 +2,7 @@ package services;
 
 import Models.City;
 import Models.Event;
+import Models.User;
 import utils.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,9 +13,11 @@ public class ServiceEvent implements IService<Event> {
     private Connection conn;
     private Statement ste;
     private PreparedStatement pste;
+    private final ServiceUser userService;
 
     public ServiceEvent() {
         conn = DataSource.getInstance().getConnection();
+        userService = new ServiceUser();
     }
 
     private City normalizeAndParseCity(String cityName) {
@@ -31,17 +34,18 @@ public class ServiceEvent implements IService<Event> {
     // ✅ Ajouter un événement
     @Override
     public void ajouter(Event event) throws SQLException {
-        String req = "INSERT INTO event (name, description, image_data, start_date, end_date, capacity, city, id_user) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO event (name, description, image_data, image_filename, start_date, end_date, capacity, city, id_user) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         pste = conn.prepareStatement(req);
         pste.setString(1, event.getName());
         pste.setString(2, event.getDescription());
         pste.setBytes(3, event.getImageData());
-        pste.setTimestamp(4, Timestamp.valueOf(event.getStart_date()));
-        pste.setTimestamp(5, Timestamp.valueOf(event.getEnd_date()));
-        pste.setInt(6, event.getCapacity());
-        pste.setString(7, event.getCity().name());
-        pste.setInt(8, event.getId_user());
+        pste.setString(4, event.getImageFileName());
+        pste.setTimestamp(5, Timestamp.valueOf(event.getStart_date()));
+        pste.setTimestamp(6, Timestamp.valueOf(event.getEnd_date()));
+        pste.setInt(7, event.getCapacity());
+        pste.setString(8, event.getCity().name());
+        pste.setInt(9, event.getId_user());
         pste.executeUpdate();
         System.out.println("✅ Event added successfully!");
     }
@@ -49,17 +53,18 @@ public class ServiceEvent implements IService<Event> {
     //  Modifier un événement
     @Override
     public void modifier(Event event) throws SQLException {
-        String req = "UPDATE event SET name=?, description=?, image_data=?, start_date=?, end_date=?, capacity=?, city=? " +
+        String req = "UPDATE event SET name=?, description=?, image_data=?, image_filename=?, start_date=?, end_date=?, capacity=?, city=? " +
                     "WHERE id_event=?";
         pste = conn.prepareStatement(req);
         pste.setString(1, event.getName());
         pste.setString(2, event.getDescription());
         pste.setBytes(3, event.getImageData());
-        pste.setTimestamp(4, Timestamp.valueOf(event.getStart_date()));
-        pste.setTimestamp(5, Timestamp.valueOf(event.getEnd_date()));
-        pste.setInt(6, event.getCapacity());
-        pste.setString(7, event.getCity().name());
-        pste.setInt(8, event.getId_event());
+        pste.setString(4, event.getImageFileName());
+        pste.setTimestamp(5, Timestamp.valueOf(event.getStart_date()));
+        pste.setTimestamp(6, Timestamp.valueOf(event.getEnd_date()));
+        pste.setInt(7, event.getCapacity());
+        pste.setString(8, event.getCity().name());
+        pste.setInt(9, event.getId_event());
         pste.executeUpdate();
         System.out.println("✅ Event updated successfully!");
     }
@@ -93,16 +98,19 @@ public class ServiceEvent implements IService<Event> {
     }
 
     private Event extractEventFromResultSet(ResultSet rs) throws SQLException {
-        Event event = new Event();
-        event.setId_event(rs.getInt("id_event"));
-        event.setName(rs.getString("name"));
-        event.setDescription(rs.getString("description"));
-        event.setImageData(rs.getBytes("image_data"));
-        event.setStart_date(rs.getTimestamp("start_date").toLocalDateTime());
-        event.setEnd_date(rs.getTimestamp("end_date").toLocalDateTime());
-        event.setCapacity(rs.getInt("capacity"));
-        event.setCity(normalizeAndParseCity(rs.getString("city")));
-        return event;
+        User user = userService.getById(rs.getInt("id_user"));
+        return new Event(
+            rs.getInt("id_event"),
+            rs.getString("name"),
+            rs.getString("description"),
+            rs.getBytes("image_data"),
+            rs.getString("image_filename"),
+            rs.getTimestamp("start_date").toLocalDateTime(),
+            rs.getTimestamp("end_date").toLocalDateTime(),
+            rs.getInt("capacity"),
+            normalizeAndParseCity(rs.getString("city")),
+            user
+        );
     }
 
     // Récupérer tous les événements

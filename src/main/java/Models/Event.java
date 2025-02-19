@@ -12,14 +12,13 @@ public class Event {
     private LocalDateTime end_date;
     private int capacity;
     private City city;
-    private int id_user;
-
+    private User user;
 
     public Event() {}
 
     public Event(int id_event, String name, String description, byte[] imageData, String imageFileName,
                  LocalDateTime start_date, LocalDateTime end_date, int capacity,
-                 City city, int id_user) {
+                 City city, User user) {
         this.id_event = id_event;
         this.name = name;
         this.description = description;
@@ -29,12 +28,12 @@ public class Event {
         this.end_date = end_date;
         this.capacity = capacity;
         this.city = city;
-        this.id_user = id_user;
+        this.user = user;
     }
 
     public Event(String name, String description, byte[] imageData, String imageFileName,
                  LocalDateTime start_date, LocalDateTime end_date, int capacity,
-                 City city, int id_user) {
+                 City city, User user) {
         this.name = name;
         this.description = description;
         this.imageData = imageData;
@@ -43,7 +42,7 @@ public class Event {
         this.end_date = end_date;
         this.capacity = capacity;
         this.city = city;
-        this.id_user = id_user;
+        this.user = user;
     }
 
     public int getId_event() {
@@ -118,12 +117,23 @@ public class Event {
         this.city = city;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public int getId_user() {
-        return id_user;
+        return user != null ? user.getId_user() : 0;
     }
 
     public void setId_user(int id_user) {
-        this.id_user = id_user;
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setId_user(id_user);
     }
 
     @Override
@@ -137,7 +147,7 @@ public class Event {
                 ", end_date=" + end_date +
                 ", capacity=" + capacity +
                 ", city=" + city +
-                ", id_user=" + id_user +
+                ", user=" + user +
                 '}';
     }
 }

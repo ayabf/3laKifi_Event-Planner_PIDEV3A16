@@ -5,6 +5,7 @@ import Models.Event;
 import Models.Booking;
 import services.ServiceBooking;
 import services.ServiceLocation;
+import services.ServiceEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -29,6 +30,7 @@ public class AddBookingController {
     private Event event;
     private ServiceBooking bookingService;
     private ServiceLocation locationService;
+    private ServiceEvent eventService;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public void setEvent(Event event) {
@@ -39,6 +41,7 @@ public class AddBookingController {
     public void setServices(ServiceBooking bookingService, ServiceLocation locationService) {
         this.bookingService = bookingService;
         this.locationService = locationService;
+        this.eventService = new ServiceEvent();
         loadLocations();
     }
 
@@ -74,29 +77,10 @@ public class AddBookingController {
     }
 
     private void setupLocationComboBox() {
-        // Location cell factory
-        locationComboBox.setCellFactory(new Callback<ListView<Location>, ListCell<Location>>() {
-            @Override
-            public ListCell<Location> call(ListView<Location> param) {
-                return new ListCell<Location>() {
-                    @Override
-                    protected void updateItem(Location location, boolean empty) {
-                        super.updateItem(location, empty);
-                        if (empty || location == null) {
-                            setText(null);
-                        } else {
-                            setText(location.getName() + " (" + location.getVille().name() + ")");
-                        }
-                    }
-                };
-            }
-        });
-
-        // Location string converter
         locationComboBox.setConverter(new StringConverter<Location>() {
             @Override
             public String toString(Location location) {
-                return location != null ? location.getName() + " (" + location.getVille().name() + ")" : "";
+                return location != null ? location.getName() : "";
             }
 
             @Override
@@ -107,65 +91,86 @@ public class AddBookingController {
     }
 
     @FXML
-    private void handleBook() {
-        if (!validateInput()) {
+    private void handleAdd() {
+        if (!validateInputs()) {
             return;
         }
 
         try {
-            Location selectedLocation = locationComboBox.getValue();
-            Booking booking = new Booking(
-                0, // id will be set by database
-                event.getId_event(),
-                selectedLocation.getId_location(),
-                LocalDateTime.of(startDatePicker.getValue(), 
-                    LocalTime.parse(startTimeField.getText())),
-                LocalDateTime.of(endDatePicker.getValue(), 
-                    LocalTime.parse(endTimeField.getText()))
+            LocalDateTime startDateTime = LocalDateTime.of(
+                startDatePicker.getValue(),
+                LocalTime.parse(startTimeField.getText())
+            );
+            
+            LocalDateTime endDateTime = LocalDateTime.of(
+                endDatePicker.getValue(),
+                LocalTime.parse(endTimeField.getText())
             );
 
+            // Validate date/time logic
+            if (endDateTime.isBefore(startDateTime)) {
+                showError("Invalid dates", "End date/time must be after start date/time");
+                return;
+            }
+
+            if (startDateTime.isBefore(LocalDateTime.now())) {
+                showError("Invalid dates", "Start date/time cannot be in the past");
+                return;
+            }
+
+            // Check location availability
+            Location selectedLocation = locationComboBox.getValue();
+            if (!bookingService.isLocationAvailable(selectedLocation.getId_location(), startDateTime, endDateTime)) {
+                showError("Location unavailable", "The selected location is not available for these dates");
+                return;
+            }
+
+            // Create and save booking
+            Booking booking = new Booking(
+                event,
+                selectedLocation,
+                startDateTime,
+                endDateTime
+            );
+            
             bookingService.ajouter(booking);
-            showInfo("Booking created successfully");
-            handleClose();
+            showInfo("Success", "Booking created successfully");
+            closeWindow();
+        } catch (SQLException e) {
+            showError("Database error", "Could not create booking: " + e.getMessage());
         } catch (Exception e) {
-            showError("Error", "Could not create booking: " + e.getMessage());
+            showError("Error", "Invalid date/time format");
         }
+    }
+
+    private boolean validateInputs() {
+        if (locationComboBox.getValue() == null) {
+            showError("Validation", "Please select a location");
+            return false;
+        }
+        if (startDatePicker.getValue() == null) {
+            showError("Validation", "Please select a start date");
+            return false;
+        }
+        if (endDatePicker.getValue() == null) {
+            showError("Validation", "Please select an end date");
+            return false;
+        }
+        if (startTimeField.getText().isEmpty() || endTimeField.getText().isEmpty()) {
+            showError("Validation", "Please enter both start and end times");
+            return false;
+        }
+        return true;
     }
 
     @FXML
     private void handleClose() {
-        ((Stage) eventNameLabel.getScene().getWindow()).close();
+        closeWindow();
     }
 
-    private boolean validateInput() {
-        if (locationComboBox.getValue() == null) {
-            showError("Invalid Input", "Please select a location");
-            return false;
-        }
-        if (startDatePicker.getValue() == null) {
-            showError("Invalid Input", "Please select a start date");
-            return false;
-        }
-        if (endDatePicker.getValue() == null) {
-            showError("Invalid Input", "Please select an end date");
-            return false;
-        }
-        if (startTimeField.getText().isEmpty()) {
-            showError("Invalid Input", "Please enter a start time");
-            return false;
-        }
-        if (endTimeField.getText().isEmpty()) {
-            showError("Invalid Input", "Please enter an end time");
-            return false;
-        }
-        try {
-            LocalTime.parse(startTimeField.getText());
-            LocalTime.parse(endTimeField.getText());
-        } catch (Exception e) {
-            showError("Invalid Input", "Please enter valid times in HH:mm format");
-            return false;
-        }
-        return true;
+    private void closeWindow() {
+        Stage stage = (Stage) locationComboBox.getScene().getWindow();
+        stage.close();
     }
 
     private void showError(String header, String content) {
@@ -176,11 +181,11 @@ public class AddBookingController {
         alert.showAndWait();
     }
 
-    private void showInfo(String message) {
+    private void showInfo(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 } 

@@ -11,13 +11,13 @@
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
-        
+
         <!-- Status Badge -->
         <HBox fx:id="statusContainer" spacing="8" alignment="CENTER_LEFT" styleClass="status-indicator">
             <FontAwesomeIconView fx:id="statusIcon" glyphName="CALENDAR" size="1.2em"/>
             <Label fx:id="statusText" styleClass="status-text"/>
         </HBox>
-        
+
         <!-- Event Image with Hover Effect -->
         <StackPane styleClass="image-container">
             <ImageView fx:id="eventImage" fitHeight="200" fitWidth="300" preserveRatio="true" styleClass="event-image"/>
@@ -26,13 +26,13 @@
                 <Label fx:id="overlayDate" styleClass="overlay-text"/>
             </VBox>
         </StackPane>
-        
+
         <!-- Event Title -->
         <Label fx:id="eventName" styleClass="event-title"/>
-        
+
         <!-- Event Description -->
         <Label fx:id="eventDescription" wrapText="true" styleClass="description-text"/>
-        
+
         <!-- Event Details -->
         <VBox spacing="10" styleClass="details-container">
             <!-- Location -->
@@ -40,13 +40,13 @@
                 <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em"/>
                 <Label fx:id="eventCity" styleClass="info-text"/>
             </HBox>
-            
+
             <!-- Capacity -->
             <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
                 <FontAwesomeIconView glyphName="USERS" size="1.2em"/>
                 <Label fx:id="eventCapacity" styleClass="info-text"/>
             </HBox>
-            
+
             <!-- Date & Time -->
             <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
                 <FontAwesomeIconView glyphName="CLOCK_O" size="1.2em"/>
@@ -56,9 +56,9 @@
                 </VBox>
             </HBox>
         </VBox>
-        
+
         <Region VBox.vgrow="ALWAYS"/>
-        
+
         <!-- Action Buttons -->
         <HBox spacing="15" alignment="CENTER">
             <Button fx:id="editButton" text="Edit Event" onAction="#handleEdit" styleClass="action-button, edit-button">
@@ -87,4 +87,4 @@
             </Button>
         </HBox>
     </VBox>
-</AnchorPane> 
+</AnchorPane>
