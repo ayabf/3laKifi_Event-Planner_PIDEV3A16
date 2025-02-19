@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="0" styleClass="content-area" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LocationListController">
+    
+    <!-- Header Bar -->
+    <VBox styleClass="header-bar">
+        <padding>
+            <Insets top="30" right="40" bottom="30" left="40"/>
+        </padding>
+        
+        <!-- Title Section -->
+        <VBox spacing="5">
+            <Label text="Location Management" styleClass="header-title"/>
+            <Label text="Manage and organize your event locations efficiently" styleClass="header-subtitle"/>
+        </VBox>
+        
+        <!-- Action Bar -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="25" right="0" bottom="0" left="0"/>
+            </padding>
+            
+            <!-- Search with icon -->
+            <HBox styleClass="search-container" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <FontAwesomeIconView glyphName="SEARCH" styleClass="search-icon" size="16"/>
+                <TextField fx:id="searchField" promptText="Search locations..." styleClass="search-field"/>
+            </HBox>
+            
+            <!-- Action Buttons -->
+            <HBox spacing="10" styleClass="nav-buttons-container">
+                <!-- Add Location Button -->
+                <Button onAction="#handleAddLocation" styleClass="nav-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" styleClass="nav-icon"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Add New Location" styleClass="custom-tooltip"/>
+                    </tooltip>
+                </Button>
+                
+                <!-- Refresh Button -->
+                <Button onAction="#handleRefresh" styleClass="nav-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="REFRESH" styleClass="nav-icon"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Refresh List" styleClass="custom-tooltip"/>
+                    </tooltip>
+                </Button>
+                
+                <!-- Back Button -->
+                <Button onAction="#handleBack" styleClass="nav-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="ARROW_LEFT" styleClass="nav-icon"/>
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Back to Dashboard" styleClass="custom-tooltip"/>
+                    </tooltip>
+                </Button>
+            </HBox>
+        </HBox>
+    </VBox>
+    
+    <!-- Content Area -->
+    <VBox spacing="20" VBox.vgrow="ALWAYS" styleClass="main-content">
+        <padding>
+            <Insets top="30" right="40" bottom="40" left="40"/>
+        </padding>
+        
+        <!-- Statistics Cards -->
+        <HBox spacing="20">
+            <!-- Total Locations Card -->
+            <VBox styleClass="dashboard-card, locations-card" HBox.hgrow="ALWAYS">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <StackPane styleClass="icon-container">
+                        <FontAwesomeIconView glyphName="MAP_MARKER" size="20"/>
+                    </StackPane>
+                    <VBox>
+                        <Label text="Total Locations" styleClass="card-title"/>
+                        <Label fx:id="totalLocationsLabel" text="0" styleClass="card-value"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            
+            <!-- Active Locations Card -->
+            <VBox styleClass="dashboard-card, active-card" HBox.hgrow="ALWAYS">
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <StackPane styleClass="icon-container">
+                        <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="20"/>
+                    </StackPane>
+                    <VBox>
+                        <Label text="Active Locations" styleClass="card-title"/>
+                        <Label fx:id="activeLocationsLabel" text="0" styleClass="card-value"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </HBox>
+        
+        <!-- Locations Table -->
+        <TableView fx:id="locationsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="nameColumn" text="Name" minWidth="150"/>
+                <TableColumn fx:id="addressColumn" text="Address" minWidth="200"/>
+                <TableColumn fx:id="cityColumn" text="City" minWidth="100"/>
+                <TableColumn fx:id="capacityColumn" text="Capacity" minWidth="80"/>
+                <TableColumn fx:id="dimensionColumn" text="Dimension" minWidth="100"/>
+                <TableColumn fx:id="priceColumn" text="Price" minWidth="80"/>
+                <TableColumn fx:id="statusColumn" text="Status" minWidth="80"/>
+                <TableColumn fx:id="actionsColumn" text="Actions" minWidth="100" style="-fx-alignment: CENTER;"/>
+            </columns>
+            <placeholder>
+                <Label text="No locations found" styleClass="placeholder-text">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="MAP_MARKER" styleClass="placeholder-icon" size="24"/>
+                    </graphic>
+                </Label>
+            </placeholder>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </VBox>
+</VBox> 

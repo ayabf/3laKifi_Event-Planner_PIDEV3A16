@@ -1,0 +1,6 @@
+package Interfaces;
+
+public interface LocalUserStateObserver {
+    void onUserStateChanged(int userId, boolean isBlocked);
+
+}

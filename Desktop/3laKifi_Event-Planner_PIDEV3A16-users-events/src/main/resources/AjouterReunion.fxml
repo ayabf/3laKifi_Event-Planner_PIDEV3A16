@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:controller="controllers.ReunionController" prefHeight="456.0" prefWidth="873.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"  >
+    <children>
+        <AnchorPane prefHeight="422.0" prefWidth="874.0">
+            <children>
+                <BorderPane layoutX="129.0" layoutY="100.0" prefHeight="400.0" prefWidth="600.0">
+                    <center>
+                        <AnchorPane prefHeight="385.0" prefWidth="672.0">
+                            <children>
+                                <Label layoutX="240.0" layoutY="20.0" text="Ajouter Réunion" textFill="#ffc336">
+                                    <font>
+                                        <Font name="System Bold Italic" size="27.0" />
+                                    </font>
+                                </Label>
+
+                                <!-- Champ Objectif de la réunion -->
+                                <TextField fx:id="objectifTF" layoutX="50.0" layoutY="80.0" prefHeight="40.0" prefWidth="250.0" promptText="Objectif de la réunion">
+                                    <font>
+                                        <Font name="System Italic" size="18.0" />
+                                    </font>
+                                </TextField>
+
+                                <!-- Champ Date de la réunion -->
+                                <Label layoutX="50.0" layoutY="140.0" text="Date de la réunion :" textFill="#73592f">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                                <DatePicker fx:id="dateReunionDP" layoutX="200.0" layoutY="135.0" prefWidth="200.0"/>
+
+                                <!-- Champ Description -->
+                                <TextArea fx:id="descriptionTA" layoutX="50.0" layoutY="190.0" prefHeight="100.0" prefWidth="500.0" >
+                                    <font>
+                                        <Font name="System Italic" size="18.0" />
+                                    </font>
+                                </TextArea>
+
+                                <!-- Bouton pour uploader un fichier (PV) -->
+                                <Button fx:id="uploadPVBtn" layoutX="50.0" layoutY="310.0" mnemonicParsing="false" text="Uploader PV" onAction="#uploaderMedia" />
+
+                                <!-- Boutons de validation -->
+                                <Button layoutX="300.0" layoutY="360.0" mnemonicParsing="false" text="Enregistrer" style="-fx-background-color: #11C613; -fx-text-fill: white;"  onAction="#enregistrerReunion"/>
+                                <Button fx:id="annulerReunionBtn" layoutX="420.0" layoutY="360.0" mnemonicParsing="false" text="Annuler Réunion" style="-fx-background-color: #C62111; -fx-text-fill: white;" onAction="#annulerReunion"/>
+
+                            </children>
+                        </AnchorPane>
+                    </center>
+                </BorderPane>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>
