@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 
 import java.sql.SQLException;
 
+
 public class OrderFormController {
     @FXML private TextField addressField;
     @FXML private ComboBox<String> paymentMethodBox;
@@ -42,6 +43,13 @@ public class OrderFormController {
 
     private final OrderService orderService = new OrderService(); // Initialisation du service
 
+    //controle de saisie :
+    @FXML private Label errorAddress;
+    @FXML private Label errorPayment;
+    @FXML private Label errorDate;
+    @FXML private Label errorTime;
+
+
     @FXML
     public void initialize() {
         if (eventHourSpinner != null && eventMinuteSpinner != null) {
@@ -50,6 +58,8 @@ public class OrderFormController {
         } else {
             System.err.println("⚠ `eventHourSpinner` ou `eventMinuteSpinner` n'est pas initialisé !");
         }
+        addressField.textProperty().addListener((observable, oldValue, newValue) -> validateAddressInput());
+
     }
 
 
@@ -70,6 +80,41 @@ public class OrderFormController {
         LocalDate selectedDate = eventDatePicker.getValue();
         String address = addressField.getText();
         String paymentMethod = paymentMethodBox.getValue();
+        boolean isValid = true;
+
+        if (address.isEmpty() || address.length() < 5) {
+            errorAddress.setVisible(true);
+            addressField.setStyle("-fx-border-color: red;");
+            isValid = false;
+        } else {
+            errorAddress.setVisible(false);
+            addressField.setStyle("-fx-border-color: green;");
+        }
+        if (paymentMethod == null) {
+            errorPayment.setVisible(true);
+            paymentMethodBox.setStyle("-fx-border-color: red;");
+            isValid = false;
+        } else {
+            errorPayment.setVisible(false);
+            paymentMethodBox.setStyle("-fx-border-color: green;");
+        }
+        if (selectedDate == null || selectedDate.isBefore(LocalDate.now())) {
+            errorDate.setVisible(true);
+            eventDatePicker.setStyle("-fx-border-color: red;");
+            isValid = false;
+        } else {
+            errorDate.setVisible(false);
+            eventDatePicker.setStyle("-fx-border-color: green;");
+        }
+        if (selectedHour < 0 || selectedMinute < 0) {
+            errorTime.setVisible(true);
+            isValid = false;
+        } else {
+            errorTime.setVisible(false);
+        }
+        if (!isValid) {
+            return;
+        }
 
         if (selectedDate == null || address.isEmpty() || paymentMethod == null) {
             showAlert("Erreur", "Veuillez remplir tous les champs !");
@@ -161,6 +206,18 @@ public class OrderFormController {
         });
     }
 
+//controle de saisie :
+@FXML
+private void validateAddressInput() {
+    String address = addressField.getText().trim();
+    if (address.length() < 5) {
+        errorAddress.setVisible(true);
+        addressField.setStyle("-fx-border-color: red;");
+    } else {
+        errorAddress.setVisible(false);
+        addressField.setStyle("-fx-border-color: green;");
+    }
+}
 
 
 

@@ -22,9 +22,13 @@
         <Label text="Date et Heure de l'événement :" />
         <HBox spacing="10">
             <DatePicker fx:id="eventDatePicker" promptText="Sélectionner une date" />
+            <Label fx:id="errorDate" text="Date invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+
             <Button fx:id="timePickerButton" text="Sélectionner l'heure" onAction="#openTimePicker"/>
+            <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
+            <Label fx:id="errorTime" text="Heure invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+
         </HBox>
-        <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
 
 
 
@@ -33,6 +37,7 @@
 
         <Label text="Adresse complète :" />
         <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
+        <Label fx:id="errorAddress" text="Adresse invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
 
         <Label text="Méthode de paiement :" />
         <ComboBox fx:id="paymentMethodBox">
@@ -44,6 +49,7 @@
                 </FXCollections>
             </items>
         </ComboBox>
+        <Label fx:id="errorPayment" text="Sélectionnez un mode de paiement !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
 
         <Button text="Valider la commande" fx:id="validateOrderButton" onAction="#validateOrder"
                 style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
