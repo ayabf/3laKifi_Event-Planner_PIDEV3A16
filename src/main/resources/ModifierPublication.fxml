@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ModifierPublicationController" style="-fx-background-color: #BCA2BF;">
+    <children>
+        <!-- 🔹 Titre -->
+        <Label layoutX="20" layoutY="20" text="✏ Modifier Publication" style="-fx-font-size: 20px; -fx-text-fill: white;" />
+
+        <!-- 🔹 Champs de modification -->
+        <Label layoutX="20" layoutY="70" text="Titre :" style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+        <TextField fx:id="titlePublicationTextfield" layoutX="120" layoutY="65" prefWidth="350" style="-fx-background-color: #e0d5e6;" />
+
+        <Label layoutX="20" layoutY="120" text="Description :" style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+        <TextField fx:id="descriptionPublicationTextfield" layoutX="120" layoutY="115" prefWidth="350" style="-fx-background-color: #e0d5e6;" />
+
+        <Label layoutX="20" layoutY="170" text="Image URL :" style="-fx-font-size: 14px; -fx-text-fill: white;"/>
+        <TextField fx:id="UrltitlePublicationTextfield" layoutX="120" layoutY="165" prefWidth="350" style="-fx-background-color: #e0d5e6;" />
+
+        <!-- 🔹 Boutons -->
+        <Button fx:id="btnUpdate" text="✅ Mettre à jour" layoutX="120" layoutY="230" prefWidth="120"
+                style="-fx-background-color: #533c56; -fx-text-fill: white;" onAction="#updatePublication"/>
+
+        <Button fx:id="btnCancel" text="❌ Annuler" layoutX="260" layoutY="230" prefWidth="120"
+                style="-fx-background-color: #533c56; -fx-text-fill: white;" onAction="#fermerFenetre"/>
+    </children>
+</AnchorPane>

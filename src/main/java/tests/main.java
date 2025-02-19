@@ -14,6 +14,11 @@ import java.util.List;
 
 public class main {
     public static void main(String[] args) throws SQLException {
+
+
+
+
+
         //test Crud Publication
         /*ServicePublications ps = new ServicePublications();
         Publications publication = new Publications("souhaib", "Description Test", "image.jpg", 1);

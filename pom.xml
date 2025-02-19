@@ -43,7 +43,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>
-                        tests.main
+                        tests.mainFx
                     </mainClass>
                 </configuration>
             </plugin>

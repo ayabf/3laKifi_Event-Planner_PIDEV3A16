@@ -14,18 +14,23 @@ public class ServicePublications implements IService<Publications> {
 
     @Override
     public void ajouter(Publications publications) throws SQLException {
-        try {
-            String req = "INSERT INTO publications (title, description, image_url, id_user) " +
-                    "VALUES ('" + publications.getTitle() + "', '" +
-                    publications.getDescription() + "', '" +
-                    publications.getImage_url() + "', " +
-                    publications.getId_user() + ")";
+        cnx = DataSource.getInstance().getConnection(); // ✅ Récupérer la connexion active
+        if (cnx == null) {
+            System.err.println("❌ Impossible d'ajouter la publication : connexion à la base de données non disponible.");
+            return;
+        }
 
-            Statement stm = cnx.createStatement();
-            stm.executeUpdate(req);
-            System.out.println("Publication ajoutée avec succès !");
+        String req = "INSERT INTO publications (title, description, image_url, id_user) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setString(1, publications.getTitle());
+            ps.setString(2, publications.getDescription());
+            ps.setString(3, publications.getImage_url());
+            ps.setInt(4, publications.getId_user());
+            ps.executeUpdate();
+            System.out.println("✅ Publication ajoutée avec succès !");
         } catch (SQLException ex) {
-            System.out.println("Erreur lors de l'ajout de la publication : " + ex.getMessage());
+            System.err.println("❌ Erreur lors de l'ajout de la publication : " + ex.getMessage());
         }
     }
 
@@ -123,4 +128,44 @@ public class ServicePublications implements IService<Publications> {
         }
         return publications;
     }
+    public boolean utilisateurExiste(String username) {
+        cnx = DataSource.getInstance().getConnection(); // Vérifier la connexion
+        if (cnx == null) {
+            System.err.println("Connexion à la base de données non disponible.");
+            return false;
+        }
+
+        String req = "SELECT COUNT(*) FROM user WHERE username = ?";
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException ex) {
+            System.err.println(" Erreur lors de la vérification du username : " + ex.getMessage());
+        }
+        return false;
+    }
+    public String getUsernameById(int userId) throws SQLException {
+        cnx = DataSource.getInstance().getConnection(); // Vérification de la connexion
+        if (cnx == null) {
+            System.err.println("Connexion à la base de données non disponible.");
+            return "Utilisateur inconnu";
+        }
+
+        String req = "SELECT username FROM user WHERE id_user = ?";
+        try (PreparedStatement ps = cnx.prepareStatement(req)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Erreur lors de la récupération du username : " + ex.getMessage());
+        }
+        return "Utilisateur inconnu";
+    }
+
 }
+
