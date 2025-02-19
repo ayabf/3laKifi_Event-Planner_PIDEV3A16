@@ -125,7 +125,6 @@ public class Order {
         this.orderedAt = orderedAt;
     }
 
-    // ✅ Méthode `toString()` pour afficher les informations de la commande
     @Override
     public String toString() {
         return "Order{" +

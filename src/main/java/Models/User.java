@@ -13,7 +13,6 @@ public class User {
     private String address;
     private String profileImagePath;
 
-    // Constructeur
     public User(int id_user, String numTel, boolean blocked, String blockEndDate, String lastName,
                 String firstName, String username, String password, String role,
                 String address, String profileImagePath) {
@@ -30,7 +29,6 @@ public class User {
         this.profileImagePath = profileImagePath;
     }
 
-    // Getters et Setters
     public int getUserId() { return id_user; }
     public void setUserId(int userId) { this.id_user = userId; }
 

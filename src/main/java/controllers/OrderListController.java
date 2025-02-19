@@ -58,8 +58,6 @@ public class OrderListController {
         }
     }
 
-
-
     private User currentUser;
     @FXML
     public void initialize() {

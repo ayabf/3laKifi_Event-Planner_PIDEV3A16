@@ -10,7 +10,7 @@
 
                         xmlns:fx="http://javafx.com/fxml"
                         fx:controller="controllers.OrderEditController"
-                        prefWidth="600" prefHeight="700">
+                        prefWidth="700" prefHeight="800">
 
     <VBox spacing="10" layoutX="50" layoutY="20">
         <Label text="Modifier la Commande" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>

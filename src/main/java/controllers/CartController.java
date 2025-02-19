@@ -105,18 +105,9 @@ public class CartController {
         }
     }
 
-
-
-
-
-
-
     private double calculateTotalPrice() {
         return cartItems.stream().mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
     }
-
-
-
 
     private void openOrderForm(int orderId, double totalPrice) {
         try {
@@ -149,22 +140,24 @@ public class CartController {
                 setGraphic(null);
             } else {
                 HBox cellContainer = new HBox(15);
-                cellContainer.setStyle("-fx-background-color: white; -fx-padding: 10; -fx-border-radius: 10;");
+                cellContainer.getStyleClass().add("cart-item");
 
                 // ✅ Chargement de l'image du produit
                 ImageView productImage = new ImageView();
-                productImage.setFitWidth(50);
-                productImage.setFitHeight(50);
+                productImage.setFitWidth(60);
+                productImage.setFitHeight(60);
                 productImage.setPreserveRatio(true);
+                productImage.setStyle("-fx-border-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);");
+
 
                 try {
                     if (item.getProduct().getImageUrl() != null && !item.getProduct().getImageUrl().isEmpty()) {
                         productImage.setImage(new Image(item.getProduct().getImageUrl()));
                     } else {
-                        productImage.setImage(new Image("file:images/default.png")); // Image par défaut
+                        productImage.setImage(new Image("images/default.png")); // Image par défaut
                     }
                 } catch (Exception e) {
-                    productImage.setImage(new Image("file:images/default.png"));
+                    productImage.setImage(new Image("images/default.png"));
                 }
 
                 Label productName = new Label(item.getProduct().getName());
@@ -206,13 +199,16 @@ public class CartController {
                 });
 
 
-                // ✅ Bouton de suppression avec confirmation
-                Button removeButton = new Button("✖");
-                removeButton.setStyle("-fx-background-color: transparent; -fx-font-size: 16px;");
-                removeButton.setOnAction(event -> showDeleteConfirmation(item));
+                // ✅ Suppression de l'article avec une icône
+                ImageView deleteIcon = new ImageView(new Image("images/delete-icon.png"));
+                deleteIcon.setFitWidth(24);
+                deleteIcon.setFitHeight(24);
+                deleteIcon.setPreserveRatio(true);
+                deleteIcon.setStyle("-fx-cursor: hand;");
+                deleteIcon.setOnMouseClicked(event -> showDeleteConfirmation(item));
 
                 HBox quantityBox = new HBox(5, minusButton, quantityLabel, plusButton);
-                cellContainer.getChildren().addAll(productImage, productName, quantityBox, productPrice, removeButton);
+                cellContainer.getChildren().addAll(productImage, productName, quantityBox, productPrice,deleteIcon);
                 setGraphic(cellContainer);
             }
         }
@@ -317,5 +313,4 @@ public class CartController {
         }
         return 0.0; // Valeur par défaut en cas d'erreur
     }
-
 }

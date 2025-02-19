@@ -17,8 +17,9 @@
 /* 🏠 BACKGROUND PRINCIPAL */
 .root {
     -fx-font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    -fx-background-color: -fx-background;
+    -fx-background-color: #FFFFFF;
     -fx-font-size: 14px;
+
 }
 
 /* 📌 TITRES & TEXTES */
@@ -329,9 +330,9 @@
 
 /* ✅ Style du titre */
 .label-title {
-    -fx-font-size: 20px;
+    -fx-font-size: 26px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333;
+    -fx-text-fill: #533C56;
 }
 
 /* ✅ Barre de recherche */
@@ -427,4 +428,55 @@
 /* ✅ Bouton Annuler au survol */
 .button-danger:hover {
     -fx-background-color: #C02929;
+}
+.cart-container {
+    -fx-background-color: #CEBEC9; /* Thistle */
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+}
+/* ✅ Produits */
+.cart-item {
+    -fx-background-color: #BCA2BF; /* Lilac */
+    -fx-padding: 10px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #93707E; /* Mountbatten Pink */
+    -fx-border-width: 1px;
+}
+
+/* ✅ Texte des produits */
+.product-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56; /* English Violet */
+}
+
+/* ✅ Boutons */
+.cart-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 15px;
+}
+.cart-button:hover {
+    -fx-background-color: #93707E; /* Mountbatten Pink */
+}
+
+/* ✅ Bouton de validation */
+.validate-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 8px;
+}
+.validate-button:hover {
+    -fx-background-color: #93707E; /* Mountbatten Pink */
+}
+
+/* ✅ Sous-total */
+.subtotal-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
 }

@@ -8,22 +8,21 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.OrderListController"
             stylesheets="@css/styles.css"
-            prefWidth="600" prefHeight="700">
+            prefWidth="1000" prefHeight="900">
 
     <VBox spacing="15" layoutX="20" layoutY="20">
-        <!-- ✅ Titre -->
+
         <Label text="Mes Commandes" styleClass="label-title" />
 
-        <!-- ✅ Barre de recherche -->
+
         <TextField fx:id="searchField" promptText="Rechercher une commande..."
                    onKeyReleased="#searchOrders"
                    styleClass="text-field-search"/>
 
-        <!-- ✅ Liste des commandes sous forme de cartes -->
         <ScrollPane fitToWidth="true" prefHeight="500" styleClass="scroll-pane">
             <content>
                 <VBox fx:id="orderListContainer" styleClass="order-list-container">
-                    <!-- Les commandes seront ajoutées dynamiquement ici -->
+
                 </VBox>
             </content>
         </ScrollPane>

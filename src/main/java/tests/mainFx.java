@@ -28,7 +28,6 @@ public class mainFx extends Application {
         }
 */
         try {
-            // Vérifie le bon chemin du fichier FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/cart.fxml"));
             Parent root = loader.load();
             root.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
@@ -36,7 +35,7 @@ public class mainFx extends Application {
             Scene scene = new Scene(root, 600, 600); // 🌟 Taille plus grande
             stage.setTitle("Shopping Cart");
             stage.setScene(scene);
-            stage.setMaximized(false); // 🌟 Plein écran
+            stage.setMaximized(false);
             stage.show();
 
 

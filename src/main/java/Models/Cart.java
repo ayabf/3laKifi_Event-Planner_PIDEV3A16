@@ -11,6 +11,7 @@ public class Cart {
     private double totalPrice;
     private List<CartItem> items;
 
+
     public Cart(int cartId, User user, LocalDateTime createdAt, double totalPrice) {
         this.cartId = cartId;
         this.user = user;

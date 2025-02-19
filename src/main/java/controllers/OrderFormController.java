@@ -141,10 +141,6 @@ public class OrderFormController {
         }
     }
 
-
-
-
-
     private void openOrderListPage() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderList.fxml"));
@@ -159,7 +155,6 @@ public class OrderFormController {
         }
     }
 
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -167,7 +162,6 @@ public class OrderFormController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 
     @FXML
     private void openTimePicker() {

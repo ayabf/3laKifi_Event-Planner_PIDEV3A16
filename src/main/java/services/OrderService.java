@@ -8,7 +8,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// ✅ Implémente l'interface IService<Order>
 public class OrderService implements IService<Order> {
 
     private final Connection connection;
@@ -60,10 +59,6 @@ public class OrderService implements IService<Order> {
             }
         }
     }
-
-
-
-
 
     @Override
     public void supprimer(int id) throws SQLException {

@@ -17,7 +17,6 @@ public class CartService implements IService<Cart> {
         connection = DataSource.getInstance().getConnection();
     }
 
-    // 1️⃣ Ajouter un panier
     @Override
     public void ajouter(Cart cart) throws SQLException {
         String query = "INSERT INTO cart (user_id, created_at, total_price) VALUES (?, NOW(), ?)";
@@ -34,7 +33,6 @@ public class CartService implements IService<Cart> {
         }
     }
 
-    // 2️⃣ Modifier un panier
     @Override
     public void modifier(Cart cart) throws SQLException {
         String query = "UPDATE cart SET total_price = ? WHERE cart_id = ?";
@@ -46,7 +44,6 @@ public class CartService implements IService<Cart> {
         }
     }
 
-    // 3️⃣ Supprimer un panier
     @Override
     public void supprimer(int cartId) throws SQLException {
         String query = "DELETE FROM cart WHERE cart_id = ?";
@@ -57,7 +54,6 @@ public class CartService implements IService<Cart> {
         }
     }
 
-    // 4️⃣ Récupérer un panier spécifique (`getOne(T t)`)
     @Override
     public Cart getOne(Cart cart) throws SQLException {
         String query = "SELECT c.*, u.username, u.email FROM cart c " +

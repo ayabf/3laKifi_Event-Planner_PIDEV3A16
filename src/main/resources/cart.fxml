@@ -7,29 +7,25 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.CartController"
-            prefHeight="600" prefWidth="700"
+            prefHeight="900" prefWidth="800"
             stylesheets="@css/styles.css"
-            style="-fx-background-color: #F4F4F4;">
+            style="-fx-background-color: #F4F4F4; -fx-padding: 20px;">
 
-    <!-- Titre -->
-    <Label text="Shopping Cart"
+    <Label text="🛒 My Cart"
            layoutX="20" layoutY="10"
            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
 
-    <!-- ListView pour afficher les produits dynamiquement -->
     <ListView fx:id="cartListView"
               layoutX="20" layoutY="50" prefWidth="560" prefHeight="350"
-              style="-fx-background-color: white; -fx-border-radius: 10;"/>
+              styleClass="label-title"/>
 
-    <!-- Sous-total -->
-    <HBox spacing="10" layoutX="400" layoutY="420">
-        <Label text="Subtotal" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-        <Label fx:id="subtotalLabel"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" layoutX="400" layoutY="480">
+        <Label text="Subtotal" styleClass="subtotal-label"/>
+        <Label fx:id="subtotalLabel" styleClass="subtotal-label"/>
     </HBox>
 
-    <!-- Bouton de paiement -->
     <Button text="validate cart" fx:id="validateCartButton" onAction="#validateCart"
-            layoutX="400" layoutY="460"
-            style="-fx-background-color: #009688; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 10;"/>
+            layoutX="400" layoutY="520"
+            styleClass="validate-button"/>
 </AnchorPane>
