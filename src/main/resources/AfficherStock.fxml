@@ -20,6 +20,11 @@
 
         <Button text="Rechercher" onAction="#rechercherStocks"
                 style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px; -fx-border-radius: 5px;"/>
+        <Button fx:id="btnmodifier" onAction="#modifierStock" text="Modifier"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+        <Button fx:id="btnSupprimer" onAction="#supprimerStock" text="Supprimer"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+        <Button fx:id="btnAjouter" onAction="#ajouterStock" text="Ajouter"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+
+
     </HBox>
 
     <!-- Liste des Stocks -->

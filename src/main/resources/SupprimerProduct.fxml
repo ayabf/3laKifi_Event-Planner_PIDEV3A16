@@ -25,8 +25,7 @@
         <Button text="🗑 Supprimer" onAction="#supprimerProduct"
                 style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8; -fx-border-radius: 5px;" />
 
-        <Button text="❌ Annuler" onAction="#annulerSuppression"
-                style="-fx-background-color: #bca2bf; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8; -fx-border-radius: 5px;" />
+        <Button fx:id="btnRetour" onAction="#retour" text="Retour"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
     </HBox>
 
 </VBox>

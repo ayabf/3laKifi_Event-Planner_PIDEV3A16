@@ -34,6 +34,7 @@
     <HBox spacing="10">
         <Button fx:id="btnAddStock" text="✅ Ajouter Stock" onAction="#ajouterStock"
                 style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px; -fx-border-radius: 5px;"/>
+        <Button fx:id="btnAfficher" onAction="#afficherstock" text="afficher"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
 
 
     </HBox>

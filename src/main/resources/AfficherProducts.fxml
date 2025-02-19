@@ -19,6 +19,10 @@
             <ComboBox fx:id="categoryFilter" promptText="Filtrer par catégorie" onAction="#filterByCategory">
             </ComboBox>
             <Button text="🛒 Mon Panier"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+            <Button fx:id="btnModifier" onAction="#modifierProduct" text="Modifier"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+            <Button fx:id="btnSupprimer" onAction="#supprimerProduct" text="Supprimer"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+            <Button fx:id="btnAjouter" onAction="#ajouterProduct" text="Ajouter"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+
         </HBox>
 
         <!-- Product List Section -->

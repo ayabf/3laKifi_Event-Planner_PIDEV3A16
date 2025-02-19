@@ -2,11 +2,15 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import models.Stock;
 import services.StockService;
+
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class SupprimerStockController {
@@ -39,6 +43,16 @@ public class SupprimerStockController {
             showAlert(Alert.AlertType.ERROR, "Error", "Stock ID must be a number.");
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Error deleting stock: " + e.getMessage());
+        }
+    }
+    @FXML
+    void retour(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherStock.fxml"));
+            Parent root = loader.load();
+            txtStockId.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
         }
     }
 

@@ -1,9 +1,11 @@
 package controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +30,7 @@ public class AfficherProductsController {
 
     @FXML
     private ComboBox<String> categoryFilter;
+
 
     private final ProductService productService = new ProductService();
 
@@ -137,5 +140,35 @@ public class AfficherProductsController {
 
         productBox.getChildren().addAll(imageView, nameLabel, priceLabel);
         return productBox;
+    }
+    @FXML
+    void modifierProduct(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ModifierProduct.fxml"));
+            Parent root = loader.load();
+            categoryFilter.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
+        }
+    }
+    @FXML
+    void supprimerProduct(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SupprimerProduct.fxml"));
+            Parent root = loader.load();
+            categoryFilter.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
+        }
+    }
+    @FXML
+    void ajouterProduct(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterProduct.fxml"));
+            Parent root = loader.load();
+            categoryFilter.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
+        }
     }
 }

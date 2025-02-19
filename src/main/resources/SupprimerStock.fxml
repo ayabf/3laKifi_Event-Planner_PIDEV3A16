@@ -24,6 +24,7 @@
     <HBox spacing="10">
         <Button fx:id="btnDeleteStock" text="❌ Supprimer Stock" onAction="#deleteStock"
                 style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px; -fx-border-radius: 5px;"/>
+        <Button fx:id="retour" onAction="#retour" text="Retour"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
 
 
     </HBox>

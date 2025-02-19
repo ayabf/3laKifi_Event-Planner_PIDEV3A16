@@ -2,12 +2,15 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import models.Product;
 import services.ProductService;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class ModifierProductController {
@@ -145,6 +148,16 @@ public class ModifierProductController {
         }
 
         return true;
+    }
+    @FXML
+    void retour(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProducts.fxml"));
+            Parent root = loader.load();
+            txtReference.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
+        }
     }
 
     /**

@@ -2,10 +2,14 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import models.Stock;
 import services.StockService;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -57,6 +61,16 @@ public class ModifierStockController {
         txtMinimumQuantity.setText(String.valueOf(stock.getMinimumQuantity()));
         txtLastUpdate.setText(String.valueOf(stock.getLastUpdate()));
         txtUserId.setText(String.valueOf(stock.getIdUser()));
+    }
+    @FXML
+    void retour(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherStock.fxml"));
+            Parent root = loader.load();
+            txtUserId.getScene().setRoot(root);
+        } catch (IOException e) {
+            System.out.println("❌ Error loading AfficherProducts.fxml: " + e.getMessage());
+        }
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

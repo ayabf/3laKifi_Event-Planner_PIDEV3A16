@@ -48,8 +48,7 @@
         <Button text="✏️ Modifier" onAction="#modifierProduct"
                 style="-fx-background-color: #99707E; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
 
-        <Button text="❌ Annuler" onAction="#annulerModification"
-                style="-fx-background-color: #bca2bf; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+        <Button fx:id="btnRetour" onAction="#retour" text="Retour"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
     </HBox>
 
 </VBox>
