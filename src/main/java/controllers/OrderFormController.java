@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import services.OrderService;
 import javafx.scene.control.Alert;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -213,6 +214,26 @@ private void validateAddressInput() {
     }
 }
 
+    @FXML
+    private void handleClose() {
+        Stage stage = (Stage) validateOrderButton.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void handleReload() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderForm.fxml"));
+            Parent root = loader.load();
+            ((OrderFormController) loader.getController()).setCartDetails(cartId, userId, totalPrice);
+
+            Stage stage = (Stage) validateOrderButton.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

@@ -157,7 +157,7 @@ public class OrderListController {
         editButton.setOnAction(event -> openEditOrderPage(order));
 
         Button cancelButton = new Button("Cancel");
-        cancelButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+        cancelButton.setStyle("-fx-background-color: #93707E; -fx-text-fill: white;");
         cancelButton.setOnAction(event -> cancelOrder(order));
 
         if (currentUser != null && currentUser.getRole().equalsIgnoreCase("admin")) {
@@ -282,5 +282,15 @@ public class OrderListController {
         System.out.println("⚠ Commande non trouvée dans l'affichage !");
     }
 
+    @FXML
+    private void reloadOrders() {
+        loadOrders();  // Recharge la liste des commandes
+    }
+
+    @FXML
+    private void closeWindow() {
+        Stage stage = (Stage) orderListContainer.getScene().getWindow();
+        stage.close(); // Ferme la fenêtre
+    }
 
 }

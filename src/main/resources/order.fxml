@@ -12,10 +12,10 @@
 
     <VBox spacing="15" layoutX="20" layoutY="20">
 
-        <Label text="Mes Commandes" styleClass="label-title" />
+        <Label text="My Commandes" styleClass="label-title" />
 
 
-        <TextField fx:id="searchField" promptText="Rechercher une commande..."
+        <TextField fx:id="searchField" promptText="Search Commande..."
                    onKeyReleased="#searchOrders"
                    styleClass="text-field-search"/>
 
