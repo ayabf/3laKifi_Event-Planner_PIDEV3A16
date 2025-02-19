@@ -3,6 +3,7 @@ package controllers;
 import Models.CartItem;
 import Models.Order;
 import Models.Product;
+import Models.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,7 +20,10 @@ import services.OrderService;
 import utils.DataSource;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -35,6 +39,10 @@ public class CartController {
     @FXML
     public void initialize() {
         subtotalLabel.setText("$0.00");
+
+        //User adminUser = new User(99, "123456789", false, null, "Test", "Admin", "admin_test", "admin123", "admin", "Rue des Admins, Paris", null);
+       // currentUserId = adminUser.getUserId();
+
         loadCartItems();
         cartListView.setItems(cartItems);
         cartListView.setCellFactory(param -> new CartItemCell()); // Appliquer la cellule personnalisée
@@ -75,7 +83,7 @@ public class CartController {
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, 1); // Remplace par le bon `cart_id`
+            stmt.setInt(1, 1); // Remplace par le bon cart_id
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -271,7 +279,7 @@ public class CartController {
 
             String query = "DELETE FROM cart_product WHERE cart_id = ? AND product_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setInt(1, 1); // Remplace par le bon `cart_id`
+                stmt.setInt(1, 1); // Remplace par le bon cart_id
                 stmt.setInt(2, itemToRemove.getProduct().getProductId());
 
                 int rowsDeleted = stmt.executeUpdate();
@@ -330,72 +338,4 @@ public class CartController {
         }
         return 0.0; // Valeur par défaut en cas d'erreur
     }
-    private int getOrCreateCart(int userId) throws SQLException {
-        String query = "SELECT cart_id FROM cart WHERE user_id = ?";
-
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("cart_id"); // Retourne l'ID du panier existant
-            }
-        }
-
-        // Si aucun panier n'existe, en créer un
-        String insertQuery = "INSERT INTO cart (user_id, created_at, total_price) VALUES (?, NOW(), 0)";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1); // Retourne l'ID du nouveau panier
-            }
-        }
-        throw new SQLException("Impossible de créer un panier !");
-    }
-    private boolean isProductInCart(int cartId, int productId) throws SQLException {
-        String query = "SELECT * FROM cart_product WHERE cart_id = ? AND product_id = ?";
-
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, cartId);
-            stmt.setInt(2, productId);
-            ResultSet rs = stmt.executeQuery();
-
-            return rs.next(); // Si un résultat est trouvé, le produit est déjà dans le panier
-        }
-    }
-    private void insertNewCartItem(int cartId, Product product) throws SQLException {
-        String query = "INSERT INTO cart_product (cart_id, product_id, quantity, total_price) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, cartId);
-            stmt.setInt(2, product.getProductId());
-            stmt.setInt(3, 1); // Par défaut, quantité = 1
-            stmt.setDouble(4, product.getPrice());
-
-            stmt.executeUpdate();
-            System.out.println("✅ Produit ajouté au panier : " + product.getName());
-        }
-    }
-    private void updateProductQuantity(int cartId, int productId, int quantityToAdd) throws SQLException {
-        String query = "UPDATE cart_product SET quantity = quantity + ?, total_price = total_price + ? WHERE cart_id = ? AND product_id = ?";
-
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, quantityToAdd);
-            stmt.setDouble(2, getTotalPriceFromCart(productId) * quantityToAdd);
-            stmt.setInt(3, cartId);
-            stmt.setInt(4, productId);
-
-            stmt.executeUpdate();
-            System.out.println("✅ Quantité mise à jour pour le produit " + productId);
-        }
-    }
-
 }

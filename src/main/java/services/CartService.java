@@ -111,7 +111,7 @@ public class CartService implements IService<Cart> {
             return;
         }
 
-        // ✅ Mise à jour de la quantité et du total_price dans `cart_product`
+        // ✅ Mise à jour de la quantité et du total_price dans cart_product
         String query = "UPDATE cart_product SET quantity = ?, total_price = ? WHERE cart_id = ? AND product_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, newQuantity);
