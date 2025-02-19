@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.Insets?>
-
-<?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.OrderFormController"
-            stylesheets="@css/styles.css"
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-            prefWidth="700" prefHeight="800">
+<AnchorPane prefHeight="700" prefWidth="904.0" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrderFormController">
 
-    <VBox spacing="10" layoutX="50" layoutY="30">
-        <Label text="Validation de la commande" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+    <VBox  layoutX="51.0" layoutY="66.0" prefHeight="546.0" prefWidth="819.0" spacing="10">
+        <Label text="Commande Validation"
+               layoutX="200" layoutY="20"
+               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333;"
+               alignment="CENTER"/>
 
         <Label text="Prix Total :" />
-        <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
         <Label text="Date et Heure de l'événement :" />
         <HBox spacing="10">
             <DatePicker fx:id="eventDatePicker" promptText="Sélectionner une date" />
-            <Label fx:id="errorDate" text="Date invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+            <Label fx:id="errorDate" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Date invalide !" visible="false" />
 
-            <Button fx:id="timePickerButton" text="Sélectionner l'heure" onAction="#openTimePicker"/>
+            <Button fx:id="timePickerButton" onAction="#openTimePicker" text="Sélectionner l'heure" />
             <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
-            <Label fx:id="errorTime" text="Heure invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+            <Label fx:id="errorTime" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Heure invalide !" visible="false" />
 
         </HBox>
 
@@ -37,7 +40,7 @@
 
         <Label text="Adresse complète :" />
         <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
-        <Label fx:id="errorAddress" text="Adresse invalide !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+        <Label fx:id="errorAddress" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Adresse invalide !" visible="false" />
 
         <Label text="Méthode de paiement :" />
         <ComboBox fx:id="paymentMethodBox">
@@ -49,10 +52,9 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <Label fx:id="errorPayment" text="Sélectionnez un mode de paiement !" style="-fx-text-fill: red; -fx-font-size: 12px;" visible="false"/>
+        <Label fx:id="errorPayment" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Sélectionnez un mode de paiement !" visible="false" />
 
-        <Button text="Valider la commande" fx:id="validateOrderButton" onAction="#validateOrder"
-                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+        <Button fx:id="validateOrderButton" onAction="#validateOrder" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" text="Valider la commande" />
     </VBox>
 
 </AnchorPane>

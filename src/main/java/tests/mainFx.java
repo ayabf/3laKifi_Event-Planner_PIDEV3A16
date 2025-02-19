@@ -32,7 +32,7 @@ public class mainFx extends Application {
             Parent root = loader.load();
             root.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-            Scene scene = new Scene(root, 600, 600); // 🌟 Taille plus grande
+            Scene scene = new Scene(root, 800, 600); // 🌟 Taille plus grande
             stage.setTitle("Shopping Cart");
             stage.setScene(scene);
             stage.setMaximized(false);

@@ -129,7 +129,6 @@ public class CartController {
         }
     }
 
-    // ✅ Classe interne `CartItemCell` pour afficher l'image et les informations du produit
     private class CartItemCell extends ListCell<CartItem> {
         @Override
         protected void updateItem(CartItem item, boolean empty) {
@@ -214,7 +213,6 @@ public class CartController {
         }
     }
 
-    // ✅ Mise à jour des quantités dans la base de données
     private void updateCartItemInDB(CartItem item) {
         try {
             new CartService().updateCartItem(1, item.getProduct().getProductId(), item.getQuantity(), item.getProduct().getPrice());
@@ -223,7 +221,6 @@ public class CartController {
         }
     }
 
-    // ✅ Confirmation de suppression avant de supprimer un produit
     private void showDeleteConfirmation(CartItem itemToRemove) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation de suppression");
@@ -242,7 +239,6 @@ public class CartController {
         }
     }
 
-    // ✅ Suppression de l'article dans la base de données et mise à jour de l'affichage
     private void deleteCartItemFromDB(CartItem itemToRemove) {
         try {
             Connection conn = DataSource.getInstance().getConnection();
