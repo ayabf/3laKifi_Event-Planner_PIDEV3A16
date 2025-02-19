@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.EventGridController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Events" styleClass="header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="Search events..." prefWidth="250"/>
+        <Button onAction="#handleRefresh" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Refresh" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Events Grid -->
+    <ScrollPane fitToWidth="true" styleClass="edge-to-edge" VBox.vgrow="ALWAYS">
+        <FlowPane fx:id="eventContainer" hgap="20" vgap="20">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </FlowPane>
+    </ScrollPane>
+
+    <!-- No Events Message -->
+    <StackPane fx:id="noEventsPane" visible="false" managed="false">
+        <VBox alignment="CENTER" spacing="15">
+            <Label text="No events available" styleClass="subheader"/>
+            <Button text="Refresh" onAction="#handleRefresh" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+                </graphic>
+            </Button>
+        </VBox>
+    </StackPane>
+</VBox> 

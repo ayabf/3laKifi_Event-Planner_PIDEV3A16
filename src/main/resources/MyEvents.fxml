@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.MyEventsController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="My Events" styleClass="header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="Search my events..." prefWidth="250"/>
+        <Button onAction="#handleCreateEvent" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Create New Event" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
+        <Button onAction="#handleRefresh" styleClass="action-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Refresh" styleClass="custom-tooltip"/>
+            </tooltip>
+        </Button>
+    </HBox>
+
+    <!-- Events Table -->
+    <TableView fx:id="eventsTable" VBox.vgrow="ALWAYS" styleClass="table-view">
+        <columns>
+            <TableColumn fx:id="eventNameColumn" text="Event Name" prefWidth="200"/>
+            <TableColumn fx:id="eventDescriptionColumn" text="Description" prefWidth="250"/>
+            <TableColumn fx:id="eventStartDateColumn" text="Start Date" prefWidth="150"/>
+            <TableColumn fx:id="eventEndDateColumn" text="End Date" prefWidth="150"/>
+            <TableColumn fx:id="eventCityColumn" text="City" prefWidth="100"/>
+            <TableColumn fx:id="eventCapacityColumn" text="Capacity" prefWidth="100"/>
+            <TableColumn fx:id="eventStatusColumn" text="Status" prefWidth="100"/>
+            <TableColumn fx:id="eventActionsColumn" text="Actions" prefWidth="150"/>
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+        </columnResizePolicy>
+    </TableView>
+
+    <!-- No Events Message -->
+    <StackPane fx:id="noEventsPane" visible="false" managed="false">
+        <VBox alignment="CENTER" spacing="15">
+            <Label text="You haven't created any events yet" styleClass="subheader"/>
+            <Button text="Create Your First Event" onAction="#handleCreateEvent" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+                </graphic>
+            </Button>
+        </VBox>
+    </StackPane>
+</VBox> 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.EventManagementController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Gestion des Événements" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #533C56;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="searchField" promptText="Rechercher..." prefWidth="200"
+                  style="-fx-background-color: white; -fx-border-color: #cebec9; -fx-border-radius: 5;"/>
+        <Button text="Ajouter" onAction="#addEvent"
+                style="-fx-background-color: #533C56; -fx-text-fill: white; -fx-background-radius: 5;"/>
+    </HBox>
+
+    <!-- Events Card View -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background: transparent; -fx-background-color: transparent;">
+        <FlowPane fx:id="eventsContainer" hgap="20" vgap="20" style="-fx-background-color: transparent;">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </FlowPane>
+    </ScrollPane>
+</VBox> 
