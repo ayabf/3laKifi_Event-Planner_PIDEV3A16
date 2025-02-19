@@ -215,8 +215,14 @@ public class  UserService implements InterfaceCRUD<User> {
                 utilisateur.setUsername(resultSet.getString("username"));
                 utilisateur.setPassword(resultSet.getString("password"));
 
-                // Utilisation d'une méthode pour convertir la chaîne en enum
-                utilisateur.setRole(Role.valueOf(resultSet.getString("role")));
+                String roleStr = resultSet.getString("role").toUpperCase();
+                if (roleStr.equals("CLIENT") || roleStr.equals("ADMIN") || roleStr.equals("FOURNISSEUR")) {
+                    utilisateur.setRole(Role.valueOf(roleStr));
+                } else {
+                    System.err.println("⚠️ Erreur : Valeur de rôle inconnue '" + roleStr + "'");
+                    utilisateur.setRole(Role.CLIENT); // Valeur par défaut
+                }
+
 
 
                 utilisateur.setAddress(resultSet.getString("address"));

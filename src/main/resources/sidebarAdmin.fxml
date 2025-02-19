@@ -92,7 +92,14 @@
                                             </graphic>
                                         </Button>
 
-                                        <Button layoutX="10.0" layoutY="240.0" mnemonicParsing="false" onAction="#diectutuilisateur" prefHeight="30.0" prefWidth="180.0" text="utilisateurs">
+
+
+
+
+
+
+
+                                        <Button layoutX="10.0" layoutY="240.0" mnemonicParsing="false" onAction="#diectoevent" prefHeight="30.0" prefWidth="180.0" text="events">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -101,7 +108,20 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+
+
+
+
                                         <Hyperlink layoutX="45.0" layoutY="386.0" onAction="#directToLogin" text="Se Déconnécter" />
+                              <Button layoutX="11.0" layoutY="300.0" mnemonicParsing="false" onAction="#diectutuilisateur" prefHeight="30.0" prefWidth="180.0" text="utilisateurs">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/UserIcon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                     </children>
                                 </AnchorPane>
                             </children>
