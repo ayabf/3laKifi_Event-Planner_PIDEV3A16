@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import services.AuthService;
 import services.OrderService;
 import utils.DataSource;
 
@@ -61,9 +62,13 @@ public class OrderListController {
     private User currentUser;
     @FXML
     public void initialize() {
-        // 👤 Ajouter un utilisateur admin en dur pour tester
-        User adminUser = new User(99, "123456789", false, null, "Test", "Admin", "admin_test", "admin123", "admin", "Rue des Admins, Paris", null);
-        setCurrentUser(adminUser); // ✅ Simule un admin connecté
+        User user = AuthService.getCurrentUser();
+        if (user == null) {
+            System.err.println("⚠ Aucun utilisateur connecté !");
+            return;
+        }
+        setCurrentUser(user);
+        loadOrders();
 
         loadOrders(); // Charger les commandes
     }
@@ -72,6 +77,7 @@ public class OrderListController {
         this.currentUser = user;
         System.out.println("👤 Utilisateur connecté : " + currentUser.getUsername() + " | Rôle : " + currentUser.getRole());
     }
+
 
     public void loadOrders() {  // Modifier "private" en "public"
         try {
