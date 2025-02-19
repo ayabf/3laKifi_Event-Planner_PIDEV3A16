@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AddBookingController">
+    
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets top="15" right="30" bottom="15" left="30"/>
+        </padding>
+        <Label text="Book Event" styleClass="header-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#handleClose" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.5em"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Main Content -->
+    <VBox spacing="20" styleClass="form-container">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <!-- Event Details -->
+        <Label fx:id="eventNameLabel" styleClass="header"/>
+        <Label fx:id="eventCityLabel"/>
+        <Label fx:id="eventDateLabel"/>
+        <Label fx:id="eventCapacityLabel"/>
+
+        <!-- Booking Form -->
+        <VBox spacing="10">
+            <Label text="Select Location" styleClass="field-label"/>
+            <ComboBox fx:id="locationComboBox" maxWidth="Infinity"/>
+        </VBox>
+
+        <GridPane vgap="10" hgap="10">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
+
+            <DatePicker fx:id="startDatePicker" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="startTimeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <DatePicker fx:id="endDatePicker" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="endTimeField" promptText="HH:mm" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+
+        <!-- Buttons -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Cancel" onAction="#handleClose" styleClass="button, secondary"/>
+            <Button text="Book" onAction="#handleAdd" styleClass="button"/>
+        </HBox>
+    </VBox>
+</VBox> 

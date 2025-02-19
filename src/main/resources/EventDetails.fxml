@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="0" styleClass="root" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.EventDetailsController"
+      maxHeight="700" maxWidth="900">
+    
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="20" right="20" top="12" bottom="12"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <FontAwesomeIconView glyphName="CALENDAR" size="1.5em" fill="WHITE"/>
+            <Label fx:id="eventName" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#handleClose" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.2em" fill="WHITE"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Main Content -->
+    <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" VBox.vgrow="ALWAYS">
+        <VBox spacing="20">
+            <!-- Event Details Card -->
+            <VBox styleClass="content-section">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <!-- Event Image and Basic Info -->
+                <HBox spacing="20">
+                    <!-- Left: Image -->
+                    <VBox spacing="10" minWidth="250" maxWidth="250">
+                        <ImageView fx:id="eventImage" fitHeight="180" fitWidth="250" 
+                                  preserveRatio="true" styleClass="event-image"/>
+                        
+                        <HBox fx:id="statusContainer" spacing="8" alignment="CENTER_LEFT" 
+                              styleClass="status-indicator">
+                            <FontAwesomeIconView fx:id="statusIcon" glyphName="CALENDAR" size="1.2em"/>
+                            <Label fx:id="statusText" styleClass="status-text"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Right: Info -->
+                    <VBox spacing="15" HBox.hgrow="ALWAYS">
+                        <!-- Event Details Grid -->
+                        <GridPane vgap="12" hgap="15" styleClass="info-grid">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="80" prefWidth="100"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <!-- Location -->
+                            <HBox spacing="8" alignment="CENTER_LEFT" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                                <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em" styleClass="icon"/>
+                                <Label text="Location:" styleClass="info-label"/>
+                            </HBox>
+                            <Label fx:id="eventCity" styleClass="info-value" 
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <!-- Capacity -->
+                            <HBox spacing="8" alignment="CENTER_LEFT" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                                <FontAwesomeIconView glyphName="USERS" size="1.2em" styleClass="icon"/>
+                                <Label text="Capacity:" styleClass="info-label"/>
+                            </HBox>
+                            <Label fx:id="eventCapacity" styleClass="info-value"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <!-- Dates -->
+                            <HBox spacing="8" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="0">
+                                <FontAwesomeIconView glyphName="CALENDAR" size="1.2em" styleClass="icon"/>
+                                <Label text="Dates:" styleClass="info-label"/>
+                            </HBox>
+                            <VBox spacing="4" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                                <Label fx:id="eventStartDate" styleClass="info-value"/>
+                                <Label fx:id="eventEndDate" styleClass="info-value-secondary"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- Description -->
+                        <VBox spacing="8">
+                            <Label text="Description" styleClass="section-label"/>
+                            <TextArea fx:id="eventDescription" wrapText="true" editable="false"
+                                     styleClass="description-text" prefRowCount="3"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Available Locations Section -->
+            <VBox styleClass="content-section" spacing="15">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <!-- Section Header -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <FontAwesomeIconView glyphName="MAP_MARKER" size="1.5em" styleClass="section-icon"/>
+                    <Label text="Available Venues" styleClass="section-header"/>
+                </HBox>
+                
+                <!-- Locations Count -->
+                <HBox spacing="8" alignment="CENTER_LEFT" styleClass="info-text">
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" size="1.2em"/>
+                    <Label text="Select a venue to book for this event" styleClass="info-label"/>
+                </HBox>
+                
+                <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" maxHeight="250">
+                    <VBox fx:id="locationsContainer" spacing="15"/>
+                </ScrollPane>
+                
+                <Label fx:id="noPlacesHint" text="No available locations for this event" 
+                       styleClass="subheader" visible="false" managed="false"/>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox spacing="12" alignment="CENTER">
+                <padding>
+                    <Insets bottom="20"/>
+                </padding>
+                <Button text="Close" onAction="#handleClose" styleClass="button, secondary">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+                    </graphic>
+                </Button>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+</VBox> 

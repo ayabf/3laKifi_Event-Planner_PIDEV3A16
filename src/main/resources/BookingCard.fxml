@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<AnchorPane styleClass="booking-card" stylesheets="@styles/global.css" 
+            xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+            fx:controller="controllers.BookingCardController">
+    <VBox spacing="15" styleClass="card">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        
+        <!-- Status Badge -->
+        <HBox fx:id="statusContainer" spacing="8" alignment="CENTER_LEFT" styleClass="status-indicator">
+            <FontAwesomeIconView fx:id="statusIcon" size="1.2em"/>
+            <Label fx:id="statusText" styleClass="status-text"/>
+        </HBox>
+        
+        <!-- Event Name -->
+        <Label fx:id="eventName" styleClass="subheader"/>
+        
+        <!-- Booking Details -->
+        <VBox spacing="10">
+            <!-- Location -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em"/>
+                <Label fx:id="locationName" styleClass="info-text"/>
+            </HBox>
+            
+            <!-- Date & Time -->
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="info-item">
+                <FontAwesomeIconView glyphName="CALENDAR" size="1.2em"/>
+                <VBox spacing="5">
+                    <Label fx:id="startDate" styleClass="info-text"/>
+                    <Label fx:id="endDate" styleClass="info-text-secondary"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        
+        <Region VBox.vgrow="ALWAYS"/>
+        
+        <!-- Action Buttons -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button fx:id="viewButton" text="View Details" onAction="#handleView" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="INFO_CIRCLE" size="1.2em"/>
+                </graphic>
+            </Button>
+            <Button fx:id="cancelButton" text="Cancel Booking" onAction="#handleCancel" styleClass="action-button, secondary">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</AnchorPane> 
