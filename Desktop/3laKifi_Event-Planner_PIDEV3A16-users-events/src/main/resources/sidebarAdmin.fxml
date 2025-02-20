@@ -72,7 +72,7 @@
                                         </Label>
 
                                         <Line endX="104.99998474121094" endY="-7.62939453125E-6" layoutX="95.0" layoutY="115.0" startX="-100.0" />
-                                        <Button layoutX="11.0" layoutY="232.0" mnemonicParsing="false" onAction="#reddirectversafficherreunions" prefHeight="30.0" prefWidth="180.0" text=" Réunions">
+                                        <Button layoutX="11.0" layoutY="206.0" mnemonicParsing="false" onAction="#reddirectversafficherreunions" prefHeight="30.0" prefWidth="180.0" text=" Réunions">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -83,7 +83,7 @@
                                         </Button>
 
                                         <Line endX="104.99998474121094" endY="-7.62939453125E-6" layoutX="95.0" layoutY="115.0" startX="-100.0" />
-                                        <Button layoutX="11.0" layoutY="196.0" mnemonicParsing="false" onAction="#redirectversproduct" prefHeight="30.0" prefWidth="180.0" text=" products">
+                                        <Button layoutX="13.0" layoutY="176.0" mnemonicParsing="false" onAction="#redirectversproduct" prefHeight="30.0" prefWidth="180.0" text=" products">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -94,7 +94,7 @@
                                         </Button>
 
                                         <Line endX="104.99998474121094" endY="-7.62939453125E-6" layoutX="95.0" layoutY="115.0" startX="-100.0" />
-                                        <Button layoutX="11.0" layoutY="160.0" mnemonicParsing="false" onAction="#reddirectverstock" prefHeight="30.0" prefWidth="180.0" text="Stock">
+                                        <Button layoutX="8.0" layoutY="146.0" mnemonicParsing="false" onAction="#reddirectverstock" prefHeight="30.0" prefWidth="180.0" text="Stock">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -128,7 +128,7 @@
 
 
 
-                                        <Button layoutX="11.0" layoutY="268.0" mnemonicParsing="false" onAction="#diectoevent" prefHeight="30.0" prefWidth="180.0" text="events">
+                                        <Button layoutX="13.0" layoutY="236.0" mnemonicParsing="false" onAction="#diectoevent" prefHeight="30.0" prefWidth="180.0" text="events">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -142,7 +142,7 @@
 
 
                                         <Hyperlink layoutX="45.0" layoutY="386.0" onAction="#directToLogin" text="Se Déconnécter" />
-                              <Button layoutX="8.0" layoutY="305.0" mnemonicParsing="false" onAction="#diectutuilisateur" prefHeight="30.0" prefWidth="180.0" text="utilisateurs">
+                              <Button layoutX="13.0" layoutY="276.0" mnemonicParsing="false" onAction="#diectutuilisateur" prefHeight="30.0" prefWidth="180.0" text="utilisateurs">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -151,11 +151,29 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="8.0" layoutY="343.0" mnemonicParsing="false" onAction="#reddirectversPanier" prefHeight="30.0" prefWidth="180.0" text="Panier">
+                              <Button layoutX="13.0" layoutY="313.0" mnemonicParsing="false" onAction="#reddirectversPanier" prefHeight="30.0" prefWidth="180.0" text="Panier">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@images/panierr.PNG" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button layoutX="8.0" layoutY="116.0" mnemonicParsing="false" onAction="#reddirectversForum" prefHeight="30.0" prefWidth="180.0" text="Forum">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/stcoki.PNG" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button layoutX="13.0" layoutY="349.0" mnemonicParsing="false" onAction="#reddirectversReport" prefHeight="30.0" prefWidth="180.0" text="Report">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@images/default.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
