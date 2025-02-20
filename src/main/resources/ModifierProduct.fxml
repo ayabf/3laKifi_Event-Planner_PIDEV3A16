@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ModifierProductController"
+      spacing="15" alignment="CENTER"
+      style="-fx-background-color: #f5f5f5; -fx-padding: 20px; -fx-border-radius: 10px; -fx-border-color: #ccc;">
+
+    <!-- Titre -->
+    <Label text="Modifier un Produit"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <!-- Section du formulaire -->
+    <GridPane hgap="10" vgap="10"
+              style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+
+        <Label text="Référence :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtReference" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Entrez la référence du produit" />
+
+        <Label text="Nom :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Nom du produit" />
+
+        <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtDescription" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="Description du produit" />
+
+        <Label text="Prix :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="3" promptText="Ex: 19.99" />
+
+        <Label text="Stock ID :" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtStockId" GridPane.columnIndex="1" GridPane.rowIndex="4" promptText="ID du stock associé"/>
+
+        <Label text="Image URL :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtImageUrl" GridPane.columnIndex="1" GridPane.rowIndex="5" promptText="URL de l'image du produit"/>
+
+        <Label text="Catégorie :" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtCategory" GridPane.columnIndex="1" GridPane.rowIndex="6" promptText="Catégorie du produit"/>
+
+        <Label text="ID Utilisateur :" GridPane.columnIndex="0" GridPane.rowIndex="7" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtUserId" GridPane.columnIndex="1" GridPane.rowIndex="7" promptText="ID de l'utilisateur" />
+    </GridPane>
+
+    <!-- Boutons d'actions -->
+    <HBox spacing="10">
+        <Button text="🔍 Rechercher" onAction="#rechercherProduct"
+                style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+        <Button text="✏️ Modifier" onAction="#modifierProduct"
+                style="-fx-background-color: #99707E; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+        <Button fx:id="btnRetour" onAction="#retour" text="Retour"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+    </HBox>
+
+</VBox>
