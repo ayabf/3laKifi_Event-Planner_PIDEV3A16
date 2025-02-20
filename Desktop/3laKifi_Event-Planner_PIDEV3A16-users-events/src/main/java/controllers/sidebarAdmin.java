@@ -70,6 +70,50 @@ UserService userService=new UserService();
 
         }
 
+
+
+
+
+
+
+        //mahdi
+        @FXML
+        public void reddirectverstock(ActionEvent event) {
+            try {
+                // Charger la page de connexion à partir du fichier FXML
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherStock.fxml"));
+                Parent root = loader.load();
+
+                // Créer une nouvelle scène
+                Scene scene = new Scene(root);
+
+                // Obtenir la scène actuelle à partir de l'événement
+                Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+                // Changer la scène actuelle vers la nouvelle scène de connexion
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Gérer les erreurs de chargement de la page de connexion
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void ProfileClient(MouseEvent mouseEvent) {
         try {
             // Charger la page de connexion à partir du fichier FXML
@@ -200,6 +244,81 @@ UserService userService=new UserService();
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+    @FXML
+    public void redirectversproduct(ActionEvent event) {
+        try {
+            // Charger la page de connexion à partir du fichier FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProducts.fxml"));
+            Parent root = loader.load();
+
+            // Créer une nouvelle scène
+            Scene scene = new Scene(root);
+
+            // Obtenir la scène actuelle à partir de l'événement
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Changer la scène actuelle vers la nouvelle scène de connexion
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les erreurs de chargement de la page de connexion
+        }
+
+    }
+
+
+
+
+
+    @FXML
+    public void reddirectversPanier(ActionEvent event) {
+        try {
+            // Charger la page de connexion à partir du fichier FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/cart.fxml"));
+            Parent root = loader.load();
+
+            // Créer une nouvelle scène
+            Scene scene = new Scene(root);
+
+            // Obtenir la scène actuelle à partir de l'événement
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Changer la scène actuelle vers la nouvelle scène de connexion
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer les erreurs de chargement de la page de connexion
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 

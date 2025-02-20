@@ -1,0 +1,483 @@
+/* 🎨 PALETTE DE COULEURS PRINCIPALES */
+* {
+    -fx-primary: #533C56;   /* Couleur principale */
+    -fx-secondary: #cebec9; /* Couleur secondaire */
+    -fx-background: #f5f6fa; /* Fond général */
+    -fx-gray-light: #f8f8f8;
+    -fx-gray: #666666;
+    -fx-white: #ffffff;
+
+    /* 🎨 Couleurs spécifiques */
+    -fx-success: #4CAF50; /* Vert pour validation */
+    -fx-danger: #E74C3C;  /* Rouge pour suppression */
+    -fx-info: #2196F3;    /* Bleu pour info */
+    -fx-warning: #FF9800; /* Orange pour alertes */
+}
+
+/* 🏠 BACKGROUND PRINCIPAL */
+.root {
+    -fx-font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -fx-background-color: #FFFFFF;
+    -fx-font-size: 14px;
+
+}
+
+/* 📌 TITRES & TEXTES */
+.header {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+    -fx-padding: 15 0 10 0;
+}
+
+.subheader {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+}
+
+.label {
+    -fx-text-fill: -fx-gray;
+    -fx-font-size: 14px;
+}
+
+/* 🔘 BOUTONS */
+.button {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10 18;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    -fx-background-color: derive(-fx-primary, 20%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+.button.success {
+    -fx-background-color: -fx-success;
+}
+
+.button.success:hover {
+    -fx-background-color: derive(-fx-success, -10%);
+}
+
+.button.danger {
+    -fx-background-color: -fx-danger;
+}
+
+.button.danger:hover {
+    -fx-background-color: derive(-fx-danger, -10%);
+}
+
+/* 📝 FORMULAIRES & CHAMPS DE TEXTE */
+.text-field, .combo-box, .date-picker {
+    -fx-background-color: -fx-gray-light;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.text-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-background-color: white;
+    -fx-border-color: -fx-primary;
+    -fx-effect: dropshadow(gaussian, rgba(83,60,86,0.1), 8, 0, 0, 0);
+}
+
+/* 📋 TABLES ET LISTES */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-gray-light;
+    -fx-border-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -fx-gray-light;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: derive(-fx-primary, 90%);
+}
+
+/* 📦 CARTES & CONTENEURS */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 20;
+}
+
+.card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 3);
+    -fx-translate-y: -2px;
+}
+
+/* 🔘 ICONES ET BOUTONS SUPPRESSION */
+.delete-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.delete-button:hover {
+    -fx-background-color: derive(-fx-danger, 20%);
+    -fx-effect: dropshadow(gaussian, rgba(231, 76, 60, 0.5), 10, 0, 0, 2);
+}
+
+.delete-icon {
+    -fx-fill: -fx-danger;
+    -fx-font-size: 16px;
+}
+
+/* 📜 SCROLLBAR */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 8;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -fx-secondary-dark;
+}
+
+/* 🎭 ANIMATIONS */
+.fade-in {
+    -fx-opacity: 0;
+    -fx-animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { -fx-opacity: 0; }
+    to { -fx-opacity: 1; }
+}
+
+.slide-up {
+    -fx-translate-y: 20;
+    -fx-opacity: 0;
+    -fx-animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes slideUp {
+    to {
+        -fx-translate-y: 0;
+        -fx-opacity: 1;
+    }
+}
+
+/* 📦 Style des cartes de commandes */
+.order-card {
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 10px;
+    -fx-border-color: #DDDDDD;
+    -fx-border-width: 1px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 2);
+}
+
+/* Effet au survol */
+.order-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 3);
+    -fx-translate-y: -2px;
+}
+
+/* 📌 Badge de statut */
+.status-badge {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+}
+
+/* 🎨 Couleurs des Statuts */
+.status-pending { -fx-background-color: #FF9800; } /* Orange */
+.status-confirmed { -fx-background-color: #4CAF50; } /* Vert */
+.status-cancelled { -fx-background-color: #E74C3C; } /* Rouge */
+
+/* 📌 Style des boutons */
+.button {
+    -fx-background-color: #533C56;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: derive(#533C56, 20%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+/* 🛑 Bouton Annuler */
+.button.danger {
+    -fx-background-color: #E74C3C;
+}
+
+.button.danger:hover {
+    -fx-background-color: #C0392B;
+}
+/* Conteneur des commandes */
+#orderListContainer {
+    -fx-display: flex;
+    -fx-flex-wrap: wrap;
+    -fx-spacing: 15px;
+    -fx-padding: 20px;
+}
+
+/* Style des cartes de commandes */
+.order-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 3);
+    -fx-padding: 15px;
+    -fx-pref-width: 350px;
+    -fx-min-height: 220px;
+    -fx-border-color: #ddd;
+}
+
+/* Titres */
+.order-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+.order-price {
+    -fx-font-size: 14px;
+    -fx-text-fill: #444444;
+}
+.order-address {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+}
+.order-status {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+/* Statut */
+.order-status {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.status-confirmed {
+    -fx-text-fill: green;
+}
+
+.status-pending {
+    -fx-text-fill: orange;
+}
+
+.status-cancelled {
+    -fx-text-fill: red;
+}
+
+/* Boutons */
+.button {
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 15px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.modify-button {
+    -fx-background-color: #533C56;
+    -fx-text-fill: white;
+}
+
+.modify-button:hover {
+    -fx-background-color: #6A4A70;
+}
+
+.cancel-button {
+    -fx-background-color: #d9534f;
+    -fx-text-fill: white;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #c9302c;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+/* ✅ Style général */
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-font-family: "Arial";
+}
+
+/* ✅ Style du titre */
+.label-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+}
+
+/* ✅ Barre de recherche */
+.text-field-search {
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #ccc;
+    -fx-background-color: #ffffff;
+}
+
+/* ✅ Style du ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+/* ✅ Conteneur des commandes */
+/* ✅ Conteneur principal */
+.order-list-container {
+    -fx-spacing: 20px; /* Espacement entre les cartes */
+    -fx-padding: 20px; /* Ajoute un padding global */
+    -fx-alignment: center; /* Centrer les commandes */
+}
+
+/* ✅ Carte d'une commande */
+.order-card {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-border-radius: 12px;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 3);
+    -fx-pref-width: 280px; /* Assure une largeur constante */
+    -fx-alignment: center; /* Centre le contenu */
+}
+
+/* ✅ Texte de base */
+.order-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555;
+}
+
+/* ✅ Statuts colorés */
+.status-confirmed {
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+}
+
+.status-pending {
+    -fx-text-fill: orange;
+    -fx-font-weight: bold;
+}
+
+.status-cancelled {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+/* ✅ Conteneur des boutons (pour alignement horizontal) */
+.button-box {
+    -fx-spacing: 10px; /* Espacement entre les boutons */
+    -fx-padding: 10px 0;
+    -fx-alignment: center;
+}
+
+/* ✅ Bouton Modifier */
+.button-primary {
+    -fx-background-color: #6C5CE7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-pref-width: 100px; /* Assurer une taille uniforme */
+    -fx-pref-height: 35px;
+}
+
+/* ✅ Bouton Modifier au survol */
+.button-primary:hover {
+    -fx-background-color: #5A4BC4;
+}
+
+/* ✅ Bouton Annuler */
+.button-danger {
+    -fx-background-color: #D63031;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-pref-width: 100px; /* Assurer une taille uniforme */
+    -fx-pref-height: 35px;
+}
+
+/* ✅ Bouton Annuler au survol */
+.button-danger:hover {
+    -fx-background-color: #C02929;
+}
+.cart-container {
+    -fx-background-color: #CEBEC9; /* Thistle */
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+}
+/* ✅ Produits */
+.cart-item {
+    -fx-background-color: #BCA2BF; /* Lilac */
+    -fx-padding: 10px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #93707E; /* Mountbatten Pink */
+    -fx-border-width: 1px;
+}
+
+/* ✅ Texte des produits */
+.product-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56; /* English Violet */
+}
+
+/* ✅ Boutons */
+.cart-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 15px;
+}
+.cart-button:hover {
+    -fx-background-color: #93707E; /* Mountbatten Pink */
+}
+
+/* ✅ Bouton de validation */
+.validate-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 8px;
+}
+.validate-button:hover {
+    -fx-background-color: #93707E; /* Mountbatten Pink */
+}
+
+/* ✅ Sous-total */
+.subtotal-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+}
+

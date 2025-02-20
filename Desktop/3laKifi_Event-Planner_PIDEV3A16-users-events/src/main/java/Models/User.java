@@ -4,6 +4,9 @@ public class User {
     private int id_user;
     private int numTel;
 
+    public User(int userId, String firstName, String username, String username1, String s, Object biography, String address, String profileImagePath, String email, int numTel) {
+    }
+
 
     public int getNumTel() {
         return numTel;
@@ -38,6 +41,9 @@ public class User {
 
 
     }
+
+
+    
 
     public User(int s, String lastName, String firstName, String username, String password, Role role,
                 String biography, String address, String profileImagePath, String email, int num) {

@@ -133,6 +133,11 @@ public class ServiceEvent implements IService<Event> {
         return list;
     }
 
+    @Override
+    public List<Event> getAll1(Event event) throws SQLException {
+        return List.of();
+    }
+
     public int getTotalCount() throws SQLException {
         String req = "SELECT COUNT(*) FROM event";
         ste = conn.createStatement();

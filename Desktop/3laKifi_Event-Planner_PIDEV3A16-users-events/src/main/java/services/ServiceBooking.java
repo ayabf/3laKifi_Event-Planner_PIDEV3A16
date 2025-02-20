@@ -123,6 +123,11 @@ public class ServiceBooking implements IService<Booking> {
         return list;
     }
 
+    @Override
+    public List<Booking> getAll1(Booking booking) throws SQLException {
+        return List.of();
+    }
+
     public int getTotalCount() throws SQLException {
         String req = "SELECT COUNT(*) FROM booking";
         ste = conn.createStatement();

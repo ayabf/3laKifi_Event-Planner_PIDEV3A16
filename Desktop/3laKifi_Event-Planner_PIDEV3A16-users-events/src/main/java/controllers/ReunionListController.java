@@ -3,11 +3,17 @@ package controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import Models.Reunion;
+import javafx.stage.Stage;
 import services.ReunionService;
 
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.List;
 
 public class ReunionListController {
@@ -69,4 +75,29 @@ public class ReunionListController {
         ObservableList<Reunion> observableList = FXCollections.observableArrayList(reunions);
         reunionsListView.setItems(observableList);
     }
+
+    @FXML
+    void ouvrirFenetreAjoutReunion() {
+        try {
+            // Charger la vue `Reunion.fxml`
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterReunion.fxml"));
+            Parent root = loader.load();
+
+            // Obtenir le contrôleur de la fenêtre d'ajout
+            ReunionController reunionController = loader.getController();
+
+            // Afficher la fenêtre d'ajout
+            Stage stage = new Stage();
+            stage.setTitle("Ajouter une réunion");
+            stage.setScene(new Scene(root));
+            stage.showAndWait(); // Attend que l'utilisateur ferme la fenêtre avant de continuer
+
+            // Après la fermeture de la fenêtre, rafraîchir la liste des réunions
+            rafraichirReunions();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

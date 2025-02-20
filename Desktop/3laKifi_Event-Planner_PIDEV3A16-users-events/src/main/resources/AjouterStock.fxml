@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterStockController"
+      spacing="15" alignment="CENTER"
+      style="-fx-background-color: #f8f9fa; -fx-padding: 20px; -fx-border-radius: 10px; -fx-border-color: #ccc;">
+
+    <!-- Titre -->
+    <Label text="📦 Ajouter un Stock"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <!-- Formulaire -->
+    <GridPane hgap="15" vgap="15"
+              style="-fx-background-color: white; -fx-padding: 15px; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+
+        <Label text="Quantité disponible :" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtAvailableQuantity" promptText="Ex: 50"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-border-color: #ccc;"
+                   GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Quantité minimale :" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtMinimumQuantity" promptText="Ex: 10"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-border-color: #ccc;"
+                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="ID Utilisateur :" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="txtUserId" promptText="Ex: 101"
+                   style="-fx-padding: 8px; -fx-border-radius: 5px; -fx-border-color: #ccc;"
+                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <!-- Boutons -->
+    <HBox spacing="10">
+        <Button fx:id="btnAddStock" text="✅ Ajouter Stock" onAction="#ajouterStock"
+                style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px; -fx-border-radius: 5px;"/>
+        <Button fx:id="btnAfficher" onAction="#afficherstock" text="afficher"  style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;"/>
+
+
+    </HBox>
+
+</VBox>

@@ -21,6 +21,7 @@ public interface IService<T> {
     public T getOne(T t) throws SQLException;
 
     public List<T> getAll() throws SQLException;
+    public List<T> getAll1(T t) throws SQLException;
 }
 
 

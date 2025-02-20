@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import Models.Reunion;
+import javafx.stage.Stage;
 import services.ReunionService;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class ReunionController {
         String objectif = objectifTF.getText();
         LocalDate dateReunion = dateReunionDP.getValue();
         String description = descriptionTA.getText();
-        String fichierPv = selectedFile != null ? selectedFile.getName() : null;
+        String fichierPv = (selectedFile != null) ? selectedFile.getName() : null;
 
         if (objectif.isEmpty() || dateReunion == null || dateReunion.isBefore(LocalDate.now())) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Veuillez entrer des informations valides et choisir une date future.", ButtonType.OK);
@@ -40,12 +41,18 @@ public class ReunionController {
             return;
         }
 
+        // Ajouter la réunion
         Reunion reunion = new Reunion(0, objectif, dateReunion, description, fichierPv);
         reunionService.ajouterReunion(reunion);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Réunion enregistrée avec succès !", ButtonType.OK);
+        // Afficher une confirmation
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Réunion ajoutée avec succès !", ButtonType.OK);
         alert.showAndWait();
+
+        // Fermer la fenêtre après l'ajout
+        ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
     }
+
 
 
 
