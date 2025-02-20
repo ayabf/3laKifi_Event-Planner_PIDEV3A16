@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="30" styleClass="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="controllers.DashboardContentController">
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <!-- Dashboard Content -->
+    <VBox spacing="30" styleClass="slide-up">
+        <Label text="Admin Dashboard" styleClass="header"/>
+
+        <!-- Dashboard Cards -->
+        <HBox spacing="20" alignment="CENTER">
+            <VBox styleClass="card" HBox.hgrow="ALWAYS" minHeight="150">
+                <padding>
+                    <Insets top="20" right="25" bottom="20" left="25"/>
+                </padding>
+                <Label text="Total Events" styleClass="subheader"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <FontAwesomeIconView glyphName="CALENDAR" size="2em" fill="#533C56"/>
+                    <Label fx:id="totalEventsLabel" styleClass="card-value" text="0"/>
+                </HBox>
+            </VBox>
+            <VBox styleClass="card" HBox.hgrow="ALWAYS" minHeight="150">
+                <padding>
+                    <Insets top="20" right="25" bottom="20" left="25"/>
+                </padding>
+                <Label text="Total Bookings" styleClass="subheader"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <FontAwesomeIconView glyphName="TICKET" size="2em" fill="#533C56"/>
+                    <Label fx:id="totalBookingsLabel" styleClass="card-value" text="0"/>
+                </HBox>
+            </VBox>
+            <VBox styleClass="card" HBox.hgrow="ALWAYS" minHeight="150">
+                <padding>
+                    <Insets top="20" right="25" bottom="20" left="25"/>
+                </padding>
+                <Label text="Total Locations" styleClass="subheader"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <FontAwesomeIconView glyphName="MAP_MARKER" size="2em" fill="#533C56"/>
+                    <Label fx:id="totalLocationsLabel" styleClass="card-value" text="0"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Action Buttons -->
+        <HBox spacing="20" alignment="CENTER">
+            <Button text="Manage Events" onAction="#handleManageEvents" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="CALENDAR" size="1.2em" fill="WHITE"/>
+                </graphic>
+            </Button>
+            <Button text="Manage Bookings" onAction="#handleManageBookings" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TICKET" size="1.2em" fill="WHITE"/>
+                </graphic>
+            </Button>
+            <Button text="Manage Locations" onAction="#handleManageLocations" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em" fill="WHITE"/>
+                </graphic>
+            </Button>
+        </HBox>
+    </VBox>
+</VBox> 
