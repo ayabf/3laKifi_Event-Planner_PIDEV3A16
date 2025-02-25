@@ -1,14 +1,15 @@
 package controllers;
 
 import Models.Booking;
+import Models.Event;
+import Models.Location;
+import services.ServiceBooking;
+import services.ServiceEvent;
+import services.ServiceLocation;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import services.ServiceBooking;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,8 +17,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.cell.PropertyValueFactory;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Pos;
 
@@ -25,115 +26,113 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 public class BookingManagementController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
-    private TableView<Booking> bookingTableView;
-
-    @FXML
-    private TableColumn<Booking, Integer> idColumn;
-
-    @FXML
-    private TableColumn<Booking, Integer> eventIdColumn;
-
-    @FXML
-    private TableColumn<Booking, Integer> locationIdColumn;
-
-    @FXML
-    private TableColumn<Booking, LocalDateTime> startDateColumn;
-
-    @FXML
-    private TableColumn<Booking, LocalDateTime> endDateColumn;
-
-    @FXML
-    private TableColumn<Booking, Void> actionsColumn;
-
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private AnchorPane main_form;
-
-    @FXML
-    private TableColumn<?, ?> eventColumn;
-    
-    @FXML
-    private TableColumn<?, ?> dateColumn;
-    
-    @FXML
-    private TableColumn<?, ?> statusColumn;
+    @FXML private ResourceBundle resources;
+    @FXML private URL location;
+    @FXML private VBox bookingsContainer;
+    @FXML private TextField searchField;
+    @FXML private AnchorPane main_form;
 
     private final ServiceBooking bookingService = new ServiceBooking();
+    private final ServiceEvent eventService = new ServiceEvent();
+    private final ServiceLocation locationService = new ServiceLocation();
     private final ObservableList<Booking> bookingList = FXCollections.observableArrayList();
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private Map<Integer, Event> eventCache = new HashMap<>();
+    private Map<Integer, Location> locationCache = new HashMap<>();
 
     @FXML
     public void initialize() {
-        // Initialize table columns
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("booking_id"));
-        setupTableColumns();
-        setupActionsColumn();
+        loadEventAndLocationData();
         loadBookingData();
         setupSearchFunctionality();
     }
 
-    private void setupTableColumns() {
-        eventIdColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getEvent_id()).asObject());
-        locationIdColumn.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getLocation_id()).asObject());
-        startDateColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStart_date()));
-        endDateColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getEnd_date()));
+    private void loadEventAndLocationData() {
+        try {
+            List<Event> events = eventService.getAll();
+            for (Event event : events) {
+                eventCache.put(event.getId_event(), event);
+            }
+
+            List<Location> locations = locationService.getAll();
+            for (Location location : locations) {
+                locationCache.put(location.getId_location(), location);
+            }
+        } catch (SQLException e) {
+            showError("Error loading events and locations", e);
+        }
     }
 
-    private void setupActionsColumn() {
-        actionsColumn.setCellFactory(param -> new TableCell<>() {
-            private final Button editButton = createButton("Modifier", "EDIT", this::handleEdit);
-            private final Button deleteButton = createButton("Supprimer", "TRASH", this::handleDelete);
-            private final HBox buttons = new HBox(5, editButton, deleteButton);
+    private HBox createBookingRow(Booking booking) {
+        HBox row = new HBox(5);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getStyleClass().add("booking-row");
 
-            {
-                buttons.setAlignment(Pos.CENTER);
-            }
+        String eventName = getEventName(booking.getEvent_id());
+        String locationName = getLocationName(booking.getLocation_id());
 
-            private Button createButton(String text, String icon, Runnable action) {
-                Button button = new Button(text);
-                button.getStyleClass().addAll("action-button");
-                if ("Supprimer".equals(text)) {
-                    button.getStyleClass().add("secondary");
-                }
-                
-                FontAwesomeIconView iconView = new FontAwesomeIconView();
-                iconView.setGlyphName(icon);
-                iconView.setSize("1.2em");
-                button.setGraphic(iconView);
-                
-                button.setOnAction(event -> action.run());
-                return button;
-            }
+        Label idLabel = createLabel(String.valueOf(booking.getBooking_id()), 80);
+        Label eventLabel = createLabel(eventName, 200);
+        Label locationLabel = createLabel(locationName, 200);
+        Label startDateLabel = createLabel(booking.getStart_date().format(dateFormatter), 150);
+        Label endDateLabel = createLabel(booking.getEnd_date().format(dateFormatter), 150);
 
-            private void handleEdit() {
-                Booking booking = getTableView().getItems().get(getIndex());
-                updateBooking(booking);
-            }
+        HBox actionsBox = new HBox(5);
+        actionsBox.setAlignment(Pos.CENTER);
+        actionsBox.setMinWidth(200);
+        actionsBox.setMaxWidth(200);
 
-            private void handleDelete() {
-                Booking booking = getTableView().getItems().get(getIndex());
-                deleteBooking(booking);
-            }
+        Button editButton = createActionButton("Modifier", "EDIT", () -> updateBooking(booking));
+        Button deleteButton = createActionButton("Supprimer", "TRASH", () -> deleteBooking(booking));
+        deleteButton.getStyleClass().add("secondary");
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : buttons);
-            }
-        });
+        actionsBox.getChildren().addAll(editButton, deleteButton);
+
+        row.getChildren().addAll(
+                idLabel, eventLabel, locationLabel,
+                startDateLabel, endDateLabel, actionsBox
+        );
+
+        return row;
+    }
+
+    private String getEventName(int eventId) {
+        Event event = eventCache.get(eventId);
+        return event != null ? event.getName() : "Unknown Event";
+    }
+
+    private String getLocationName(int locationId) {
+        Location location = locationCache.get(locationId);
+        return location != null ? location.getName() : "Unknown Location";
+    }
+
+    private Label createLabel(String text, double width) {
+        Label label = new Label(text);
+        label.setMinWidth(width);
+        label.setMaxWidth(width);
+        label.getStyleClass().add("cell");
+        return label;
+    }
+
+    private Button createActionButton(String text, String icon, Runnable action) {
+        Button button = new Button(text);
+        button.getStyleClass().add("action-button");
+
+        FontAwesomeIconView iconView = new FontAwesomeIconView();
+        iconView.setGlyphName(icon);
+        iconView.setSize("1.2em");
+        button.setGraphic(iconView);
+
+        button.setOnAction(event -> action.run());
+        return button;
     }
 
     @FXML
@@ -141,43 +140,72 @@ public class BookingManagementController {
         try {
             List<Booking> bookings = bookingService.getAll();
             bookingList.setAll(bookings);
-            bookingTableView.setItems(bookingList);
+            displayBookings(bookings);
         } catch (SQLException e) {
             showError("Error loading bookings", e);
         }
     }
 
+    private void displayBookings(List<Booking> bookings) {
+        bookingsContainer.getChildren().clear();
+        for (Booking booking : bookings) {
+            bookingsContainer.getChildren().add(createBookingRow(booking));
+        }
+    }
+
     private void setupSearchFunctionality() {
-        FilteredList<Booking> filteredData = new FilteredList<>(bookingList, p -> true);
-        
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(booking -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                
-                String lowerCaseFilter = newValue.toLowerCase();
-                return String.valueOf(booking.getEvent_id()).contains(lowerCaseFilter)
-                    || String.valueOf(booking.getLocation_id()).contains(lowerCaseFilter);
-            });
+            if (newValue == null || newValue.isEmpty()) {
+                displayBookings(bookingList);
+            } else {
+                String searchText = newValue.toLowerCase();
+                List<Booking> filteredBookings = bookingList.stream()
+                        .filter(booking -> {
+                            String eventName = getEventName(booking.getEvent_id()).toLowerCase();
+                            String locationName = getLocationName(booking.getLocation_id()).toLowerCase();
+                            return eventName.contains(searchText) ||
+                                    locationName.contains(searchText) ||
+                                    String.valueOf(booking.getBooking_id()).contains(searchText);
+                        })
+                        .collect(Collectors.toList());
+                displayBookings(filteredBookings);
+            }
         });
-        
-        SortedList<Booking> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(bookingTableView.comparatorProperty());
-        bookingTableView.setItems(sortedData);
     }
 
     @FXML
-    void handleBack() {
+    void handleHome() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
+            URL dashboardUrl = getClass().getResource("/AdminDashboard.fxml");
+            if (dashboardUrl == null) {
+                throw new IOException("Cannot find AdminDashboard.fxml");
+            }
+            FXMLLoader loader = new FXMLLoader(dashboardUrl);
             Parent root = loader.load();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-            Stage stage = (Stage) bookingTableView.getScene().getWindow();
+            Stage stage = (Stage) bookingsContainer.getScene().getWindow();
             stage.setScene(scene);
         } catch (IOException e) {
-            showError("Error returning to dashboard", e);
+            showError("Error loading dashboard", e);
+        }
+    }
+
+    @FXML
+    void handleLogout() {
+        try {
+            URL loginUrl = getClass().getResource("/log.fxml");
+            if (loginUrl == null) {
+                throw new IOException("Cannot find log.fxml");
+            }
+            FXMLLoader loader = new FXMLLoader(loginUrl);
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+            Stage stage = (Stage) bookingsContainer.getScene().getWindow();
+            stage.setScene(scene);
+        } catch (IOException e) {
+            showError("Error during logout", e);
         }
     }
 
@@ -185,17 +213,17 @@ public class BookingManagementController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/UpdateBooking.fxml"));
             Parent root = loader.load();
-            
+
             UpdateBookingController controller = loader.getController();
             controller.setBooking(booking);
-            
+
             Stage stage = new Stage();
             stage.setTitle("Modifier la réservation");
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
             stage.setScene(scene);
             stage.showAndWait();
-            
+
             loadBookingData();
         } catch (IOException e) {
             showError("Error loading update booking form", e);

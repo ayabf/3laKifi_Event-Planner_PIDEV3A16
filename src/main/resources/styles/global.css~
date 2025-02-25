@@ -1,0 +1,376 @@
+/* Color Palette */
+* {
+    /* Primary Colors */
+    -fx-primary: #533C56;
+    -fx-primary-light: derive(#533C56, 20%);
+    -fx-primary-dark: derive(#533C56, -20%);
+    -fx-primary-transparent: rgba(83, 60, 86, 0.1);
+    
+    /* Secondary Colors */
+    -fx-secondary: #cebec9;
+    -fx-secondary-light: derive(#cebec9, 20%);
+    -fx-secondary-dark: derive(#cebec9, -20%);
+    -fx-secondary-transparent: rgba(206, 190, 201, 0.2);
+    
+    /* Background Colors */
+    -fx-background: #f5f6fa;
+    -fx-surface: #ffffff;
+    
+    /* Text Colors */
+    -fx-text-primary: #2C3E50;
+    -fx-text-secondary: #666666;
+    -fx-text-light: #ffffff;
+    
+    /* Status Colors */
+    -fx-success: #4CAF50;
+    -fx-warning: #FFA726;
+    -fx-error: #E53935;
+    -fx-info: #2196F3;
+    
+    /* Shadows */
+    -fx-shadow-1: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-shadow-2: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
+    -fx-shadow-3: dropshadow(gaussian, rgba(0,0,0,0.2), 16, 0, 0, 6);
+
+    /* Transitions */
+    -fx-transition-duration: 200ms;
+    -fx-transition-timing: ease-out;
+}
+
+/* Base Styles */
+.root {
+    -fx-font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -fx-background-color: -fx-background;
+    -fx-font-size: 14px;
+}
+
+/* Typography */
+.header {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+    -fx-effect: -fx-shadow-1;
+    -fx-padding: 20 0 10 0;
+}
+
+.subheader {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+    -fx-padding: 15 0 10 0;
+}
+
+.title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.subtitle {
+    -fx-font-size: 16px;
+    -fx-font-weight: normal;
+    -fx-text-fill: -fx-text-secondary;
+}
+
+/* Cards */
+.card {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 15;
+    -fx-padding: 20;
+    -fx-effect: -fx-shadow-1;
+    -fx-transition: all -fx-transition-duration -fx-transition-timing;
+}
+
+.card:hover {
+    -fx-effect: -fx-shadow-2;
+    -fx-translate-y: -2;
+}
+
+/* Event Card Specific */
+.event-card {
+    -fx-min-width: 300;
+    -fx-max-width: 400;
+    -fx-min-height: 450;
+}
+
+.event-image {
+    -fx-background-radius: 10;
+    -fx-effect: -fx-shadow-1;
+}
+
+/* Status Indicators */
+.status-indicator {
+    -fx-padding: 8 16;
+    -fx-background-radius: 20;
+    -fx-alignment: center-left;
+    -fx-spacing: 8;
+}
+
+.status-indicator.available {
+    -fx-background-color: derive(-fx-success, 90%);
+}
+
+.status-indicator.available .icon,
+.status-indicator.available .status-text {
+    -fx-fill: -fx-success;
+    -fx-text-fill: -fx-success;
+}
+
+.status-indicator.unavailable {
+    -fx-background-color: derive(-fx-error, 90%);
+}
+
+.status-indicator.unavailable .icon,
+.status-indicator.unavailable .status-text {
+    -fx-fill: -fx-error;
+    -fx-text-fill: -fx-error;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-text-light;
+    -fx-font-size: 14px;
+    -fx-padding: 12 24;
+    -fx-background-radius: 25;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 8;
+    -fx-effect: -fx-shadow-1;
+    -fx-transition: all -fx-transition-duration -fx-transition-timing;
+}
+
+.button:hover {
+    -fx-background-color: -fx-primary-light;
+    -fx-effect: -fx-shadow-2;
+    -fx-translate-y: -1;
+}
+
+.button:pressed {
+    -fx-background-color: -fx-primary-dark;
+    -fx-effect: -fx-shadow-1;
+    -fx-translate-y: 0;
+}
+
+.button.secondary {
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+}
+
+.button.secondary:hover {
+    -fx-background-color: -fx-secondary-light;
+}
+
+.button.secondary:pressed {
+    -fx-background-color: -fx-secondary-dark;
+}
+
+/* Input Fields */
+.text-field, .text-area {
+    -fx-background-color: -fx-background;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-font-size: 14px;
+    -fx-transition: all -fx-transition-duration -fx-transition-timing;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-background-color: -fx-surface;
+    -fx-border-color: -fx-primary;
+    -fx-effect: -fx-shadow-1;
+}
+
+/* Scroll Pane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: -fx-secondary;
+    -fx-background-radius: 8;
+}
+
+/* Header Bar */
+.header-bar {
+    -fx-background-color: linear-gradient(to right, -fx-primary, -fx-primary-light);
+    -fx-padding: 15 30;
+    -fx-effect: -fx-shadow-2;
+}
+
+.header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-text-light;
+}
+
+/* Location Card */
+.location-card {
+    -fx-background-color: -fx-surface;
+    -fx-background-radius: 12;
+    -fx-padding: 15;
+    -fx-effect: -fx-shadow-1;
+    -fx-transition: all -fx-transition-duration -fx-transition-timing;
+}
+
+.location-card:hover {
+    -fx-effect: -fx-shadow-2;
+    -fx-translate-y: -2;
+}
+
+.location-image {
+    -fx-background-radius: 8;
+    -fx-effect: -fx-shadow-1;
+}
+
+/* Unavailable Reason */
+.unavailable-reason {
+    -fx-text-fill: -fx-error;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-background-color: derive(-fx-error, 90%);
+    -fx-background-radius: 20;
+    -fx-border-color: derive(-fx-error, 70%);
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-effect: -fx-shadow-1;
+}
+
+/* Animations */
+.fade-in {
+    -fx-opacity: 0;
+    -fx-animation: fadeIn -fx-transition-duration -fx-transition-timing;
+}
+
+@keyframes fadeIn {
+    from { -fx-opacity: 0; }
+    to { -fx-opacity: 1; }
+}
+
+.slide-up {
+    -fx-translate-y: 20;
+    -fx-opacity: 0;
+    -fx-animation: slideUp -fx-transition-duration -fx-transition-timing;
+}
+
+@keyframes slideUp {
+    to {
+        -fx-translate-y: 0;
+        -fx-opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 800px) {
+    .root {
+        -fx-font-size: 12px;
+    }
+    
+    .header {
+        -fx-font-size: 28px;
+    }
+    
+    .subheader {
+        -fx-font-size: 20px;
+    }
+    
+    .button {
+        -fx-padding: 10 20;
+        -fx-font-size: 12px;
+    }
+    
+    .card {
+        -fx-padding: 15;
+    }
+    
+    .event-card {
+        -fx-min-width: 250;
+        -fx-max-width: 350;
+    }
+}
+
+/* Custom Components */
+.info-grid {
+    -fx-hgap: 15;
+    -fx-vgap: 10;
+}
+
+.info-label {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 14px;
+}
+
+.info-value {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.info-value-secondary {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 12px;
+}
+
+.description-text {
+    -fx-background-color: -fx-background;
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+    -fx-background-radius: 8;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+.loading-spinner {
+    -fx-progress-color: -fx-primary;
+}
+
+/* Empty State */
+.empty-state {
+    -fx-padding: 40;
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+.empty-state-icon {
+    -fx-fill: -fx-secondary;
+    -fx-font-size: 48px;
+}
+
+.empty-state-text {
+    -fx-text-fill: -fx-text-secondary;
+    -fx-font-size: 16px;
+    -fx-text-alignment: center;
+}
+
+/* Tooltips */
+.tooltip {
+    -fx-background-color: -fx-primary-dark;
+    -fx-text-fill: -fx-text-light;
+    -fx-font-size: 12px;
+    -fx-padding: 8 12;
+    -fx-background-radius: 4;
+    -fx-effect: -fx-shadow-1;
+}

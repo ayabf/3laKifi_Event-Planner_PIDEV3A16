@@ -62,6 +62,11 @@
                     <FontAwesomeIconView glyphName="INFO_CIRCLE" size="1.2em" />
                 </graphic>
             </Button>
+            <Button fx:id="tour3DButton" onAction="#handle3DTour" styleClass="action-button, primary" text="3D Tour">
+                <graphic>
+                    <FontAwesomeIconView glyphName="CUBE" size="1.2em" />
+                </graphic>
+            </Button>
         </HBox>
     </VBox>
 </AnchorPane>

@@ -51,8 +51,7 @@ public class EventManagementController {
                 
                 EventCardController controller = loader.getController();
                 controller.setEvent(event);
-                
-                // Add event handlers for edit and delete
+
                 controller.setOnEdit(e -> updateEvent(event));
                 controller.setOnDelete(e -> deleteEvent(event));
                 
@@ -89,8 +88,7 @@ public class EventManagementController {
             stage.setTitle("Ajouter un événement");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-            
-            // Refresh the view after adding
+
             loadEventData();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre d'ajout.");
@@ -110,8 +108,7 @@ public class EventManagementController {
             stage.setTitle("Modifier l'événement");
             stage.setScene(new Scene(root));
             stage.showAndWait();
-            
-            // Refresh the view after updating
+
             loadEventData();
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir la fenêtre de modification.");

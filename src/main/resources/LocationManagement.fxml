@@ -1,106 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.geometry.Insets?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<VBox spacing="0" styleClass="root" stylesheets="@styles/global.css"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="controllers.LocationManagementController">
-    
+<VBox spacing="0" styleClass="root" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LocationManagementController">
+
     <!-- Header -->
-    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+    <HBox alignment="CENTER_LEFT" styleClass="header-bar">
         <padding>
-            <Insets left="20" right="20" top="12" bottom="12"/>
+            <Insets bottom="12" left="20" right="20" top="12" />
         </padding>
         <HBox alignment="CENTER_LEFT" spacing="12">
-            <FontAwesomeIconView glyphName="MAP_MARKER" size="1.5em" fill="WHITE"/>
-            <Label text="Location Management" styleClass="header-title"/>
+            <FontAwesomeIconView fill="WHITE" glyphName="MAP_MARKER" size="1.5em" />
+            <Label styleClass="header-title" text="Location Management" />
         </HBox>
-        <Region HBox.hgrow="ALWAYS"/>
-        <TextField fx:id="searchField" promptText="Search locations..." prefWidth="250" styleClass="search-field"/>
+        <Region HBox.hgrow="ALWAYS" />
+        <TextField fx:id="searchField" prefWidth="250" promptText="Search locations..." styleClass="search-field" />
         <Button onAction="#handleAddLocation" styleClass="header-button">
             <graphic>
-                <FontAwesomeIconView glyphName="PLUS" size="1.2em" fill="WHITE"/>
+                <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="1.2em" />
             </graphic>
             <tooltip>
-                <Tooltip text="Add New Location"/>
+                <Tooltip text="Add New Location" />
             </tooltip>
         </Button>
         <Button onAction="#handleRefresh" styleClass="header-button">
             <graphic>
-                <FontAwesomeIconView glyphName="REFRESH" size="1.2em" fill="WHITE"/>
+                <FontAwesomeIconView fill="WHITE" glyphName="REFRESH" size="1.2em" />
             </graphic>
             <tooltip>
-                <Tooltip text="Refresh"/>
+                <Tooltip text="Refresh" />
             </tooltip>
         </Button>
     </HBox>
 
     <!-- Main Content -->
-    <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" VBox.vgrow="ALWAYS">
-        <VBox spacing="20">
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <!-- Filters Sidebar -->
+        <VBox fx:id="filtersContainer" minWidth="250" spacing="10" styleClass="filters-sidebar">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="20" right="0" bottom="20" left="20" />
             </padding>
-
-            <!-- Statistics Cards -->
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <VBox styleClass="dashboard-card, locations-card">
-                    <padding>
-                        <Insets top="15" right="20" bottom="15" left="20"/>
-                    </padding>
-                    <HBox alignment="CENTER_LEFT" spacing="15">
-                        <StackPane styleClass="icon-container">
-                            <FontAwesomeIconView glyphName="MAP_MARKER" size="1.5em"/>
-                        </StackPane>
-                        <VBox spacing="5">
-                            <Label text="Total Locations" styleClass="card-title"/>
-                            <Label fx:id="totalLocationsLabel" text="0" styleClass="card-value"/>
-                        </VBox>
-                    </HBox>
-                </VBox>
-
-                <VBox styleClass="dashboard-card, active-card">
-                    <padding>
-                        <Insets top="15" right="20" bottom="15" left="20"/>
-                    </padding>
-                    <HBox alignment="CENTER_LEFT" spacing="15">
-                        <StackPane styleClass="icon-container">
-                            <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="1.5em"/>
-                        </StackPane>
-                        <VBox spacing="5">
-                            <Label text="Active Locations" styleClass="card-title"/>
-                            <Label fx:id="activeLocationsLabel" text="0" styleClass="card-value"/>
-                        </VBox>
-                    </HBox>
-                </VBox>
-            </HBox>
-
-            <!-- Locations Table -->
-            <TableView fx:id="locationsTable" VBox.vgrow="ALWAYS" styleClass="data-table">
-                <columns>
-                    <TableColumn fx:id="nameColumn" text="Location Name" prefWidth="200"/>
-                    <TableColumn fx:id="addressColumn" text="Address" prefWidth="200"/>
-                    <TableColumn fx:id="cityColumn" text="City" prefWidth="150"/>
-                    <TableColumn fx:id="capacityColumn" text="Capacity" prefWidth="100"/>
-                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
-                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="150"/>
-                </columns>
-                <placeholder>
-                    <VBox alignment="CENTER" spacing="10">
-                        <FontAwesomeIconView glyphName="MAP_MARKER" size="3em"/>
-                        <Label text="No locations available" styleClass="placeholder-text"/>
-                        <Button text="Add Location" onAction="#handleAddLocation" styleClass="action-button">
-                            <graphic>
-                                <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
-                            </graphic>
-                        </Button>
-                    </VBox>
-                </placeholder>
-            </TableView>
         </VBox>
-    </ScrollPane>
-</VBox> 
+
+        <!-- Main Content Area -->
+        <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" HBox.hgrow="ALWAYS">
+            <VBox spacing="20">
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20" />
+                </padding>
+
+                <!-- Statistics Cards -->
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <VBox styleClass="dashboard-card, locations-card">
+                        <padding>
+                            <Insets bottom="15" left="20" right="20" top="15" />
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <StackPane styleClass="icon-container">
+                                <FontAwesomeIconView glyphName="MAP_MARKER" size="1.5em" />
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label styleClass="card-title" text="Total Locations" />
+                                <Label fx:id="totalLocationsLabel" styleClass="card-value" text="0" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="dashboard-card, active-card">
+                        <padding>
+                            <Insets bottom="15" left="20" right="20" top="15" />
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <StackPane styleClass="icon-container">
+                                <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="1.5em" />
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label styleClass="card-title" text="Active Locations" />
+                                <Label fx:id="activeLocationsLabel" styleClass="card-value" text="0" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- Locations Table -->
+                <TableView fx:id="locationsTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" prefWidth="200" text="Location Name" />
+                        <TableColumn fx:id="addressColumn" prefWidth="200" text="Address" />
+                        <TableColumn fx:id="cityColumn" prefWidth="97.0" text="City" />
+                        <TableColumn fx:id="capacityColumn" prefWidth="153.0" text="Capacity" />
+                        <TableColumn fx:id="statusColumn" prefWidth="100" text="Status" />
+                        <TableColumn fx:id="priceColumn" prefWidth="100" text="Price" />
+                        <TableColumn fx:id="actionsColumn" prefWidth="150" text="Actions" />
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="10">
+                            <FontAwesomeIconView glyphName="MAP_MARKER" size="3em" />
+                            <Label styleClass="placeholder-text" text="No locations available" />
+                            <Button onAction="#handleAddLocation" styleClass="action-button" text="Add Location">
+                                <graphic>
+                                    <FontAwesomeIconView glyphName="PLUS" size="1.2em" />
+                                </graphic>
+                            </Button>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </ScrollPane>
+    </HBox>
+</VBox>

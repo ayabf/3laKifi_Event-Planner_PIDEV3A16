@@ -65,6 +65,9 @@ public class LocationCardController {
     
     @FXML
     private Button detailsButton;
+    
+    @FXML
+    private Button tour3DButton;
 
     private Location location;
     private final ServiceLocation locationService = new ServiceLocation();
@@ -84,6 +87,9 @@ public class LocationCardController {
         this.location = location;
         updateCard();
         System.out.println("Location set: " + location.getName());
+
+        tour3DButton.setVisible(location.getHas3DTour());
+        tour3DButton.setManaged(location.getHas3DTour());
     }
 
     public void setAvailabilityStatus(boolean isAvailable) {
@@ -100,7 +106,6 @@ public class LocationCardController {
             locationPrice.setText(String.format("%.2f DT", location.getPrice()));
             updateStatus();
 
-            // Load image from byte array if available
             if (location.getImageFileName() != null && location.getImageData().length > 0) {
                 try {
                     Image image = new Image(new ByteArrayInputStream(location.getImageData()));
@@ -137,8 +142,7 @@ public class LocationCardController {
     public void setOnDetails(EventHandler<ActionEvent> handler) {
         System.out.println("Setting details handler for location: " + (location != null ? location.getName() : "null"));
         this.onDetails = handler;
-        
-        // Keep the FXML handler but delegate to our custom handler
+
         detailsButton.setOnAction(this::handleDetails);
         
         System.out.println("Details handler set successfully for: " + 
@@ -167,23 +171,19 @@ public class LocationCardController {
     private void handleDetails(ActionEvent event) {
         if (location != null) {
             try {
-                // Create and configure the details dialog
                 Alert detailsDialog = new Alert(Alert.AlertType.NONE);
                 detailsDialog.setTitle("Location Details");
-                
-                // Create a custom dialog pane with VBox for content
+
                 DialogPane dialogPane = new DialogPane();
                 VBox contentBox = new VBox(15);
                 contentBox.setStyle("-fx-padding: 20;");
-                
-                // Header with location name and status
+
                 HBox headerBox = new HBox(15);
                 headerBox.setAlignment(Pos.CENTER_LEFT);
                 
                 Label headerLabel = new Label(location.getName());
                 headerLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #533C56;");
-                
-                // Status indicator
+
                 Region statusCircle = new Region();
                 statusCircle.setMinSize(12, 12);
                 statusCircle.setMaxSize(12, 12);
@@ -202,8 +202,7 @@ public class LocationCardController {
                 
                 headerBox.getChildren().addAll(headerLabel, statusBox);
                 contentBox.getChildren().add(headerBox);
-                
-                // Location image
+
                 if (location.getImageData() != null && location.getImageData().length > 0) {
                     ImageView imageView = new ImageView(new Image(new ByteArrayInputStream(location.getImageData())));
                     imageView.setFitWidth(400);
@@ -216,30 +215,26 @@ public class LocationCardController {
                                          "-fx-background-radius: 10;");
                     contentBox.getChildren().add(imageContainer);
                 }
-                
-                // Details grid
+
                 GridPane detailsGrid = new GridPane();
                 detailsGrid.setHgap(20);
                 detailsGrid.setVgap(15);
                 detailsGrid.setStyle("-fx-background-color: #F5F0F6; -fx-padding: 20; -fx-background-radius: 10;");
-                
-                // Add details with icons
+
                 addDetailRow(detailsGrid, 0, "📍", "Location", location.getVille().name());
                 addDetailRow(detailsGrid, 1, "👥", "Capacity", location.getCapacity() + " people");
                 addDetailRow(detailsGrid, 2, "📏", "Dimensions", location.getDimension());
                 addDetailRow(detailsGrid, 3, "💰", "Price", String.format("%.2f DT", location.getPrice()));
                 
                 contentBox.getChildren().add(detailsGrid);
-                
-                // Add close button
+
                 ButtonType closeButton = new ButtonType("Close", ButtonType.OK.getButtonData());
                 dialogPane.getButtonTypes().add(closeButton);
                 
                 Button closeBtnCtrl = (Button) dialogPane.lookupButton(closeButton);
                 closeBtnCtrl.setStyle("-fx-background-color: #533C56; -fx-text-fill: white; " +
                                     "-fx-font-size: 14px; -fx-padding: 8 20; -fx-background-radius: 5;");
-                
-                // Style the dialog
+
                 dialogPane.setContent(contentBox);
                 dialogPane.setStyle("-fx-background-color: white;");
                 
@@ -249,8 +244,7 @@ public class LocationCardController {
             } catch (Exception e) {
                 System.err.println("Error showing location details: " + e.getMessage());
                 e.printStackTrace();
-                
-                // Show error to user
+
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setTitle("Error");
                 errorAlert.setHeaderText("Error Processing Request");
@@ -275,10 +269,46 @@ public class LocationCardController {
         grid.add(valueLabel, 2, row);
     }
 
+    @FXML
+    private void handle3DTour() {
+        if (location != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationTour3D.fxml"));
+                Parent root = loader.load();
+                
+                LocationTour3DController controller = loader.getController();
+                controller.setLocation(location);
+                
+                Stage stage = new Stage();
+                stage.setTitle("3D Tour - " + location.getName());
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+                stage.setScene(scene);
+
+                stage.setMaximized(true);
+
+                stage.setOnCloseRequest(e -> controller.cleanup());
+                
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError("Error launching 3D tour", e);
+            }
+        }
+    }
+
     public void hideManagementButtons() {
         editButton.setVisible(false);
         editButton.setManaged(false);
         deleteButton.setVisible(false);
         deleteButton.setManaged(false);
+    }
+
+    private void showError(String message, IOException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 } 

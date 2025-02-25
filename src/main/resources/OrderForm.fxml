@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="700" prefWidth="904.0" stylesheets="@css/styles.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.OrderFormController">
+
+    <!-- En-tête avec titre et rechargement -->
+    <HBox spacing="10" alignment="CENTER" layoutX="20" layoutY="20" prefWidth="860">
+        <Label text="Commande Validation"
+               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+        <Region HBox.hgrow="ALWAYS"/> <!-- Pour pousser le bouton à droite -->
+        <Button onAction="#handleReload"
+                style="-fx-background-color: #533C5C; -fx-text-fill: white;
+                -fx-padding: 8px 16px; -fx-font-size: 14px;"
+                text="Recharger"/>
+    </HBox>
+
+    <VBox layoutX="50" layoutY="80" prefHeight="600.0" prefWidth="819.0" spacing="15">
+        <!-- Prix Total -->
+        <Label text="Prix Total :" />
+        <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+        <!-- Date et Heure -->
+        <Label text="Date et Heure de l'événement :" />
+        <HBox spacing="10">
+            <DatePicker fx:id="eventDatePicker" promptText="Sélectionner une date" />
+            <Label fx:id="errorDate" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Date invalide !" visible="false" />
+
+            <Button fx:id="timePickerButton" onAction="#openTimePicker" text="Sélectionner l'heure" />
+
+            <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
+            <Label fx:id="errorTime" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Heure invalide !" visible="false" />
+        </HBox>
+
+        <!-- Adresse -->
+        <Label text="Full address:" />
+        <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
+        <Label fx:id="errorAddress" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Adresse invalide !" visible="false" />
+
+        <!-- Méthode de paiement -->
+        <Label text="Payment method:" />
+        <ComboBox fx:id="paymentMethodBox">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Carte Bancaire" />
+                    <String fx:value="PayPal" />
+                    <String fx:value="Espèces" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+        <Label fx:id="errorPayment" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Sélectionnez un mode de paiement !" visible="false" />
+
+        <!-- Boutons d'action -->
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="validateOrderButton" onAction="#validateOrder"
+                    style="-fx-background-color: #533C56; -fx-text-fill: white;
+                    -fx-font-size: 14px; -fx-padding: 8;"
+                    text="Validate the order" />
+            <Button onAction="#handleClose"
+                    style="-fx-background-color: #93707E; -fx-text-fill: white;
+                    -fx-padding: 8px 16px; -fx-font-size: 14px;"
+                    text="Fermer" />
+        </HBox>
+    </VBox>
+</AnchorPane>

@@ -4,6 +4,7 @@ import Models.Booking;
 import Models.Event;
 import Models.Location;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,14 +15,18 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import services.ServiceBooking;
 import services.ServiceEvent;
 import services.ServiceLocation;
+import utils.NotificationManager;
+import Models.Notification.NotificationType;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 public class BookingCardController {
     @FXML private HBox statusContainer;
@@ -33,6 +38,7 @@ public class BookingCardController {
     @FXML private Label endDate;
     @FXML private Button viewButton;
     @FXML private Button cancelButton;
+    @FXML private Button exportButton;
 
     private Booking booking;
     private Event event;
@@ -41,16 +47,26 @@ public class BookingCardController {
     private final ServiceEvent eventService = new ServiceEvent();
     private final ServiceLocation locationService = new ServiceLocation();
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private Consumer<Booking> onExport;
+    private final NotificationManager notificationManager = NotificationManager.getInstance();
 
     @FXML
     public void initialize() {
-        // Initialization code if needed
+        exportButton.setOnAction(e -> {
+            if (onExport != null && booking != null) {
+                onExport.accept(booking);
+            }
+        });
     }
 
     public void setBooking(Booking booking) {
         this.booking = booking;
         loadEventAndLocation();
         updateCard();
+    }
+
+    public void setOnExport(Consumer<Booking> onExport) {
+        this.onExport = onExport;
     }
 
     private void loadEventAndLocation() {
@@ -107,10 +123,10 @@ public class BookingCardController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/EventDetails.fxml"));
                 Parent root = loader.load();
-                
+
                 EventDetailsController controller = loader.getController();
                 controller.setEvent(event);
-                
+
                 Stage stage = new Stage();
                 stage.setTitle("Event Details - " + event.getName());
                 Scene scene = new Scene(root);
@@ -127,7 +143,11 @@ public class BookingCardController {
     @FXML
     private void handleCancel() {
         if (LocalDateTime.now().isAfter(booking.getStart_date())) {
-            showError("Cannot cancel booking", new Exception("Cannot cancel a booking that has already started"));
+            notificationManager.showNotification(
+                    "Cannot Cancel Booking",
+                    "Cannot cancel a booking that has already started",
+                    NotificationType.BOOKING_CANCELLED
+            );
             return;
         }
 
@@ -138,14 +158,71 @@ public class BookingCardController {
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
+                Event event = eventService.getById(booking.getEvent_id());
+                Location location = locationService.getById(booking.getLocation_id());
+
                 bookingService.supprimer(booking.getBooking_id());
-                showInfo("Booking cancelled successfully");
-                // Close the booking card
-                statusContainer.getScene().getWindow().hide();
+
+                notificationManager.showNotification(
+                        "Booking Cancelled",
+                        "Your booking for " + event.getName() + " at " + location.getName() + " has been cancelled",
+                        NotificationType.BOOKING_CANCELLED
+                );
+
+                notificationManager.showNotification(
+                        "Location Available",
+                        location.getName() + " is now available for booking",
+                        NotificationType.LOCATION_AVAILABLE
+                );
+
+                refreshParentScene();
             } catch (SQLException e) {
                 e.printStackTrace();
                 showError("Error canceling booking", e);
             }
+        }
+    }
+
+    private void refreshParentScene() {
+        try {
+            Scene scene = statusContainer.getScene();
+            if (scene != null) {
+                Window window = scene.getWindow();
+                if (window instanceof Stage) {
+                    Stage stage = (Stage) window;
+                    Parent root = scene.getRoot();
+
+                    if (root.getId().equals("clientDashboard")) {
+                        ClientDashboardController controller = (ClientDashboardController) scene.getUserData();
+                        if (controller != null) {
+                            controller.handleRefresh();
+                        }
+                    } else if (root.getId().equals("myBookings")) {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MyBookings.fxml"));
+                        root = loader.load();
+                        MyBookingsController controller = loader.getController();
+
+                        Scene newScene = new Scene(root);
+                        newScene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+                        stage.setScene(newScene);
+
+                        controller.initialize();
+                    } else if (root.getId().equals("myEvents")) {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MyEvents.fxml"));
+                        root = loader.load();
+                        MyEventsController controller = loader.getController();
+
+                        Scene newScene = new Scene(root);
+                        newScene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+                        stage.setScene(newScene);
+
+                        controller.initialize();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error refreshing scene: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

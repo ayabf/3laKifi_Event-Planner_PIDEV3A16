@@ -50,8 +50,7 @@ public class UpdateEventController {
     @FXML
     void initialize() {
         cityComboBox.getItems().addAll(City.values());
-        
-        // Initialize the image selection button
+
         imageButton.setOnAction(event -> handleImageSelection());
     }
 
@@ -83,7 +82,6 @@ public class UpdateEventController {
             capacityField.setText(String.valueOf(event.getCapacity()));
             cityComboBox.setValue(event.getCity());
 
-            // Set date and time fields
             startDatePicker.setValue(event.getStart_date().toLocalDate());
             startTimeField.setText(event.getStart_date().toLocalTime().toString());
             endDatePicker.setValue(event.getEnd_date().toLocalDate());
@@ -94,13 +92,11 @@ public class UpdateEventController {
     @FXML
     void handleUpdate() {
         try {
-            // Update event properties
             event.setName(nameField.getText());
             event.setDescription(descriptionArea.getText());
             event.setCapacity(Integer.parseInt(capacityField.getText()));
             event.setCity(cityComboBox.getValue());
 
-            // Update image if changed
             if (imageChanged && selectedImageFile != null) {
                 try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
                     byte[] imageData = new byte[(int) selectedImageFile.length()];
@@ -113,24 +109,20 @@ public class UpdateEventController {
                 }
             }
 
-            // Combine date and time for start date
             LocalDateTime startDateTime = LocalDateTime.of(
                 startDatePicker.getValue(),
                 LocalTime.parse(startTimeField.getText())
             );
             event.setStart_date(startDateTime);
 
-            // Combine date and time for end date
             LocalDateTime endDateTime = LocalDateTime.of(
                 endDatePicker.getValue(),
                 LocalTime.parse(endTimeField.getText())
             );
             event.setEnd_date(endDateTime);
 
-            // Update event in database
             eventService.modifier(event);
-            
-            // Notify listeners about the update
+
             if (onEventUpdated != null) {
                 onEventUpdated.accept(event);
             }

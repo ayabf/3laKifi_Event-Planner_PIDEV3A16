@@ -144,11 +144,8 @@ public class MyBookingsController {
             eventCache.clear();
             locationCache.clear();
 
-            // Load all bookings
-            // TODO: Add filter for current user's bookings only
             List<Booking> bookings = bookingService.getAll();
-            
-            // Pre-load events and locations
+
             for (Booking booking : bookings) {
                 if (!eventCache.containsKey(booking.getEvent_id())) {
                     Event event = new Event();

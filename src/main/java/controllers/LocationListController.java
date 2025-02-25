@@ -1,6 +1,7 @@
 package controllers;
 
 import Models.Location;
+import Models.City;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -33,6 +34,18 @@ public class LocationListController implements LocationRefreshable {
     @FXML private TextField searchField;
     @FXML private Label totalLocationsLabel;
     @FXML private Label activeLocationsLabel;
+    @FXML private TextField minPriceField;
+    @FXML private TextField maxPriceField;
+    @FXML private TextField minCapacityField;
+    @FXML private TextField maxCapacityField;
+    @FXML private ComboBox<City> cityComboBox;
+    @FXML private ComboBox<String> statusComboBox;
+    @FXML private CheckBox has3DTourCheckbox;
+    @FXML private CheckBox hasCornerPlantsCheckbox;
+    @FXML private CheckBox hasCeilingLightsCheckbox;
+    @FXML private Button applyFiltersButton;
+    @FXML private Button clearFiltersButton;
+    @FXML private Slider tableSetSlider;
 
     private final LocationService locationService = new LocationService();
     private ObservableList<Location> locationList = FXCollections.observableArrayList();
@@ -40,6 +53,7 @@ public class LocationListController implements LocationRefreshable {
     @FXML
     public void initialize() {
         initializeColumns();
+        initializeFilters();
         loadLocations();
         setupSearch();
         updateStatistics();
@@ -57,14 +71,12 @@ public class LocationListController implements LocationRefreshable {
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        // Setup actions column with edit and delete buttons
         actionsColumn.setCellFactory(param -> new TableCell<>() {
             private final Button editBtn = new Button();
             private final Button deleteBtn = new Button();
             private final HBox actionButtons = new HBox(5);
 
             {
-                // Edit button
                 FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
                 editIcon.setSize("14");
                 editBtn.setGraphic(editIcon);
@@ -76,7 +88,6 @@ public class LocationListController implements LocationRefreshable {
                     handleEditLocation(location);
                 });
 
-                // Delete button
                 FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
                 deleteIcon.setSize("14");
                 deleteBtn.setGraphic(deleteIcon);
@@ -100,6 +111,25 @@ public class LocationListController implements LocationRefreshable {
                 } else {
                     setGraphic(actionButtons);
                 }
+            }
+        });
+    }
+
+    private void initializeFilters() {
+        cityComboBox.getItems().addAll(City.values());
+
+        statusComboBox.getItems().addAll("Active", "Inactive", "Under Maintenance");
+
+        setupNumericValidation(minPriceField);
+        setupNumericValidation(maxPriceField);
+        setupNumericValidation(minCapacityField);
+        setupNumericValidation(maxCapacityField);
+    }
+
+    private void setupNumericValidation(TextField field) {
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                field.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
     }
@@ -176,19 +206,89 @@ public class LocationListController implements LocationRefreshable {
 
     private void setupSearch() {
         FilteredList<Location> filteredData = new FilteredList<>(locationList, p -> true);
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(location -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
 
-                String lowerCaseFilter = newValue.toLowerCase();
-                return location.getName().toLowerCase().contains(lowerCaseFilter) ||
-                       location.getVille().name().toLowerCase().contains(lowerCaseFilter) ||
-                       location.getDimension().toLowerCase().contains(lowerCaseFilter);
-            });
-        });
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        
         locationsTable.setItems(filteredData);
+    }
+
+    private void applyFilters() {
+        FilteredList<Location> filteredData = new FilteredList<>(locationList);
+        
+        filteredData.setPredicate(location -> {
+            if (searchField.getText() != null && !searchField.getText().isEmpty()) {
+                String searchText = searchField.getText().toLowerCase();
+                if (!location.getName().toLowerCase().contains(searchText) &&
+                    !location.getVille().name().toLowerCase().contains(searchText) &&
+                    !location.getDimension().toLowerCase().contains(searchText)) {
+                    return false;
+                }
+            }
+
+            if (!minPriceField.getText().isEmpty()) {
+                double minPrice = Double.parseDouble(minPriceField.getText());
+                if (location.getPrice() < minPrice) return false;
+            }
+            if (!maxPriceField.getText().isEmpty()) {
+                double maxPrice = Double.parseDouble(maxPriceField.getText());
+                if (location.getPrice() > maxPrice) return false;
+            }
+
+            if (!minCapacityField.getText().isEmpty()) {
+                int minCapacity = Integer.parseInt(minCapacityField.getText());
+                if (location.getCapacity() < minCapacity) return false;
+            }
+            if (!maxCapacityField.getText().isEmpty()) {
+                int maxCapacity = Integer.parseInt(maxCapacityField.getText());
+                if (location.getCapacity() > maxCapacity) return false;
+            }
+
+            if (cityComboBox.getValue() != null && !location.getVille().equals(cityComboBox.getValue())) {
+                return false;
+            }
+
+            if (statusComboBox.getValue() != null && !location.getStatus().equals(statusComboBox.getValue())) {
+                return false;
+            }
+
+            if (has3DTourCheckbox.isSelected() && !location.getHas3DTour()) {
+                return false;
+            }
+            if (hasCornerPlantsCheckbox.isSelected() && !location.isIncludeCornerPlants()) {
+                return false;
+            }
+            if (hasCeilingLightsCheckbox.isSelected() && !location.isIncludeCeilingLights()) {
+                return false;
+            }
+
+            if (location.getTableSetCount() < tableSetSlider.getValue()) {
+                return false;
+            }
+            
+            return true;
+        });
+        
+        locationsTable.setItems(filteredData);
+    }
+
+    @FXML
+    private void handleApplyFilters() {
+        applyFilters();
+    }
+
+    @FXML
+    private void handleClearFilters() {
+        minPriceField.clear();
+        maxPriceField.clear();
+        minCapacityField.clear();
+        maxCapacityField.clear();
+        cityComboBox.setValue(null);
+        statusComboBox.setValue(null);
+        has3DTourCheckbox.setSelected(false);
+        hasCornerPlantsCheckbox.setSelected(false);
+        hasCeilingLightsCheckbox.setSelected(false);
+        searchField.clear();
+        applyFilters();
     }
 
     private void updateStatistics() {
@@ -221,21 +321,16 @@ public class LocationListController implements LocationRefreshable {
         }
     }
 
-    private void showError(String header, Exception e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(header);
-        alert.setContentText(e.getMessage());
-        alert.showAndWait();
-        e.printStackTrace();
-    }
-
     private void showError(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private void showError(String header, Exception e) {
+        showError(header, e.getMessage());
     }
 
     private void showInfo(String message) {

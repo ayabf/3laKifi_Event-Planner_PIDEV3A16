@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.OrderListController"
+            stylesheets="@css/styles.css"
+            prefWidth="-Infinity" prefHeight="-Infinity">
+
+    <VBox spacing="15" layoutX="20" layoutY="20">
+
+        <Label text="My Commandes" styleClass="label-title" />
+
+
+        <TextField fx:id="searchField" promptText="Search Commande..."
+                   onKeyReleased="#searchOrders"
+                   styleClass="text-field-search"/>
+
+        <ScrollPane fitToWidth="true" prefHeight="500" styleClass="scroll-pane">
+            <content>
+                <VBox fx:id="orderListContainer" styleClass="order-list-container">
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </VBox>
+
+</AnchorPane>

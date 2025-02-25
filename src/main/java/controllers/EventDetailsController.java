@@ -23,6 +23,7 @@ import services.ServiceLocation;
 import services.ServiceBooking;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.scene.Node;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,15 +54,41 @@ public class EventDetailsController {
     @FXML
     private Label noPlacesHint;
 
+    @FXML
+    private VBox weatherDisplayContainer;
+    private WeatherDisplayController weatherDisplayController;
+
     private Event event;
     private final ServiceLocation locationService = new ServiceLocation();
     private final ServiceBooking bookingService = new ServiceBooking();
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    @FXML
+    public void initialize() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/WeatherDisplay.fxml"));
+            Node weatherDisplay = loader.load();
+            weatherDisplayController = loader.getController();
+            weatherDisplayContainer.getChildren().add(weatherDisplay);
+            weatherDisplayContainer.getStylesheets().add(getClass().getResource("/styles/weather.css").toExternalForm());
+        } catch (IOException e) {
+            System.out.println("❌ Error loading weather display: " + e.getMessage());
+        }
+    }
+
     public void setEvent(Event event) {
         this.event = event;
         updateUI();
         loadAvailableLocations();
+
+        // Update weather display
+        if (weatherDisplayController != null) {
+            weatherDisplayController.updateWeather(
+                event.getCity().toString(),
+                event.getStart_date(),
+                event.getEnd_date()
+            );
+        }
     }
 
     private void updateUI() {
@@ -73,7 +100,6 @@ public class EventDetailsController {
             eventStartDate.setText("Start: " + event.getStart_date().format(dateFormatter));
             eventEndDate.setText("End: " + event.getEnd_date().format(dateFormatter));
 
-            // Load image from byte array if available
             if (event.getImageData() != null && event.getImageData().length > 0) {
                 try {
                     Image image = new Image(new ByteArrayInputStream(event.getImageData()));
@@ -87,15 +113,12 @@ public class EventDetailsController {
 
     private void loadAvailableLocations() {
         try {
-            // Get all locations
             List<Location> locations = locationService.getAll();
             System.out.println("Total locations found: " + locations.size());
             System.out.println("Event city: " + event.getCity());
-            
-            // Clear existing locations
+
             locationsContainer.getChildren().clear();
-            
-            // Filter locations based on city, capacity, and availability
+
             List<Location> availableLocations = locations.stream()
                     .peek(location -> System.out.println("Checking location: " + location.getName() 
                         + " (City: " + location.getVille()
@@ -115,7 +138,6 @@ public class EventDetailsController {
                     })
                     .collect(Collectors.toList());
 
-            // Show or hide the hint based on available locations
             if (availableLocations.isEmpty()) {
                 noPlacesHint.setText("No available venues for this event. Please check:\n" +
                                    "• Required capacity: " + event.getCapacity() + " people\n" +
@@ -127,8 +149,7 @@ public class EventDetailsController {
             } else {
                 noPlacesHint.setVisible(false);
                 noPlacesHint.setManaged(false);
-                
-                // Add available location cards
+
                 availableLocations.forEach(this::addLocationCard);
             }
             
@@ -149,7 +170,7 @@ public class EventDetailsController {
             );
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // If there's an error, consider the location as unavailable
+            return false;
         }
     }
 
@@ -169,8 +190,7 @@ public class EventDetailsController {
             scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
             stage.setScene(scene);
             stage.showAndWait();
-            
-            // Refresh locations after booking
+
             loadAvailableLocations();
         } catch (IOException e) {
             showError("Error opening booking form", e);
@@ -185,13 +205,11 @@ public class EventDetailsController {
             LocationCardController controller = loader.getController();
             controller.setLocation(location);
             controller.hideManagementButtons();
-            
-            // Check if location is available
+
             boolean isAvailable = isLocationAvailable(location);
             controller.setAvailabilityStatus(isAvailable);
             
             if (isAvailable) {
-                // Create Reserve Venue button
                 Button reserveButton = new Button("Reserve Venue");
                 reserveButton.getStyleClass().addAll("action-button", "primary");
                 
@@ -200,11 +218,9 @@ public class EventDetailsController {
                 reserveButton.setGraphic(icon);
                 
                 reserveButton.setOnAction(e -> handleLocationSelection(location));
-                
-                // Add button to the card
+
                 VBox cardContent = (VBox) locationCard.lookup(".card");
                 if (cardContent != null) {
-                    // Create a container for the button
                     HBox buttonContainer = new HBox();
                     buttonContainer.setAlignment(javafx.geometry.Pos.CENTER);
                     buttonContainer.getChildren().add(reserveButton);
@@ -239,8 +255,7 @@ public class EventDetailsController {
             Stage stage = new Stage();
             stage.setTitle("Détails de l'événement - " + event.getName());
             stage.setScene(new Scene(root));
-            
-            // Set preferred and maximum size
+
             stage.setWidth(800);
             stage.setHeight(600);
             stage.setMinWidth(600);
@@ -250,8 +265,7 @@ public class EventDetailsController {
             
             stage.initStyle(StageStyle.DECORATED);
             stage.show();
-            
-            // Center the window on the screen
+
             stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();

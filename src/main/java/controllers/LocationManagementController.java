@@ -31,36 +31,68 @@ public class LocationManagementController implements LocationRefreshable {
     @FXML private TextField searchField;
     @FXML private Label totalLocationsLabel;
     @FXML private Label activeLocationsLabel;
+    @FXML private VBox filtersContainer;
 
     private LocationService locationService;
     private ObservableList<Location> locationsList;
+    private LocationFiltersController filtersController;
 
     @FXML
     public void initialize() {
+        System.out.println("Initializing LocationManagementController");
         locationService = new LocationService();
         locationsList = FXCollections.observableArrayList();
 
         // Initialize table columns
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
-        cityColumn.setCellValueFactory(cellData -> 
-            Bindings.createStringBinding(
-                () -> cellData.getValue().getVille().name()
-            ));
+        cityColumn.setCellValueFactory(cellData ->
+                Bindings.createStringBinding(
+                        () -> cellData.getValue().getVille().name()
+                ));
         capacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-        
-        // Setup actions column
+
         setupActionsColumn();
 
-        // Load locations
-        refreshLocations();
+        // Load and initialize filters
+        initializeFilters();
 
-        // Setup search functionality
+        // Set up search field listener
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filterLocations(newValue);
+            applyFilters();
         });
+
+        // Initial data load
+        refreshLocations();
+    }
+
+    private void initializeFilters() {
+        try {
+            System.out.println("Loading filters view...");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationFilters.fxml"));
+            VBox filtersView = loader.load();
+            filtersController = loader.getController();
+
+            if (filtersContainer != null) {
+                filtersContainer.getChildren().clear();
+                filtersContainer.getChildren().add(filtersView);
+                System.out.println("Filters view added to container");
+
+                // Set up filter change callback
+                filtersController.setOnFiltersChanged(() -> {
+                    System.out.println("Filter change callback triggered");
+                    applyFilters();
+                });
+            } else {
+                System.out.println("ERROR: filtersContainer is null!");
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR loading filters: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error loading filters", e.getMessage());
+        }
     }
 
     private void setupActionsColumn() {
@@ -70,7 +102,6 @@ public class LocationManagementController implements LocationRefreshable {
             private final HBox actionButtons = new HBox(2);
 
             {
-                // Edit button
                 FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
                 editIcon.setSize("14");
                 editBtn.setGraphic(editIcon);
@@ -82,7 +113,6 @@ public class LocationManagementController implements LocationRefreshable {
                     handleEditLocation(location);
                 });
 
-                // Delete button
                 FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
                 deleteIcon.setSize("14");
                 deleteBtn.setGraphic(deleteIcon);
@@ -115,16 +145,16 @@ public class LocationManagementController implements LocationRefreshable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
             VBox addLocationView = loader.load();
-            
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add New Location");
             stage.setScene(new Scene(addLocationView));
-            
+
             AddLocationController controller = loader.getController();
             controller.setLocationService(locationService);
             controller.setParentController(this);
-            
+
             stage.showAndWait();
         } catch (IOException e) {
             showError("Error opening add location window", e.getMessage());
@@ -135,17 +165,17 @@ public class LocationManagementController implements LocationRefreshable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddLocation.fxml"));
             VBox editLocationView = loader.load();
-            
+
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Edit Location");
             stage.setScene(new Scene(editLocationView));
-            
+
             AddLocationController controller = loader.getController();
             controller.setLocationService(locationService);
             controller.setParentController(this);
             controller.setLocationForEdit(location);
-            
+
             stage.showAndWait();
         } catch (IOException e) {
             showError("Error opening edit location window", e.getMessage());
@@ -175,30 +205,67 @@ public class LocationManagementController implements LocationRefreshable {
 
     @Override
     public void refreshLocations() {
+        System.out.println("\nRefreshing locations from database");
         List<Location> locations = locationService.getAll();
+        System.out.println("Retrieved " + locations.size() + " locations");
+
         locationsList.setAll(locations);
-        locationsTable.setItems(locationsList);
+        System.out.println("Updated locationsList with " + locationsList.size() + " items");
+
+        // Apply filters to the new data
+        applyFilters();
+    }
+
+    private void applyFilters() {
+        if (locationsList == null) {
+            System.out.println("ERROR: locationsList is null!");
+            return;
+        }
+
+        System.out.println("\nApplying filters to " + locationsList.size() + " locations");
+        ObservableList<Location> filteredList = FXCollections.observableArrayList();
+        String searchText = searchField.getText().toLowerCase();
+
+        for (Location location : locationsList) {
+            boolean matchesSearch = matchesSearch(location, searchText);
+            boolean matchesFilters = true;
+
+            if (filtersController != null) {
+                try {
+                    matchesFilters = filtersController.getFilterPredicate().test(location);
+                } catch (Exception e) {
+                    System.out.println("Error applying filters to location " + location.getName() + ": " + e.getMessage());
+                    e.printStackTrace();
+                    matchesFilters = false;
+                }
+            }
+
+            System.out.println("\nLocation: " + location.getName());
+            System.out.println("Matches search: " + matchesSearch);
+            System.out.println("Matches filters: " + matchesFilters);
+
+            if (matchesSearch && matchesFilters) {
+                filteredList.add(location);
+                System.out.println("Added to filtered list");
+            }
+        }
+
+        System.out.println("\nFiltered list size: " + filteredList.size());
+        locationsTable.setItems(filteredList);
         updateStatistics();
     }
 
-    private void filterLocations(String searchText) {
-        if (searchText == null || searchText.isEmpty()) {
-            locationsTable.setItems(locationsList);
-        } else {
-            ObservableList<Location> filteredList = FXCollections.observableArrayList();
-            locationsList.forEach(location -> {
-                if (matchesSearch(location, searchText.toLowerCase())) {
-                    filteredList.add(location);
-                }
-            });
-            locationsTable.setItems(filteredList);
-        }
-    }
-
     private boolean matchesSearch(Location location, String searchText) {
-        return location.getName().toLowerCase().contains(searchText) ||
-               location.getAddress().toLowerCase().contains(searchText) ||
-               location.getVille().name().toLowerCase().contains(searchText);
+        if (searchText == null || searchText.isEmpty()) {
+            return true;
+        }
+
+        boolean matches = location.getName().toLowerCase().contains(searchText) ||
+                location.getAddress().toLowerCase().contains(searchText) ||
+                location.getVille().name().toLowerCase().contains(searchText);
+
+        System.out.println("Search text '" + searchText + "' matches location " + location.getName() + ": " + matches);
+        return matches;
     }
 
     private void updateStatistics() {

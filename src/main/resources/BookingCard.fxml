@@ -49,6 +49,11 @@
                     <FontAwesomeIconView glyphName="INFO_CIRCLE" size="1.2em"/>
                 </graphic>
             </Button>
+            <Button fx:id="exportButton" text="Export PDF" styleClass="action-button, secondary">
+                <graphic>
+                    <FontAwesomeIconView glyphName="DOWNLOAD" size="1.2em"/>
+                </graphic>
+            </Button>
             <Button fx:id="cancelButton" text="Cancel Booking" onAction="#handleCancel" styleClass="action-button, secondary">
                 <graphic>
                     <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>

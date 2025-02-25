@@ -107,7 +107,6 @@ public class AddBookingController {
                 LocalTime.parse(endTimeField.getText())
             );
 
-            // Validate date/time logic
             if (endDateTime.isBefore(startDateTime)) {
                 showError("Invalid dates", "End date/time must be after start date/time");
                 return;
@@ -118,14 +117,12 @@ public class AddBookingController {
                 return;
             }
 
-            // Check location availability
             Location selectedLocation = locationComboBox.getValue();
             if (!bookingService.isLocationAvailable(selectedLocation.getId_location(), startDateTime, endDateTime)) {
                 showError("Location unavailable", "The selected location is not available for these dates");
                 return;
             }
 
-            // Create and save booking
             Booking booking = new Booking(
                 event,
                 selectedLocation,

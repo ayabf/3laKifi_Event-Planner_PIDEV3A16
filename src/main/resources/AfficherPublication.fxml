@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AfficherPublicationController">
+    <children>
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 15; -fx-background-color: #bca2bf; -fx-alignment: center;">
+            <!-- 🔹 Titre -->
+            <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #333;" text="List of publications" />
+
+            <!-- 🔹 Bouton Ajouter une publication -->
+            <Button fx:id="btnAddPublication" style="-fx-font-size: 14px; -fx-background-color: #533c56; -fx-text-fill: white;" text="➕ Add Publication" />
+
+            <!-- 🔹 ScrollPane contenant la liste des publications -->
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="400" prefWidth="600">
+                <content>
+                    <VBox fx:id="publicationContainer" spacing="15" style="-fx-background-color: #ffffff;">
+                        <padding>
+                            <Insets bottom="10" left="10" right="10" top="10" />
+                        </padding>
+                    </VBox>
+                </content>
+            </ScrollPane>
+
+            <!-- 🔹 Boutons Actualiser -->
+            <HBox spacing="10">
+                <Button fx:id="btnRefresh" style="-fx-font-size: 14px; -fx-background-color: #533c56; -fx-text-fill: white;" text="🔄 Refresh" />
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -24,7 +24,6 @@ public class UpdateBookingController {
 
     @FXML
     public void initialize() {
-        // Add time format validation
         startTimeField.textProperty().addListener((obs, oldValue, newValue) -> {
             if (!newValue.matches("\\d{0,2}:\\d{0,2}")) {
                 startTimeField.setText(oldValue);
@@ -47,12 +46,10 @@ public class UpdateBookingController {
         if (booking != null) {
             eventIdField.setText(String.valueOf(booking.getEvent_id()));
             locationIdField.setText(String.valueOf(booking.getLocation_id()));
-            
-            // Set date pickers
+
             startDatePicker.setValue(booking.getStart_date().toLocalDate());
             endDatePicker.setValue(booking.getEnd_date().toLocalDate());
-            
-            // Set time fields (format: HH:mm)
+
             startTimeField.setText(booking.getStart_date().toLocalTime().format(timeFormatter));
             endTimeField.setText(booking.getEnd_date().toLocalTime().format(timeFormatter));
         }
@@ -75,7 +72,6 @@ public class UpdateBookingController {
                 LocalTime.parse(endTimeField.getText())
             );
 
-            // Validate date/time logic
             if (startDateTime.isAfter(endDateTime)) {
                 showError("Invalid dates", "Start date/time must be before end date/time");
                 return;
@@ -86,11 +82,9 @@ public class UpdateBookingController {
                 return;
             }
 
-            // Update booking object
             booking.setStart_date(startDateTime);
             booking.setEnd_date(endDateTime);
 
-            // Save to database
             bookingService.modifier(booking);
             showInfo("Booking updated successfully");
             handleClose();

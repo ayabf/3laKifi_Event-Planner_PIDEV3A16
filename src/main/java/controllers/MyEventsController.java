@@ -1,6 +1,7 @@
 package controllers;
 
 import Models.Event;
+import Models.session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class MyEventsController {
     @FXML private TableView<Event> eventsTable;
@@ -38,6 +40,7 @@ public class MyEventsController {
 
     @FXML
     void initialize() {
+        System.out.println("Initializing MyEventsController with user ID: " + session.id_utilisateur);
         initializeColumns();
         loadEvents();
         setupSearch();
@@ -111,8 +114,11 @@ public class MyEventsController {
     private void loadEvents() {
         try {
             eventList.clear();
-            // TODO: Add filter for current user's events only
-            eventList.addAll(eventService.getAll());
+            int currentUserId = session.id_utilisateur;
+            System.out.println("Loading events for user ID: " + currentUserId);
+            List<Event> events = eventService.getEventsByUser(currentUserId);
+            System.out.println("Found " + events.size() + " events for user " + currentUserId);
+            eventList.addAll(events);
             updateNoEventsPane();
         } catch (SQLException e) {
             showError("Error loading events", e);

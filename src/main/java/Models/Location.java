@@ -12,12 +12,22 @@ public class Location {
     private double price;
     private byte[] imageData;
     private String imageFileName;
+    private boolean has3DTour;
+    
+    private int tableSetCount;
+    private boolean includeCornerPlants;
+    private String windowStyle;
+    private String doorStyle;
+    private boolean includeCeilingLights;
+    private String lightColor;
 
     public Location() {}
 
     public Location(int id_location, String name, String address, City ville, int capacity, 
                    String status, String description, String dimension, double price, 
-                   byte[] imageData, String imageFileName) {
+                   byte[] imageData, String imageFileName, boolean has3DTour,
+                   int tableSetCount, boolean includeCornerPlants, String windowStyle,
+                   String doorStyle, boolean includeCeilingLights, String lightColor) {
         this.id_location = id_location;
         this.name = name;
         this.address = address;
@@ -29,9 +39,15 @@ public class Location {
         this.price = price;
         this.imageData = imageData;
         this.imageFileName = imageFileName;
+        this.has3DTour = has3DTour;
+        this.tableSetCount = tableSetCount;
+        this.includeCornerPlants = includeCornerPlants;
+        this.windowStyle = windowStyle;
+        this.doorStyle = doorStyle;
+        this.includeCeilingLights = includeCeilingLights;
+        this.lightColor = lightColor;
     }
 
-    // Getters
     public int getId_location() { return id_location; }
     public String getName() { return name; }
     public String getAddress() { return address; }
@@ -43,8 +59,26 @@ public class Location {
     public double getPrice() { return price; }
     public byte[] getImageData() { return imageData; }
     public String getImageFileName() { return imageFileName; }
+    public boolean getHas3DTour() { return has3DTour; }
 
-    // Setters
+    public int getTableSetCount() { return tableSetCount; }
+    public void setTableSetCount(int tableSetCount) { this.tableSetCount = tableSetCount; }
+
+    public boolean isIncludeCornerPlants() { return includeCornerPlants; }
+    public void setIncludeCornerPlants(boolean includeCornerPlants) { this.includeCornerPlants = includeCornerPlants; }
+
+    public String getWindowStyle() { return windowStyle; }
+    public void setWindowStyle(String windowStyle) { this.windowStyle = windowStyle; }
+
+    public String getDoorStyle() { return doorStyle; }
+    public void setDoorStyle(String doorStyle) { this.doorStyle = doorStyle; }
+
+    public boolean isIncludeCeilingLights() { return includeCeilingLights; }
+    public void setIncludeCeilingLights(boolean includeCeilingLights) { this.includeCeilingLights = includeCeilingLights; }
+
+    public String getLightColor() { return lightColor; }
+    public void setLightColor(String lightColor) { this.lightColor = lightColor; }
+
     public void setId_location(int id_location) { this.id_location = id_location; }
     public void setName(String name) { this.name = name; }
     public void setAddress(String address) { this.address = address; }
@@ -56,6 +90,7 @@ public class Location {
     public void setPrice(double price) { this.price = price; }
     public void setImageData(byte[] imageData) { this.imageData = imageData; }
     public void setImageFileName(String imageFileName) { this.imageFileName = imageFileName; }
+    public void setHas3DTour(boolean has3DTour) { this.has3DTour = has3DTour; }
 
     @Override
     public String toString() {
@@ -68,6 +103,13 @@ public class Location {
                 ", status='" + status + '\'' +
                 ", dimension='" + dimension + '\'' +
                 ", price=" + price +
+                ", has3DTour=" + has3DTour +
+                ", tableSetCount=" + tableSetCount +
+                ", includeCornerPlants=" + includeCornerPlants +
+                ", windowStyle='" + windowStyle + '\'' +
+                ", doorStyle='" + doorStyle + '\'' +
+                ", includeCeilingLights=" + includeCeilingLights +
+                ", lightColor='" + lightColor + '\'' +
                 '}';
     }
 } 

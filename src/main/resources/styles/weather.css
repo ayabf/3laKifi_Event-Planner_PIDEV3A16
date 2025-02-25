@@ -1,0 +1,61 @@
+.weather-display {
+    -fx-background-color: white;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 15;
+}
+
+.weather-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+    -fx-padding: 0 0 10 0;
+}
+
+.weather-row {
+    -fx-padding: 15;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #eee;
+    -fx-border-width: 0 0 1 0;
+    -fx-spacing: 15;
+}
+
+.weather-row:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.weather-date {
+    -fx-min-width: 200;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+    -fx-font-size: 14px;
+}
+
+.weather-temp {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+}
+
+.weather-desc {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+    -fx-font-style: italic;
+}
+
+.weather-additional {
+    -fx-text-fill: #888;
+    -fx-font-size: 12px;
+}
+
+.error-label {
+    -fx-text-fill: #dc3545;
+    -fx-font-size: 14px;
+    -fx-padding: 10 0 0 0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+} 

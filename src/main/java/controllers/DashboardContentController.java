@@ -15,22 +15,18 @@ public class DashboardContentController {
 
     @FXML
     void initialize() {
-        // Initialize will be handled by the parent controller
     }
 
     @FXML
     void handleManageEvents() {
-        // These will be handled by the parent controller
     }
 
     @FXML
     void handleManageBookings() {
-        // These will be handled by the parent controller
     }
 
     @FXML
     void handleManageLocations() {
-        // These will be handled by the parent controller
     }
 
     public void updateStatistics(String events, String bookings, String locations) {

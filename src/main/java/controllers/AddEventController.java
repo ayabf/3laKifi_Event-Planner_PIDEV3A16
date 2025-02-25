@@ -3,6 +3,8 @@ package controllers;
 import Models.Event;
 import Models.City;
 import Models.User;
+import Models.session;
+import Models.Notification.NotificationType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -10,7 +12,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceEvent;
-import services.ServiceUser;
+import services.UserService;
+import utils.NotificationManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,8 +47,8 @@ public class AddEventController {
     private Button addButton;
 
     private final ServiceEvent eventService = new ServiceEvent();
-    private final ServiceUser userService = new ServiceUser();
-    private int userId = 1; // TODO: Get this from the logged-in user's session
+    private final UserService userService = new UserService();
+    private int userId = session.id_utilisateur;
     private File selectedImageFile;
     private Event eventToEdit;
     private User currentUser;
@@ -53,44 +56,34 @@ public class AddEventController {
     @FXML
     void initialize() {
         cityComboBox.getItems().addAll(City.values());
-        
-        // Initialize the image selection button
+
         imageButton.setOnAction(event -> handleImageSelection());
-        
-        // Set default image for preview
+
         imagePreview.setImage(null);
-        
-        // Load current user
-        try {
-            currentUser = userService.getById(userId);
-            if (currentUser == null) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information");
-            }
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information: " + e.getMessage());
+
+        userId = session.id_utilisateur;
+        System.out.println("Initializing AddEventController with user ID: " + userId);
+        currentUser = userService.getById(userId);
+        if (currentUser == null) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information");
         }
     }
 
     public void setUserId(int userId) {
         this.userId = userId;
-        try {
-            currentUser = userService.getById(userId);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Could not load user information: " + e.getMessage());
-        }
+        currentUser = userService.getById(userId);
     }
 
     private void handleImageSelection() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Event Image");
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
         );
-        
+
         File file = fileChooser.showOpenDialog(imageButton.getScene().getWindow());
         if (file != null) {
             selectedImageFile = file;
-            // Update the image preview
             try {
                 Image image = new Image(file.toURI().toString());
                 imagePreview.setImage(image);
@@ -102,8 +95,7 @@ public class AddEventController {
 
     public void setEventForEdit(Event event) {
         this.eventToEdit = event;
-        
-        // Populate form fields with event data
+
         nameField.setText(event.getName());
         descriptionArea.setText(event.getDescription());
         startDatePicker.setValue(event.getStart_date().toLocalDate());
@@ -113,10 +105,8 @@ public class AddEventController {
         capacityField.setText(String.valueOf(event.getCapacity()));
         cityComboBox.setValue(event.getCity());
 
-        // Update image preview if event has an image
         if (event.getImageData() != null) {
             try {
-                // Create a temporary file for the image
                 File tempFile = File.createTempFile("event_image", event.getImageFileName());
                 java.nio.file.Files.write(tempFile.toPath(), event.getImageData());
                 selectedImageFile = tempFile;
@@ -126,7 +116,6 @@ public class AddEventController {
             }
         }
 
-        // Update the Add button text to "Update"
         if (addButton != null) {
             addButton.setText("Update");
         }
@@ -135,12 +124,18 @@ public class AddEventController {
     @FXML
     void handleAdd() {
         try {
-            // Validate input fields
             if (!validateInputs()) {
                 return;
             }
 
-            // Read the image file into a byte array
+            userId = session.id_utilisateur;
+            currentUser = userService.getById(userId);
+            if (currentUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Error", "No user information available");
+                return;
+            }
+            System.out.println("Creating event for user ID: " + userId);
+
             byte[] imageData = null;
             String imageFileName = null;
             if (selectedImageFile != null) {
@@ -154,10 +149,10 @@ public class AddEventController {
                 }
             }
 
-            // Create or update event
             Event event;
+            NotificationManager notificationManager = NotificationManager.getInstance();
+
             if (eventToEdit != null) {
-                // Update existing event
                 event = eventToEdit;
                 event.setName(nameField.getText());
                 event.setDescription(descriptionArea.getText());
@@ -166,47 +161,53 @@ public class AddEventController {
                     event.setImageFileName(imageFileName);
                 }
                 event.setStart_date(LocalDateTime.of(
-                    startDatePicker.getValue(),
-                    LocalTime.parse(startTimeField.getText())
+                        startDatePicker.getValue(),
+                        LocalTime.parse(startTimeField.getText())
                 ));
                 event.setEnd_date(LocalDateTime.of(
-                    endDatePicker.getValue(),
-                    LocalTime.parse(endTimeField.getText())
+                        endDatePicker.getValue(),
+                        LocalTime.parse(endTimeField.getText())
                 ));
                 event.setCapacity(Integer.parseInt(capacityField.getText()));
                 event.setCity(cityComboBox.getValue());
-                
+
                 eventService.modifier(event);
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Event updated successfully.");
-            } else {
-                // Create new event
-                if (currentUser == null) {
-                    showAlert(Alert.AlertType.ERROR, "Error", "No user information available");
-                    return;
-                }
-                
-                event = new Event(
-                    nameField.getText(),
-                    descriptionArea.getText(),
-                    imageData,
-                    imageFileName,
-                    LocalDateTime.of(
-                        startDatePicker.getValue(),
-                        LocalTime.parse(startTimeField.getText())
-                    ),
-                    LocalDateTime.of(
-                        endDatePicker.getValue(),
-                        LocalTime.parse(endTimeField.getText())
-                    ),
-                    Integer.parseInt(capacityField.getText()),
-                    cityComboBox.getValue(),
-                    currentUser
+
+                notificationManager.showNotification(
+                        "Event Updated",
+                        "Event '" + event.getName() + "' has been updated successfully",
+                        NotificationType.EVENT_UPDATED
                 );
-                
+            } else {
+                event = new Event(
+                        nameField.getText(),
+                        descriptionArea.getText(),
+                        imageData,
+                        imageFileName,
+                        LocalDateTime.of(
+                                startDatePicker.getValue(),
+                                LocalTime.parse(startTimeField.getText())
+                        ),
+                        LocalDateTime.of(
+                                endDatePicker.getValue(),
+                                LocalTime.parse(endTimeField.getText())
+                        ),
+                        Integer.parseInt(capacityField.getText()),
+                        cityComboBox.getValue(),
+                        currentUser
+                );
+
                 eventService.ajouter(event);
                 showAlert(Alert.AlertType.INFORMATION, "Success", "Event added successfully.");
+
+                notificationManager.showNotification(
+                        "Event Created",
+                        "Event '" + event.getName() + "' has been created successfully",
+                        NotificationType.EVENT_CREATED
+                );
             }
-            
+
             closeWindow();
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Error", "Could not save event: " + e.getMessage());
@@ -243,17 +244,16 @@ public class AddEventController {
             showAlert(Alert.AlertType.WARNING, "Validation", "La ville est requise.");
             return false;
         }
-        
-        // Validate that end date is after start date
+
         LocalDateTime startDateTime = LocalDateTime.of(
-            startDatePicker.getValue(),
-            LocalTime.parse(startTimeField.getText())
+                startDatePicker.getValue(),
+                LocalTime.parse(startTimeField.getText())
         );
         LocalDateTime endDateTime = LocalDateTime.of(
-            endDatePicker.getValue(),
-            LocalTime.parse(endTimeField.getText())
+                endDatePicker.getValue(),
+                LocalTime.parse(endTimeField.getText())
         );
-        
+
         if (endDateTime.isBefore(startDateTime)) {
             showAlert(Alert.AlertType.WARNING, "Validation", "La date de fin doit être après la date de début.");
             return false;
@@ -279,4 +279,4 @@ public class AddEventController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-} 
+}

@@ -13,11 +13,11 @@ public class ServiceEvent implements IService<Event> {
     private Connection conn;
     private Statement ste;
     private PreparedStatement pste;
-    private final ServiceUser userService;
+    private final UserService userService;
 
     public ServiceEvent() {
         conn = DataSource.getInstance().getConnection();
-        userService = new ServiceUser();
+        userService = new UserService();
     }
 
     private City normalizeAndParseCity(String cityName) {
@@ -45,10 +45,17 @@ public class ServiceEvent implements IService<Event> {
         pste.setTimestamp(6, Timestamp.valueOf(event.getEnd_date()));
         pste.setInt(7, event.getCapacity());
         pste.setString(8, event.getCity().name());
+
         pste.setInt(9, event.getId_user());
         pste.executeUpdate();
         System.out.println("✅ Event added successfully!");
     }
+
+
+
+
+
+
 
     //  Modifier un événement
     @Override
@@ -154,10 +161,12 @@ public class ServiceEvent implements IService<Event> {
     public List<Event> getEventsByUser(int userId) throws SQLException {
         List<Event> list = new ArrayList<>();
         String req = "SELECT * FROM event WHERE id_user = ?";
+        System.out.println("Executing query: " + req + " with userId: " + userId);
         pste = conn.prepareStatement(req);
         pste.setInt(1, userId);
         ResultSet rs = pste.executeQuery();
         while (rs.next()) {
+            System.out.println("Found event: id=" + rs.getInt("id_event") + ", name=" + rs.getString("name"));
             list.add(extractEventFromResultSet(rs));
         }
         return list;

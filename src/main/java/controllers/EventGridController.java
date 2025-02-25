@@ -52,8 +52,7 @@ public class EventGridController {
             Node eventCard = loader.load();
             EventCardController controller = loader.getController();
             controller.setEvent(event);
-            
-            // Set preferred width for consistent card size
+
             eventCard.setStyle("-fx-pref-width: 300;");
             eventContainer.getChildren().add(eventCard);
         } catch (IOException e) {
@@ -105,7 +104,6 @@ public class EventGridController {
     }
 
     private void showError(String message, Exception e) {
-        // You can implement your error showing logic here
         System.err.println(message + ": " + e.getMessage());
     }
 } 

@@ -6,18 +6,18 @@
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="CENTER" spacing="20" styleClass="root" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LandingController">
-    
+
     <padding>
         <Insets bottom="50" left="50" right="50" top="50" />
     </padding>
-    
+
     <!-- Welcome Section -->
     <VBox alignment="CENTER" spacing="15" styleClass="welcome-section">
         <FontAwesomeIconView glyphName="CALENDAR" size="4em" styleClass="welcome-icon" />
         <Label styleClass="welcome-header" text="Welcome to 3laKifi Events" />
         <Label styleClass="welcome-subtext" text="Your one-stop platform for event planning and management" />
     </VBox>
-    
+
     <!-- Action Buttons -->
     <HBox alignment="CENTER" spacing="20">
         <Button onAction="#handleClientDashboard" styleClass="action-button, events-action">
@@ -28,8 +28,8 @@
                 </HBox>
             </graphic>
         </Button>
-        
-        <Button onAction="#handleAdminDashboard" styleClass="action-button, bookings-action">
+
+        <Button fx:id="adminDashboardButton" onAction="#handleAdminDashboard" styleClass="action-button, bookings-action">
             <graphic>
                 <HBox alignment="CENTER" spacing="10">
                     <FontAwesomeIconView glyphName="DASHBOARD" size="1.5em" />
@@ -38,7 +38,7 @@
             </graphic>
         </Button>
     </HBox>
-    
+
     <Button fx:id="logoutButton" onAction="#handleLogout" styleClass="text-button">
         <graphic>
             <HBox alignment="CENTER" spacing="10">
@@ -47,5 +47,5 @@
             </HBox>
         </graphic>
     </Button>
-   <Button mnemonicParsing="false" text="Back" />
+    <Button fx:id="backButton" onAction="#handleBack" mnemonicParsing="false" text="Back" />
 </VBox>

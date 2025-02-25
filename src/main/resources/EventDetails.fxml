@@ -123,6 +123,9 @@
                        styleClass="subheader" visible="false" managed="false"/>
             </VBox>
 
+            <!-- Add this where you want the weather display to appear -->
+            <VBox fx:id="weatherDisplayContainer" spacing="10" />
+
             <!-- Action Buttons -->
             <HBox spacing="12" alignment="CENTER">
                 <padding>

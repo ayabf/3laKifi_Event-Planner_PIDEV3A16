@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<HBox spacing="0" styleClass="root" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.LocationsViewController">
+    
+    <!-- Filters Panel -->
+    <VBox styleClass="filters-container" minWidth="300" maxWidth="300">
+        <fx:include source="LocationFilters.fxml" fx:id="filtersPane"/>
+    </VBox>
+    
+    <!-- Main Content -->
+    <VBox spacing="20" HBox.hgrow="ALWAYS" styleClass="content-area">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Label text="Locations" styleClass="header"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="Search locations..." prefWidth="250"/>
+            <Button onAction="#handleAddLocation" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Add New Location"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleRefresh" styleClass="action-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="REFRESH" size="1.2em"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Refresh"/>
+                </tooltip>
+            </Button>
+        </HBox>
+        
+        <!-- Location Cards -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="edge-to-edge">
+            <FlowPane fx:id="locationsContainer" hgap="20" vgap="20">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+            </FlowPane>
+        </ScrollPane>
+        
+        <!-- No Locations Message -->
+        <StackPane fx:id="noLocationsPane" visible="false" managed="false">
+            <VBox alignment="CENTER" spacing="15">
+                <Label text="No locations found" styleClass="subheader"/>
+                <Button text="Add New Location" onAction="#handleAddLocation" styleClass="action-button">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+                    </graphic>
+                </Button>
+            </VBox>
+        </StackPane>
+    </VBox>
+</HBox> 

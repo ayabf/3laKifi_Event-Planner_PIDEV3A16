@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane prefHeight="900" prefWidth="800" style="-fx-background-color: #F4F4F4; -fx-padding: 20px;" stylesheets="@css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CartController">
+
+    <Label layoutX="306.0" layoutY="14.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" text="🛒 My Cart" />
+
+    <ListView fx:id="cartListView" layoutX="30.0" layoutY="68.0" prefHeight="350" prefWidth="741.0" styleClass="label-title" />
+
+
+    <HBox layoutX="676.0" layoutY="476.0" spacing="10">
+        <Label fx:id="subtotalLabel" styleClass="subtotal-label" />
+    </HBox>
+
+    <Button fx:id="validateCartButton" layoutX="337.0" layoutY="522.0" onAction="#validateCart" styleClass="validate-button" text="validate cart" />
+     <Label layoutX="665.0" layoutY="439.0" styleClass="subtotal-label" text="Subtotal" />
+   <Button layoutX="30.0" layoutY="15.0" mnemonicParsing="false" text="⬅  Back" />
+    
+</AnchorPane>

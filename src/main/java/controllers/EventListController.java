@@ -70,7 +70,6 @@ public class EventListController {
             });
         });
 
-        // Setup actions column with edit and delete buttons
         setupActionsColumn();
     }
 
@@ -81,7 +80,6 @@ public class EventListController {
             private final HBox actionButtons = new HBox(5);
 
             {
-                // Edit button
                 FontAwesomeIconView editIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.PENCIL);
                 editIcon.setSize("14");
                 editBtn.setGraphic(editIcon);
@@ -93,7 +91,6 @@ public class EventListController {
                     handleEditEvent(selectedEvent);
                 });
 
-                // Delete button
                 FontAwesomeIconView deleteIcon = new FontAwesomeIconView(de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon.TRASH);
                 deleteIcon.setSize("14");
                 deleteBtn.setGraphic(deleteIcon);
@@ -133,34 +130,17 @@ public class EventListController {
 
     private void setupSearch() {
         FilteredList<Event> filteredData = new FilteredList<>(eventList, p -> true);
-        
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredData.setPredicate(event -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-                
                 String lowerCaseFilter = newValue.toLowerCase();
-                
-                if (event.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (event.getDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (event.getCity().name().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (event.getStart_date().format(dateFormatter).toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                if (event.getEnd_date().format(dateFormatter).toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return String.valueOf(event.getCapacity()).contains(lowerCaseFilter);
+                return event.getName().toLowerCase().contains(lowerCaseFilter) ||
+                       event.getDescription().toLowerCase().contains(lowerCaseFilter) ||
+                       event.getCity().name().toLowerCase().contains(lowerCaseFilter);
             });
         });
-        
         eventsTable.setItems(filteredData);
     }
 

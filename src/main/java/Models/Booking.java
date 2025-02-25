@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 public class Booking {
     private int booking_id;
-    private Event event;
-    private Location location;
+    private int event_id;
+    private int location_id;
+    private int user_id;
     private LocalDateTime start_date;
     private LocalDateTime end_date;
+    private Event event;
+    private Location location;
 
     public Booking() {}
 
@@ -26,6 +29,14 @@ public class Booking {
         this.location = location;
         this.start_date = start_date;
         this.end_date = end_date;
+    }
+
+    public Booking(int eventId, int locationId, int userId, LocalDateTime startDate, LocalDateTime endDate) {
+        this.event_id = eventId;
+        this.location_id = locationId;
+        this.user_id = userId;
+        this.start_date = startDate;
+        this.end_date = endDate;
     }
 
     public int getBooking_id() {
@@ -88,6 +99,14 @@ public class Booking {
 
     public void setEnd_date(LocalDateTime end_date) {
         this.end_date = end_date;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
     @Override

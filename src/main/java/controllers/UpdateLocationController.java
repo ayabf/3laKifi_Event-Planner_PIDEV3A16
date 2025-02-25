@@ -35,10 +35,8 @@ public class UpdateLocationController {
 
     @FXML
     void initialize() {
-        // Initialize the city combo box
         villeComboBox.getItems().addAll(City.values());
-        
-        // Initialize the image selection button
+
         imageButton.setOnAction(event -> handleImageSelection());
     }
 
@@ -76,11 +74,9 @@ public class UpdateLocationController {
     @FXML
     void handleUpdate() {
         try {
-            // Update location properties
             location.setName(nameField.getText());
             location.setVille(villeComboBox.getValue());
-            
-            // Update image if changed
+
             if (imageChanged && selectedImageFile != null) {
                 try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
                     byte[] imageData = new byte[(int) selectedImageFile.length()];
@@ -97,7 +93,6 @@ public class UpdateLocationController {
             location.setDimension(dimensionField.getText());
             location.setPrice(Double.parseDouble(priceField.getText()));
 
-            // Update location in database
             locationService.modifier(location);
             
             showAlert(Alert.AlertType.INFORMATION, "Success", "Location updated successfully.");

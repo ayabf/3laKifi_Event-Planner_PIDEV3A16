@@ -10,7 +10,8 @@
     -fx-gray-light: #f8f8f8;
     -fx-gray: #666666;
     -fx-white: #ffffff;
-    
+    -fx-text-primary: #2C3E50;
+
     /* Card Colors */
     -fx-events-color: #4CAF50;
     -fx-bookings-color: #2196F3;
@@ -183,47 +184,132 @@
 }
 
 /* Table Styles */
-.data-table {
+.table-view {
     -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+    -fx-padding: 0;
+    -fx-border-width: 0;
 }
 
 .table-view .column-header-background {
     -fx-background-color: -fx-primary;
-    -fx-background-radius: 8 8 0 0;
-    -fx-padding: 0 0 5 0;
+    -fx-background-radius: 15 15 0 0;
+    -fx-padding: 0;
 }
 
 .table-view .column-header {
     -fx-background-color: transparent;
     -fx-size: 45px;
-    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-pref-height: 45px;
 }
 
 .table-view .column-header .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-padding: 12 8 12 8;
+    -fx-padding: 10;
+    -fx-alignment: center-left;
+}
+
+/* Remove sort arrows */
+.table-view .column-header .arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-shape: null;
 }
 
 .table-view .table-row-cell {
     -fx-background-color: white;
     -fx-border-color: transparent transparent rgba(0,0,0,0.05) transparent;
-    -fx-padding: 8;
+    -fx-padding: 5;
+    -fx-cell-size: 40px;
 }
 
 .table-view .table-row-cell:odd {
-    -fx-background-color: rgba(0,0,0,0.02);
+    -fx-background-color: derive(-fx-background, -2%);
 }
 
 .table-view .table-row-cell:hover {
-    -fx-background-color: rgba(83,60,86,0.05);
+    -fx-background-color: derive(-fx-secondary, 90%);
 }
 
 .table-view .table-row-cell:selected {
-    -fx-background-color: rgba(83,60,86,0.1);
+    -fx-background-color: derive(-fx-primary, 90%);
     -fx-text-fill: -fx-primary;
+}
+
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 10 15;
+    -fx-alignment: center-left;
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* Remove table grid lines */
+.table-view .table-row-cell {
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/* Remove selection highlight */
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected {
+    -fx-background: -fx-selection-bar-non-focused;
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Remove focus indicator */
+.table-view:focused > .virtual-flow > .clipped-container > .sheet > .table-row-cell:filled:selected .table-cell {
+    -fx-background-color: transparent;
+}
+
+/* Data Table specific styles */
+.data-table {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+    -fx-padding: 5;
+}
+
+.data-table .table-column {
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Make table columns resize with window */
+.data-table .table-column {
+    -fx-pref-width: -1;
+}
+
+/* Status column specific styles */
+.status-column {
+    -fx-alignment: CENTER;
+}
+
+.status-label {
+    -fx-padding: 5 10;
+    -fx-background-radius: 15;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.status-upcoming {
+    -fx-background-color: derive(-fx-events-color, 90%);
+    -fx-text-fill: -fx-events-color;
+}
+
+.status-in-progress {
+    -fx-background-color: derive(-fx-bookings-color, 90%);
+    -fx-text-fill: -fx-bookings-color;
+}
+
+.status-completed {
+    -fx-background-color: derive(-fx-locations-color, 90%);
+    -fx-text-fill: -fx-locations-color;
 }
 
 /* Scroll Bar */
@@ -263,19 +349,19 @@
     .root {
         -fx-font-size: 12px;
     }
-    
+
     .header {
         -fx-font-size: 28px;
     }
-    
+
     .subheader {
         -fx-font-size: 20px;
     }
-    
+
     .button {
         -fx-padding: 8 15;
     }
-    
+
     .card {
         -fx-padding: 15;
     }
@@ -788,7 +874,7 @@
     -fx-table-cell-border-color: transparent;
 }
 
-.table-view .column-header-background {
+.table-view .column-header {
     -fx-background-color: -fx-primary;
 }
 
@@ -806,7 +892,6 @@
     -fx-background-color: white;
     -fx-background-radius: 8;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
-    -fx-min-width: 250;
 }
 
 .dashboard-card:hover {
@@ -1114,20 +1199,20 @@
     .root {
         -fx-font-size: 12px;
     }
-    
+
     .welcome-header {
         -fx-font-size: 28px;
     }
-    
+
     .card-value {
         -fx-font-size: 24px;
     }
-    
+
     .action-button {
         -fx-min-width: 150px;
         -fx-padding: 10 20;
     }
-    
+
     .nav-button {
         -fx-min-width: 40px;
         -fx-min-height: 40px;
@@ -1335,4 +1420,402 @@
     -fx-border-color: rgba(0,0,0,0.1);
     -fx-border-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
+}
+
+/* Custom Table Styles */
+.table-header {
+    -fx-background-color: -fx-primary;
+    -fx-padding: 10;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.header-cell {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10;
+}
+
+.bookings-scroll {
+    -fx-background: white;
+    -fx-background-radius: 0 0 5 5;
+    -fx-border-color: -fx-gray-light;
+    -fx-border-width: 0 1 1 1;
+    -fx-border-radius: 0 0 5 5;
+}
+
+.bookings-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.bookings-container {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+}
+
+.booking-row {
+    -fx-background-color: white;
+    -fx-padding: 8;
+    -fx-border-color: transparent transparent -fx-gray-light transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.booking-row:hover {
+    -fx-background-color: -fx-gray-light;
+}
+
+.booking-row .cell {
+    -fx-padding: 0 10;
+}
+
+/* Statistics Section */
+.stats-section {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);
+    -fx-padding: 20;
+}
+
+.stats-section .section-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+    -fx-padding: 0 0 15 0;
+}
+
+.stats-section .dashboard-card {
+    -fx-background-color: derive(-fx-background, 2%);
+    -fx-background-radius: 12;
+    -fx-effect: none;
+}
+
+.stats-section .dashboard-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-translate-y: -1;
+}
+
+.stats-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: -fx-gray;
+}
+
+.stats-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+}
+
+.trend-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: -fx-gray;
+    -fx-padding: 5 0 0 0;
+}
+
+/* Status Colors */
+.upcoming {
+    -fx-text-fill: -fx-primary;
+}
+
+.in-progress {
+    -fx-text-fill: -fx-secondary;
+}
+
+.completed {
+    -fx-text-fill: -fx-gray;
+}
+
+/* Chart Styles */
+.custom-chart {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(0,0,0,0.05);
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(0,0,0,0.05);
+}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+}
+
+/* Pie Chart */
+.chart-pie {
+    -fx-border-color: derive(-fx-pie-color, 40%);
+    -fx-border-width: 0;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: rgba(0,0,0,0.3);
+}
+
+.chart-pie-label {
+    -fx-fill: -fx-text-primary;
+    -fx-font-size: 12px;
+}
+
+/* Bar Chart */
+.chart-bar {
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+}
+
+.default-color0.chart-bar { -fx-bar-fill: -fx-primary; }
+.default-color1.chart-bar { -fx-bar-fill: -fx-secondary; }
+.default-color2.chart-bar { -fx-bar-fill: -fx-events-color; }
+.default-color3.chart-bar { -fx-bar-fill: -fx-bookings-color; }
+.default-color4.chart-bar { -fx-bar-fill: -fx-locations-color; }
+
+/* Line Chart */
+.chart-series-line {
+    -fx-stroke-width: 2px;
+}
+
+.default-color0.chart-series-line { -fx-stroke: -fx-primary; }
+.default-color1.chart-series-line { -fx-stroke: -fx-secondary; }
+
+.chart-line-symbol {
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.default-color0.chart-line-symbol { -fx-background-color: -fx-primary, white; }
+.default-color1.chart-line-symbol { -fx-background-color: -fx-secondary, white; }
+
+/* Axis */
+.axis {
+    -fx-tick-label-fill: -fx-gray;
+    -fx-tick-length: 10;
+    -fx-minor-tick-length: 5;
+}
+
+.axis-label {
+    -fx-text-fill: -fx-gray;
+}
+
+/* Legend */
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: -fx-gray;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 0;
+}
+
+/* Pie Chart Colors */
+.data0.chart-pie { -fx-pie-color: -fx-primary; }
+.data1.chart-pie { -fx-pie-color: -fx-secondary; }
+.data2.chart-pie { -fx-pie-color: -fx-events-color; }
+
+/* Chart Animation */
+.animated-chart {
+    -fx-animation: chartFadeIn 1s ease-out;
+}
+
+@keyframes chartFadeIn {
+    from {
+        -fx-opacity: 0;
+        -fx-translate-y: 20;
+    }
+    to {
+        -fx-opacity: 1;
+        -fx-translate-y: 0;
+    }
+}
+
+/* 3D Tour Styles */
+.tour-container {
+    -fx-background-color: #2C3E50;
+}
+
+.tour-container .header-bar {
+    -fx-background-color: linear-gradient(to right, #533C56, #805D86);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+.tour-container .header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.controls-container {
+    -fx-background-color: rgba(44, 62, 80, 0.9);
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, -3);
+}
+
+.control-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.slider {
+    -fx-show-tick-labels: true;
+    -fx-show-tick-marks: true;
+}
+
+.slider .track {
+    -fx-background-color: #7F8C8D;
+}
+
+.slider .thumb {
+    -fx-background-color: #533C56;
+}
+
+.slider .thumb:hover {
+    -fx-background-color: #805D86;
+}
+
+/* Ensure the 3D scene has proper depth */
+.tour-container SubScene {
+    -fx-background-color: transparent;
+}
+
+/* Location Filters Panel */
+.filters-panel {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1;
+}
+
+.filter-header {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56;
+}
+
+.filter-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666666;
+}
+
+.clear-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #666666;
+}
+
+.clear-button:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.apply-button {
+    -fx-background-color: #533C56;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 15;
+}
+
+.apply-button:hover {
+    -fx-background-color: derive(#533C56, 10%);
+}
+
+/* Slider customization */
+.slider .track {
+    -fx-background-color: #e0e0e0;
+}
+
+.slider .thumb {
+    -fx-background-color: #533C56;
+}
+
+.slider .axis {
+    -fx-tick-label-fill: #666666;
+}
+
+/* ComboBox customization */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 3;
+}
+
+.combo-box:focused {
+    -fx-border-color: #533C56;
+}
+
+/* TextField customization */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 3;
+}
+
+.text-field:focused {
+    -fx-border-color: #533C56;
+}
+
+/* CheckBox customization */
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #533C56;
+}
+
+/* Location Cards */
+.location-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 15;
+    -fx-pref-width: 300;
+    -fx-max-width: 300;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.location-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 4);
+    -fx-translate-y: -2;
+}
+
+.location-card .card-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: -fx-primary;
+}
+
+.location-card Label {
+    -fx-text-fill: -fx-gray;
+}
+
+.location-card Button {
+    -fx-min-width: 80;
+}
+
+/* Filters Container */
+.filters-container {
+    -fx-background-color: derive(-fx-background, -2%);
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 2, 0);
+}
+
+.filters-container .filters-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: none;
 }

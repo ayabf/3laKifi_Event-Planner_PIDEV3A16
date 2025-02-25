@@ -107,7 +107,6 @@ public class EventCardController {
 
     private void updateCard() {
         if (event != null) {
-            // Set event details
             eventName.setText(event.getName());
             eventDescription.setText(event.getDescription());
             eventCity.setText(event.getCity().name());
@@ -115,11 +114,9 @@ public class EventCardController {
             eventStartDate.setText(event.getStart_date().format(dateFormatter));
             eventEndDate.setText("Until " + event.getEnd_date().format(dateFormatter));
 
-            // Set overlay content
             overlayTitle.setText(event.getName());
             overlayDate.setText(event.getStart_date().format(dateFormatter));
 
-            // Load image
             if (event.getImageData() != null && event.getImageData().length > 0) {
                 try {
                     Image image = new Image(new ByteArrayInputStream(event.getImageData()));
@@ -129,7 +126,6 @@ public class EventCardController {
                 }
             }
 
-            // Update status
             updateStatus();
         }
     }

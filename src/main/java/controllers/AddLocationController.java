@@ -6,12 +6,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 import Models.Location;
 import Models.City;
 import services.LocationService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.io.ByteArrayInputStream;
+import javafx.scene.paint.Color;
 
 interface LocationRefreshable {
     void refreshLocations();
@@ -30,6 +33,14 @@ public class AddLocationController {
     @FXML private ImageView locationImage;
     @FXML private Button uploadButton;
     @FXML private Button saveButton;
+    @FXML private CheckBox has3DTourCheckbox;
+    @FXML private VBox tourCustomizationBox;
+    @FXML private ComboBox<Integer> tableSetCountComboBox;
+    @FXML private CheckBox includeCornerPlantsCheckbox;
+    @FXML private ComboBox<String> windowStyleComboBox;
+    @FXML private ComboBox<String> doorStyleComboBox;
+    @FXML private CheckBox includeCeilingLightsCheckbox;
+    @FXML private ColorPicker lightColorPicker;
 
     private LocationService locationService;
     private LocationRefreshable parentController;
@@ -39,16 +50,14 @@ public class AddLocationController {
 
     @FXML
     public void initialize() {
-        // Initialize city combo box with enum values
         cityComboBox.getItems().addAll(City.values());
 
-        // Initialize status combo box
         statusComboBox.getItems().addAll("Active", "Inactive", "Under Maintenance");
 
-        // Setup image upload
         uploadButton.setOnAction(e -> handleImageUpload());
 
-        // Setup input validation
+        initializeTourOptions();
+
         setupValidation();
     }
 
@@ -65,7 +74,6 @@ public class AddLocationController {
         formTitle.setText("Edit Location");
         saveButton.setText("Save Changes");
 
-        // Populate fields
         nameField.setText(location.getName());
         addressField.setText(location.getAddress());
         cityComboBox.setValue(location.getVille());
@@ -73,13 +81,33 @@ public class AddLocationController {
         statusComboBox.setValue(location.getStatus());
         descriptionArea.setText(location.getDescription());
         dimensionField.setText(location.getDimension());
-        priceField.setText(String.valueOf(location.getPrice()));
+        priceField.setText(String.format("%.2f", location.getPrice()));
+        has3DTourCheckbox.setSelected(location.getHas3DTour());
 
-        // Load image if exists
+        if (location.getHas3DTour()) {
+            tableSetCountComboBox.setValue(location.getTableSetCount() > 0 ? location.getTableSetCount() : 3);
+            includeCornerPlantsCheckbox.setSelected(location.isIncludeCornerPlants());
+            windowStyleComboBox.setValue(location.getWindowStyle() != null ? location.getWindowStyle() : "Modern");
+            doorStyleComboBox.setValue(location.getDoorStyle() != null ? location.getDoorStyle() : "Modern");
+            includeCeilingLightsCheckbox.setSelected(location.isIncludeCeilingLights());
+
+            String lightColor = location.getLightColor();
+            if (lightColor != null && !lightColor.isEmpty()) {
+                try {
+                    lightColorPicker.setValue(Color.valueOf(lightColor));
+                } catch (IllegalArgumentException e) {
+                    lightColorPicker.setValue(Color.YELLOW);
+                }
+            } else {
+                lightColorPicker.setValue(Color.YELLOW);
+            }
+        }
+
         if (location.getImageData() != null && location.getImageData().length > 0) {
             selectedImageData = location.getImageData();
             selectedImageFileName = location.getImageFileName();
-            loadImage(location.getImageData());
+            Image image = new Image(new ByteArrayInputStream(selectedImageData));
+            locationImage.setImage(image);
         }
     }
 
@@ -90,6 +118,13 @@ public class AddLocationController {
         }
 
         try {
+            String colorString = has3DTourCheckbox.isSelected() ?
+                String.format("#%02X%02X%02X", 
+                    (int)(lightColorPicker.getValue().getRed() * 255),
+                    (int)(lightColorPicker.getValue().getGreen() * 255),
+                    (int)(lightColorPicker.getValue().getBlue() * 255)) : 
+                "#FFFFFF";
+
             Location location = new Location(
                 locationToEdit != null ? locationToEdit.getId_location() : 0,
                 nameField.getText(),
@@ -101,7 +136,14 @@ public class AddLocationController {
                 dimensionField.getText(),
                 Double.parseDouble(priceField.getText()),
                 selectedImageData,
-                selectedImageFileName
+                selectedImageFileName,
+                has3DTourCheckbox.isSelected(),
+                has3DTourCheckbox.isSelected() ? tableSetCountComboBox.getValue() : 3,
+                has3DTourCheckbox.isSelected() ? includeCornerPlantsCheckbox.isSelected() : true,
+                has3DTourCheckbox.isSelected() ? windowStyleComboBox.getValue() : "Modern",
+                has3DTourCheckbox.isSelected() ? doorStyleComboBox.getValue() : "Modern",
+                has3DTourCheckbox.isSelected() ? includeCeilingLightsCheckbox.isSelected() : true,
+                colorString
             );
 
             boolean success;
@@ -137,11 +179,9 @@ public class AddLocationController {
         File selectedFile = fileChooser.showOpenDialog(uploadButton.getScene().getWindow());
         if (selectedFile != null) {
             try {
-                // Read the image file into a byte array
                 selectedImageData = Files.readAllBytes(selectedFile.toPath());
                 selectedImageFileName = selectedFile.getName();
 
-                // Load and display image
                 loadImage(selectedImageData);
             } catch (IOException e) {
                 showError("Error", "Could not load image: " + e.getMessage());
@@ -198,19 +238,38 @@ public class AddLocationController {
     }
 
     private void setupValidation() {
-        // Allow only numbers in capacity field
         capacityField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
                 capacityField.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
 
-        // Allow only numbers and decimal point in price field
         priceField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*\\.?\\d*")) {
                 priceField.setText(oldValue);
             }
         });
+    }
+
+    private void initializeTourOptions() {
+        tableSetCountComboBox.getItems().addAll(1, 2, 3, 4, 5);
+        tableSetCountComboBox.setValue(3);
+
+        windowStyleComboBox.getItems().addAll(
+            "Modern", "Classic", "Large", "Small"
+        );
+        windowStyleComboBox.setValue("Modern");
+
+        doorStyleComboBox.getItems().addAll(
+            "Modern", "Classic", "Double", "Single"
+        );
+        doorStyleComboBox.setValue("Modern");
+
+        lightColorPicker.setValue(Color.WHITE);
+
+        tourCustomizationBox.disableProperty().bind(
+            has3DTourCheckbox.selectedProperty().not()
+        );
     }
 
     private void showError(String header, String content) {

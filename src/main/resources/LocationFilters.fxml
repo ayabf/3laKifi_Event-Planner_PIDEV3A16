@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="15" styleClass="filters-panel" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.LocationFiltersController">
+
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <FontAwesomeIconView glyphName="FILTER" size="1.2em"/>
+        <Label text="Advanced Filters" styleClass="filter-header"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="clearFiltersButton" onAction="#handleClearFilters" styleClass="clear-button" text="Clear">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Price Range -->
+    <VBox spacing="5">
+        <Label text="Price Range (DT)" styleClass="filter-label"/>
+        <HBox spacing="10" alignment="CENTER">
+            <TextField fx:id="minPriceField" promptText="Min" prefWidth="100"/>
+            <Label text="-"/>
+            <TextField fx:id="maxPriceField" promptText="Max" prefWidth="100"/>
+        </HBox>
+    </VBox>
+
+    <!-- Capacity -->
+    <VBox spacing="5">
+        <Label text="Capacity" styleClass="filter-label"/>
+        <HBox spacing="10" alignment="CENTER">
+            <TextField fx:id="minCapacityField" promptText="Min people" prefWidth="100"/>
+            <Label text="-"/>
+            <TextField fx:id="maxCapacityField" promptText="Max people" prefWidth="100"/>
+        </HBox>
+    </VBox>
+
+    <!-- City -->
+    <VBox spacing="5">
+        <Label text="City" styleClass="filter-label"/>
+        <ComboBox fx:id="cityComboBox" promptText="Select city" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Status -->
+    <VBox spacing="5">
+        <Label text="Status" styleClass="filter-label"/>
+        <ComboBox fx:id="statusComboBox" promptText="Select status" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Amenities -->
+    <VBox spacing="5">
+        <Label text="Amenities" styleClass="filter-label"/>
+        <CheckBox fx:id="has3DTourCheckbox" text="3D Tour Available"/>
+        <CheckBox fx:id="hasCornerPlantsCheckbox" text="Corner Plants"/>
+        <CheckBox fx:id="hasCeilingLightsCheckbox" text="Ceiling Lights"/>
+    </VBox>
+
+    <!-- Table Sets -->
+    <VBox spacing="5">
+        <Label text="Table Sets" styleClass="filter-label"/>
+        <Slider fx:id="tableSetSlider" min="0" max="50" value="0" majorTickUnit="10" minorTickCount="1"
+                snapToTicks="true" showTickLabels="true" showTickMarks="true"/>
+    </VBox>
+
+    <!-- Apply Filters Button -->
+    <Button fx:id="applyFiltersButton" onAction="#handleApplyFilters"
+            styleClass="apply-button" maxWidth="Infinity" text="Apply Filters">
+        <graphic>
+            <FontAwesomeIconView glyphName="CHECK" size="1.2em"/>
+        </graphic>
+    </Button>
+</VBox>

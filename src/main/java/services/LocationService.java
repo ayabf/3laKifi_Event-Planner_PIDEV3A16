@@ -15,8 +15,8 @@ public class LocationService {
     }
 
     public boolean add(Location location) {
-        String query = "INSERT INTO location (name, address, city, capacity, status, description, dimension, price, image_data, image_filename) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO location (name, address, city, capacity, status, description, dimension, price, image_data, image_filename, has_3d_tour) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pst = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, location.getName());
             pst.setString(2, location.getAddress());
@@ -28,6 +28,7 @@ public class LocationService {
             pst.setDouble(8, location.getPrice());
             pst.setBytes(9, location.getImageData());
             pst.setString(10, location.getImageFileName());
+            pst.setBoolean(11, location.getHas3DTour());
 
             int affectedRows = pst.executeUpdate();
             if (affectedRows > 0) {
@@ -45,7 +46,7 @@ public class LocationService {
 
     public boolean update(Location location) {
         String query = "UPDATE location SET name=?, address=?, city=?, capacity=?, " +
-                      "status=?, description=?, dimension=?, price=?, image_data=?, image_filename=? " +
+                      "status=?, description=?, dimension=?, price=?, image_data=?, image_filename=?, has_3d_tour=? " +
                       "WHERE id_location=?";
         try (PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setString(1, location.getName());
@@ -58,7 +59,8 @@ public class LocationService {
             pst.setDouble(8, location.getPrice());
             pst.setBytes(9, location.getImageData());
             pst.setString(10, location.getImageFileName());
-            pst.setInt(11, location.getId_location());
+            pst.setBoolean(11, location.getHas3DTour());
+            pst.setInt(12, location.getId_location());
 
             return pst.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -133,22 +135,33 @@ public class LocationService {
     }
 
     private Location extractLocationFromResultSet(ResultSet rs) throws SQLException {
-        return new Location(
-            rs.getInt("id_location"),
-            rs.getString("name"),
-            rs.getString("address"),
-            City.valueOf(rs.getString("city")),
-            rs.getInt("capacity"),
-            rs.getString("status"),
-            rs.getString("description"),
-            rs.getString("dimension"),
-            rs.getDouble("price"),
-            rs.getBytes("image_data"),
-            rs.getString("image_filename")
-        );
+        Location location = new Location();
+        location.setId_location(rs.getInt("id_location"));
+        location.setName(rs.getString("name"));
+        location.setAddress(rs.getString("address"));
+        location.setVille(City.valueOf(rs.getString("city")));
+        location.setCapacity(rs.getInt("capacity"));
+        location.setStatus(rs.getString("status"));
+        location.setDescription(rs.getString("description"));
+        location.setDimension(rs.getString("dimension"));
+        location.setPrice(rs.getDouble("price"));
+        location.setImageData(rs.getBytes("image_data"));
+        location.setImageFileName(rs.getString("image_filename"));
+        location.setHas3DTour(rs.getBoolean("has_3d_tour"));
+        return location;
     }
 
     public void refreshConnection() {
         this.conn = DataSource.getInstance().getConnection();
+    }
+
+    public void reserveLocation(Location location) {
+        String query = "UPDATE location SET status = 'Reserved' WHERE id_location = ?";
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setInt(1, location.getId_location());
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("❌ Error reserving location: " + e.getMessage());
+        }
     }
 } 

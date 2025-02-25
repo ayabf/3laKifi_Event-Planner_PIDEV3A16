@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.chart.*?>
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
       fx:controller="controllers.AdminDashboardController" 
@@ -132,6 +133,124 @@
                         </HBox>
                     </VBox>
                 </HBox>
+
+                <!-- Statistics Section -->
+                <VBox spacing="30">
+                    <!-- Event Statistics -->
+                    <VBox spacing="15" styleClass="stats-section">
+                        <Label text="Event Statistics" styleClass="section-header"/>
+                        <HBox spacing="20">
+                            <!-- Events Status Distribution (Pie Chart) -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Events by Status" styleClass="card-title"/>
+                                <PieChart fx:id="eventStatusChart" legendVisible="true" 
+                                         legendSide="RIGHT" labelsVisible="true"
+                                         styleClass="custom-chart" minHeight="250"/>
+                            </VBox>
+                            
+                            <!-- Average Capacity -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Average Event Capacity" styleClass="card-title"/>
+                                <Label fx:id="avgEventCapacityLabel" text="0" styleClass="stats-value"/>
+                                <BarChart fx:id="eventCapacityChart" legendVisible="false"
+                                        styleClass="custom-chart" minHeight="200">
+                                    <xAxis>
+                                        <CategoryAxis label="Capacity Range"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Number of Events"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Booking Statistics -->
+                    <VBox spacing="15" styleClass="stats-section">
+                        <Label text="Booking Statistics" styleClass="section-header"/>
+                        <HBox spacing="20">
+                            <!-- Monthly Bookings Trend -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Monthly Bookings Trend" styleClass="card-title"/>
+                                <LineChart fx:id="bookingTrendChart" legendVisible="false"
+                                         styleClass="custom-chart" minHeight="250">
+                                    <xAxis>
+                                        <CategoryAxis label="Month"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Number of Bookings"/>
+                                    </yAxis>
+                                </LineChart>
+                            </VBox>
+                            
+                            <!-- Popular Locations Chart -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Most Booked Locations" styleClass="card-title"/>
+                                <BarChart fx:id="popularLocationsChart" legendVisible="false"
+                                        styleClass="custom-chart" minHeight="250">
+                                    <xAxis>
+                                        <CategoryAxis label="Location"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Number of Bookings"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Location Statistics -->
+                    <VBox spacing="15" styleClass="stats-section">
+                        <Label text="Location Statistics" styleClass="section-header"/>
+                        <HBox spacing="20">
+                            <!-- Price Distribution -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Price Distribution" styleClass="card-title"/>
+                                <BarChart fx:id="priceDistributionChart" legendVisible="false"
+                                        styleClass="custom-chart" minHeight="250">
+                                    <xAxis>
+                                        <CategoryAxis label="Price Range (DT)"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Number of Locations"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                            
+                            <!-- Capacity Distribution -->
+                            <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                                <padding>
+                                    <Insets top="15" right="20" bottom="15" left="20"/>
+                                </padding>
+                                <Label text="Capacity Distribution" styleClass="card-title"/>
+                                <BarChart fx:id="capacityDistributionChart" legendVisible="false"
+                                        styleClass="custom-chart" minHeight="250">
+                                    <xAxis>
+                                        <CategoryAxis label="Capacity Range"/>
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis label="Number of Locations"/>
+                                    </yAxis>
+                                </BarChart>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </VBox>
 
                 <!-- Events Table Section -->
                 <VBox spacing="15" styleClass="table-container">
