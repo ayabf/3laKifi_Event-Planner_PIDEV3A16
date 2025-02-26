@@ -1,6 +1,10 @@
 package controllers;
 
 import Models.Publications;
+import Models.Reports;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import services.ServicePublications;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class ModifierPublicationController {
@@ -82,5 +87,31 @@ public class ModifierPublicationController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    @FXML
+    private void btnCancel(ActionEvent actionEvent) {
+        try {
+            // Charger l'interface AfficherPublication.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherPublication.fxml"));
+            Parent root = loader.load();
+
+            // Récupérer la scène actuelle et la fermer
+            Stage currentStage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+            currentStage.close();
+
+            // Ouvrir la nouvelle scène
+            Stage stage = new Stage();
+            stage.setTitle("Liste des Publications");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors de l'ouverture de AfficherPublication.fxml : " + e.getMessage());
+        }
+    }
+
+
+    public void updatePublicationStatus(ActionEvent actionEvent) {
+
     }
 }

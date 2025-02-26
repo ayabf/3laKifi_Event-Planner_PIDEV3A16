@@ -1,6 +1,11 @@
 package controllers;
 
 import Models.Publications;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import services.ServicePublications;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class AjouterPublicationController {
@@ -32,6 +38,8 @@ public class AjouterPublicationController {
     private ImageView imageView;
 
     private final ServicePublications servicePublications = new ServicePublications();
+    @FXML
+    private Button cancelPublication;
 
     @FXML
     void ajouterPublication(ActionEvent event) {
@@ -108,5 +116,26 @@ public class AjouterPublicationController {
         assert descriptionPublicationTextfield != null : "fx:id=\"descriptionPublicationTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
         assert titlePublicationTextfield != null : "fx:id=\"titlePublicationTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
         assert imageView != null : "fx:id=\"imageView\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
+    }
+    @FXML
+    private void cancelPublication(ActionEvent event) {
+        try {
+            // Charger l'interface AfficherPublication.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherPublication.fxml"));
+            Parent root = loader.load();
+
+            // Récupérer la scène actuelle et la fermer
+            Stage currentStage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            currentStage.close();
+
+            // Ouvrir la nouvelle scène
+            Stage stage = new Stage();
+            stage.setTitle("Liste des Publications");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors de l'ouverture de AfficherPublication.fxml : " + e.getMessage());
+        }
     }
 }

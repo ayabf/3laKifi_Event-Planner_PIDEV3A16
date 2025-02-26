@@ -10,10 +10,10 @@ public class mainFx extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherPublication.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReport.fxml"));
             Parent root = loader.load();
 
-            primaryStage.setTitle("Gestion des Publications");
+            primaryStage.setTitle("Forum Management");
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
         } catch (Exception e) {
