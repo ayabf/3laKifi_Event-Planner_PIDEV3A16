@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<VBox alignment="CENTER" spacing="20" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.WelcomeController">
+
+    <Label text="Bienvenue !" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <Label text="Veuillez choisir votre espace :" style="-fx-font-size: 16px;"/>
+
+    <Button text="Espace Client (Panier)" onAction="#goToClientSpace"
+            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 10px 20px;"/>
+
+    <Button text="Tableau de Bord Admin" onAction="#goToAdminDashboard"
+            style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 10px 20px;"/>
+</VBox>

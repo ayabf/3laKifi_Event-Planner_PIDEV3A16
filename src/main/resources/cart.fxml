@@ -18,7 +18,7 @@
     </HBox>
 
     <Button fx:id="validateCartButton" layoutX="337.0" layoutY="522.0" onAction="#validateCart" styleClass="validate-button" text="validate cart" />
-     <Label layoutX="665.0" layoutY="439.0" styleClass="subtotal-label" text="Subtotal" />
-   <Button layoutX="30.0" layoutY="15.0" mnemonicParsing="false" text="⬅  Back" />
-    
+    <Label layoutX="665.0" layoutY="439.0" styleClass="subtotal-label" text="Subtotal" />
+    <Button layoutX="30.0" layoutY="15.0" mnemonicParsing="false" text="⬅  Back" />
+
 </AnchorPane>

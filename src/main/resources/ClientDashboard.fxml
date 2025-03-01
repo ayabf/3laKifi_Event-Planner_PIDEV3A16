@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="controllers.ClientDashboardController" 
+      styleClass="root" 
+      stylesheets="@styles/global.css">
+    
+    <!-- Header -->
+    <HBox styleClass="header-bar">
+        <padding>
+            <Insets left="30" right="30" top="15" bottom="15"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <FontAwesomeIconView glyphName="CALENDAR" size="2em" fill="WHITE"/>
+            <Label text="3laKifi Events" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#handleBackToLanding" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="HOME" size="1.5em" fill="WHITE"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Back to Landing Page"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="refreshButton" onAction="#handleRefresh" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="REFRESH" size="1.5em" fill="WHITE"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Refresh"/>
+            </tooltip>
+        </Button>
+        <Button fx:id="logoutButton" onAction="#handleLogout" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="SIGN_OUT" size="1.5em" fill="WHITE"/>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Logout"/>
+            </tooltip>
+        </Button>
+    </HBox>
+    
+    <!-- Main Content -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="edge-to-edge">
+        <VBox spacing="30">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+            
+            <!-- My Events Section -->
+            <VBox spacing="20">
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="My Events" styleClass="section-header"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button onAction="#handleCreateEvent" styleClass="action-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip text="Create New Event"/>
+                        </tooltip>
+                    </Button>
+                </HBox>
+                <FlowPane fx:id="myEventsContainer" hgap="30" vgap="30" prefWrapLength="1200">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+                </FlowPane>
+                <StackPane fx:id="noEventsPane" visible="false" managed="false">
+                    <VBox alignment="CENTER" spacing="15">
+                        <FontAwesomeIconView glyphName="CALENDAR" size="3em"/>
+                        <Label text="You haven't created any events yet" styleClass="empty-state-title"/>
+                        <Button text="Create Your First Event" onAction="#handleCreateEvent" styleClass="action-button">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="PLUS" size="1.2em"/>
+                            </graphic>
+                        </Button>
+                    </VBox>
+                </StackPane>
+            </VBox>
+            
+            <!-- My Reservations Section -->
+            <VBox spacing="20">
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="My Reservations" styleClass="section-header"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button onAction="#handleBrowseEvents" styleClass="action-button">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="SEARCH" size="1.2em"/>
+                        </graphic>
+                        <tooltip>
+                            <Tooltip text="Browse Events"/>
+                        </tooltip>
+                    </Button>
+                </HBox>
+                <FlowPane fx:id="myReservationsContainer" hgap="30" vgap="30" prefWrapLength="1200">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+                </FlowPane>
+                <StackPane fx:id="noReservationsPane" visible="false" managed="false">
+                    <VBox alignment="CENTER" spacing="15">
+                        <FontAwesomeIconView glyphName="TICKET" size="3em"/>
+                        <Label text="You don't have any reservations yet" styleClass="empty-state-title"/>
+                        <Button text="Browse Events" onAction="#handleBrowseEvents" styleClass="action-button">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="SEARCH" size="1.2em"/>
+                            </graphic>
+                        </Button>
+                    </VBox>
+                </StackPane>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox> 

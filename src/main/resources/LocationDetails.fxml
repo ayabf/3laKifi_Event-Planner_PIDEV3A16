@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox spacing="20" styleClass="root" stylesheets="@styles/global.css"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.LocationDetailsController">
+    
+    <!-- Header -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="30" right="30" top="15" bottom="15"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <FontAwesomeIconView glyphName="MAP_MARKER" size="2em" fill="WHITE"/>
+            <Label fx:id="locationTitle" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#handleClose" styleClass="header-button">
+            <graphic>
+                <FontAwesomeIconView glyphName="TIMES" size="1.5em" fill="WHITE"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Main Content -->
+    <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" VBox.vgrow="ALWAYS">
+        <VBox spacing="30" styleClass="form-container">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <!-- Location Image -->
+            <VBox spacing="15" alignment="CENTER" styleClass="image-upload-section">
+                <ImageView fx:id="locationImage" fitHeight="250" fitWidth="400" 
+                          preserveRatio="true" styleClass="image-preview"/>
+            </VBox>
+
+            <!-- Status Indicator -->
+            <HBox fx:id="statusContainer" spacing="8" alignment="CENTER_LEFT" styleClass="status-indicator">
+                <FontAwesomeIconView fx:id="statusIcon" size="1.2em"/>
+                <Label fx:id="statusText" styleClass="status-text"/>
+            </HBox>
+
+            <!-- Location Details -->
+            <GridPane styleClass="details-grid" vgap="15" hgap="30">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="100" prefWidth="150"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <!-- City -->
+                <Label text="City:" styleClass="field-label" 
+                       GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label fx:id="cityLabel" styleClass="field-value"
+                       GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <!-- Capacity -->
+                <Label text="Capacity:" styleClass="field-label"
+                       GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label fx:id="capacityLabel" styleClass="field-value"
+                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <!-- Dimensions -->
+                <Label text="Dimensions:" styleClass="field-label"
+                       GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <Label fx:id="dimensionsLabel" styleClass="field-value"
+                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <!-- Price -->
+                <Label text="Price:" styleClass="field-label"
+                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Label fx:id="priceLabel" styleClass="field-value"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <!-- Action Buttons -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Close" onAction="#handleClose" styleClass="button, secondary">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="TIMES" size="1.2em"/>
+                    </graphic>
+                </Button>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+</VBox> 

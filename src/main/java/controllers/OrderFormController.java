@@ -1,6 +1,7 @@
 package controllers;
 
 import Models.Order;
+import Models.session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,8 +12,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
 import javafx.scene.control.Alert;
+import utils.DataSource;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,7 +36,8 @@ public class OrderFormController {
     @FXML private Spinner<Integer> eventMinuteSpinner;
     @FXML private Label totalPriceLabel;
     @FXML private Button timePickerButton;
-
+    @FXML
+    private Button modifyStatusButton;
 
     @FXML
     private Label selectedTimeLabel;
@@ -53,31 +59,67 @@ public class OrderFormController {
 
     @FXML
     public void initialize() {
+        System.out.println("🔍 Session utilisateur chargée : ID = " + session.id_utilisateur);
+        System.out.println("🔍 Vérification du rôle de l'utilisateur : " + session.id_utilisateur);
+
+        if (!isAdmin(session.id_utilisateur)) {
+            modifyStatusButton.setVisible(false); // Cache le bouton si ce n'est pas un admin
+        }
+        if (session.id_utilisateur <= 0) {
+            System.err.println("❌ ERREUR: L'utilisateur n'est pas défini !");
+            showAlert("Erreur", "Utilisateur non défini. Veuillez vous reconnecter.");
+            return;
+        }
+
         if (eventHourSpinner != null && eventMinuteSpinner != null) {
             eventHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 12));
             eventMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 30));
         } else {
-            System.err.println("⚠ `eventHourSpinner` ou `eventMinuteSpinner` n'est pas initialisé !");
+            System.err.println("⚠ eventHourSpinner ou eventMinuteSpinner n'est pas initialisé !");
         }
         addressField.textProperty().addListener((observable, oldValue, newValue) -> validateAddressInput());
 
     }
+    private boolean isAdmin(int userId) {
+        String query = "SELECT role FROM user WHERE id_user = ?";
 
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "ADMIN".equalsIgnoreCase(role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 
     public void setCartDetails(int cartId, int userId, double totalPrice) {
+        if (userId <= 0) {
+            System.err.println("❌ ERREUR: userId est invalide !");
+            return;
+        }
+
         this.cartId = cartId;
-        this.userId = userId;
+        this.userId = userId;  // 🔥 S'assurer que l'ID utilisateur est bien stocké
         this.totalPrice = totalPrice;
 
-        System.out.println("Prix total reçu dans le formulaire: " + totalPrice); // Debugging
+        System.out.println("🔹 setCartDetails() appelé avec - Cart ID: " + cartId + ", User ID: " + userId + ", Total: " + totalPrice);
 
-        totalPriceLabel.setText("$" + totalPrice); // Mise à jour de l'affichage
+        System.out.println("📦 Commande associée à l'utilisateur ID: " + userId);
+        totalPriceLabel.setText("$" + totalPrice);
     }
 
 
     @FXML
     private void validateOrder() {
+
         LocalDate selectedDate = eventDatePicker.getValue();
         String address = addressField.getText();
         String paymentMethod = paymentMethodBox.getValue();
@@ -121,26 +163,99 @@ public class OrderFormController {
             showAlert("Erreur", "Veuillez remplir tous les champs !");
             return;
         }
+        // ✅ Vérification de l'utilisateur et du panier avant de passer la commande
+        if (session.id_utilisateur <= 0) {
+            System.err.println("❌ ERREUR: L'utilisateur n'est pas défini !");
+            showAlert("Erreur", "Utilisateur non défini. Veuillez vous reconnecter.");
+            return;
+        }
+        int cartId = getCartIdForUser(session.id_utilisateur);
+        System.out.println("🎯 Cart ID trouvé pour utilisateur " + session.id_utilisateur + " : " + cartId);
+
+        if (cartId <= 0) {
+            System.out.println("⚠ Aucun panier trouvé, création d'un nouveau panier...");
+            cartId = orderService.creerNouveauPanier(session.id_utilisateur);
+        }
+        if (orderService.commandeExisteDeja(cartId)) {
+            showAlertAndRedirect("Erreur", "Une commande existe déjà pour ce panier !");
+            return;
+        }
+// Vérifier si le panier contient des produits avant de créer la commande
+        if (!orderService.panierContientProduits(cartId)) {
+            showAlert("Erreur", "Votre panier est vide. Ajoutez des produits avant de valider la commande !");
+            return;
+        }
+
+        System.out.println("📅 Date sélectionnée : " + (selectedDate != null ? selectedDate.toString() : "null"));
+
         LocalDateTime eventDateTime = LocalDateTime.of(selectedDate, LocalTime.of(selectedHour, selectedMinute));
         System.out.println("📅 Date sauvegardée : " + eventDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+        System.out.println("🔍 Vérification de session.id_utilisateur : " + session.id_utilisateur);
 
         // 📌 Créer et enregistrer la commande
-        Order newOrder = new Order(cartId, userId, "PENDING");
-        newOrder.setTotalPrice(totalPrice);
-        newOrder.setEventDate(eventDateTime);
-        newOrder.setExactAddress(address);
-        newOrder.setPaymentMethod(paymentMethod);
+        Order newOrder = new Order(cartId, userId, "PENDING", totalPrice, eventDateTime, address, paymentMethod);
+        System.out.println("🔄 Cart ID avant appel à ajouter() : " + newOrder.getCartId());
+        System.out.println("🔄 User ID avant appel à ajouter() : " + newOrder.getUserId());
+        System.out.println("🔄 Total Price avant appel à ajouter() : " + newOrder.getTotalPrice());
 
-        try {
-            orderService.ajouter(newOrder);
-            showAlert("Succès", "Commande validée !");
-            openOrderListPage();
+        System.out.println("🎯 Cart ID trouvé pour utilisateur " + session.id_utilisateur + " : " + cartId);
+        if (cartId <= 0) {
+            System.out.println("⚠ Aucun panier trouvé, création d'un nouveau panier...");
+            cartId = orderService.creerNouveauPanier(session.id_utilisateur);
+        }
+
+
+
+        orderService.ajouter(newOrder);
+        showAlertAndRedirect("Succès", "Commande validée !");
+        openOrderListPage();
+
+    }
+    private void showAlertAndRedirect(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait().ifPresent(response -> openOrderListPage());
+    }
+
+
+
+
+
+
+
+
+
+    private int getCartIdForUser(int userId) {
+        System.out.println("🔍 Recherche du Cart ID pour user_id : " + userId);
+
+        String query = "SELECT cart_id FROM cart WHERE user_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int cartId = rs.getInt("cart_id");
+                System.out.println("✅ Cart ID trouvé : " + cartId);
+                return cartId;
+            } else {
+                System.out.println("⚠ Aucun panier trouvé pour l'utilisateur : " + userId);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible de valider la commande.");
+            System.err.println("❌ Erreur lors de la récupération du cart_id !");
         }
+        return -1; // Retourne -1 si aucun panier n'est trouvé
     }
+
+
+
+
+
 
     private void openOrderListPage() {
         try {
@@ -201,18 +316,18 @@ public class OrderFormController {
         });
     }
 
-//controle de saisie :
-@FXML
-private void validateAddressInput() {
-    String address = addressField.getText().trim();
-    if (address.length() < 5) {
-        errorAddress.setVisible(true);
-        addressField.setStyle("-fx-border-color: red;");
-    } else {
-        errorAddress.setVisible(false);
-        addressField.setStyle("-fx-border-color: green;");
+    //controle de saisie :
+    @FXML
+    private void validateAddressInput() {
+        String address = addressField.getText().trim();
+        if (address.length() < 5) {
+            errorAddress.setVisible(true);
+            addressField.setStyle("-fx-border-color: red;");
+        } else {
+            errorAddress.setVisible(false);
+            addressField.setStyle("-fx-border-color: green;");
+        }
     }
-}
 
     @FXML
     private void handleClose() {

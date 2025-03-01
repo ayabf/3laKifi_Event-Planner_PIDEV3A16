@@ -1,66 +1,222 @@
 package services;
 
 import Models.Order;
-import Models.User;
 import utils.DataSource;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderService implements IService<Order> {
+public class OrderService {
 
-    private final Connection connection;
+    private Connection connection;
 
     public OrderService() {
         this.connection = DataSource.getInstance().getConnection();
     }
 
-    @Override
-    public void ajouter(Order order) throws SQLException {
-        if (commandeExisteDeja(order.getCartId())) {
-            System.out.println("⚠ Une commande avec ce cart_id existe déjà ! Opération annulée.");
+
+    public List<Order> getAllByUser(int userId) throws SQLException {
+        List<Order> orderList = new ArrayList<>();
+        String query = "SELECT * FROM `order` WHERE user_id = ? ORDER BY ordered_at DESC";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Order order = new Order(
+                        rs.getInt("order_id"),
+                        rs.getInt("cart_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("status"),
+                        rs.getString("payment_method"),
+                        rs.getString("exact_address"),
+                        rs.getTimestamp("event_date") != null ? rs.getTimestamp("event_date").toLocalDateTime() : null,
+                        rs.getTimestamp("ordered_at") != null ? rs.getTimestamp("ordered_at").toLocalDateTime() : null,
+                        rs.getDouble("total_price")
+                );
+                System.out.println("🔍 Commande récupérée : " + order);
+                orderList.add(order);
+            }
+        }
+        return orderList;
+    }
+
+
+    public void ajouter(Order order) {
+        if (!userExists(order.getUserId())) {
+            System.err.println("❌ ERREUR: L'utilisateur avec l'ID " + order.getUserId() + " n'existe pas dans la base !");
             return;
         }
 
-        String query = "INSERT INTO `order` (cart_id, user_id, total_price, event_date, exact_address, payment_method, status, ordered_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, 'PENDING', NOW())";
+        if (!cartExists(order.getCartId())) {
+            System.err.println("❌ ERREUR: Le panier avec l'ID " + order.getCartId() + " n'existe pas !");
+            return;
+        }
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        if (commandeExisteDeja(order.getCartId())) {
+            System.err.println("⚠ ERREUR: Une commande existe déjà pour ce panier !");
+            return;
+        }
+
+        System.out.println("🔹 Tentative d'insertion de la commande...");
+
+        String query = "INSERT INTO `order` (cart_id, user_id, status, total_price, payment_method, exact_address, event_date, ordered_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) { // 🔥 Récupérer l'ID généré
+
             stmt.setInt(1, order.getCartId());
             stmt.setInt(2, order.getUserId());
-            stmt.setDouble(3, order.getTotalPrice());
-            stmt.setTimestamp(4, Timestamp.valueOf(order.getEventDate())); // ✅ Correct
-            stmt.setString(5, order.getExactAddress());
-            stmt.setString(6, order.getPaymentMethod());
+            stmt.setString(3, order.getStatus());
+            stmt.setDouble(4, order.getTotalPrice());
+            stmt.setString(5, order.getPaymentMethod());
+            stmt.setString(6, order.getExactAddress());
+            stmt.setTimestamp(7, Timestamp.valueOf(order.getEventDate()));
 
-            stmt.executeUpdate();
-            System.out.println("✅ Commande ajoutée avec succès !");
+            int rowsInserted = stmt.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("✅ Commande ajoutée avec succès !");
+
+                // 🔥 Récupérer l'order_id généré
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int orderId = generatedKeys.getInt(1);
+                    order.setOrderId(orderId);  // 🔥 Mise à jour de l'objet Order
+                    System.out.println("🆕 Order ID généré: " + orderId);
+                } else {
+                    System.err.println("⚠ Problème : Order ID non récupéré !");
+                }
+            } else {
+                System.err.println("⚠ Problème lors de l'insertion de la commande !");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de l'ajout de la commande !");
         }
     }
 
 
-    public void modifier(Order order) throws SQLException {
-        String query = "UPDATE `order` SET event_date = ?, exact_address = ? WHERE order_id = ?";
+
+
+
+
+
+
+
+
+
+
+    private boolean cartExists(int cartId) {
+        String query = "SELECT COUNT(*) FROM cart WHERE cart_id = ?";
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            stmt.setInt(1, cartId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean commandeExisteDeja(int cartId) {
+        String query = "SELECT COUNT(*) FROM `order` WHERE cart_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, cartId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+    public boolean panierContientProduits(int cartId) {
+        String query = "SELECT COUNT(*) FROM cart_product WHERE cart_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, cartId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int creerNouveauPanier(int userId) {
+        String checkUserQuery = "SELECT COUNT(*) FROM user WHERE id_user = ?";
+        String insertCartQuery = "INSERT INTO cart (user_id) VALUES (?)";
+        int newCartId = -1;
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement checkUserStmt = conn.prepareStatement(checkUserQuery)) {
+
+            checkUserStmt.setInt(1, userId);
+            ResultSet rs = checkUserStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {  // Vérifie que l'utilisateur existe
+                try (PreparedStatement insertCartStmt = conn.prepareStatement(insertCartQuery, Statement.RETURN_GENERATED_KEYS)) {
+                    insertCartStmt.setInt(1, userId);
+                    insertCartStmt.executeUpdate();
+
+                    ResultSet generatedKeys = insertCartStmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        newCartId = generatedKeys.getInt(1);
+                    }
+
+                    System.out.println("✅ Nouveau panier créé avec l'ID : " + newCartId);
+                }
+            } else {
+                System.err.println("❌ ERREUR: L'utilisateur avec l'ID " + userId + " n'existe pas. Impossible de créer un panier !");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de la création du panier !");
+        }
+
+        return newCartId;
+    }
+
+    public void modifier(Order order) throws SQLException {
+        String query = "UPDATE `order` SET event_date = ?, exact_address = ? WHERE order_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setTimestamp(1, Timestamp.valueOf(order.getEventDate()));
             stmt.setString(2, order.getExactAddress());
             stmt.setInt(3, order.getOrderId());
 
             int rowsUpdated = stmt.executeUpdate();
             if (rowsUpdated > 0) {
-                System.out.println("✅ Commande mise à jour dans la base !");
-                System.out.println("📅 Nouvelle Date: " + order.getEventDate());
-                System.out.println("📍 Nouvelle Adresse: " + order.getExactAddress());
+                System.out.println("✅ Commande mise à jour avec succès !");
             } else {
-                System.out.println("❌ Aucune commande mise à jour !");
+                System.out.println("❌ Aucune mise à jour effectuée !");
             }
         }
     }
 
-    @Override
     public void supprimer(int id) throws SQLException {
         String query = "DELETE FROM `order` WHERE order_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -70,11 +226,10 @@ public class OrderService implements IService<Order> {
         }
     }
 
-    @Override
-    public Order getOne(Order order) throws SQLException {
+    public Order getOne(int orderId) throws SQLException {
         String query = "SELECT * FROM `order` WHERE order_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, order.getOrderId());
+            stmt.setInt(1, orderId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -94,14 +249,11 @@ public class OrderService implements IService<Order> {
         return null;
     }
 
-
-    @Override
     public List<Order> getAll() throws SQLException {
         List<Order> orderList = new ArrayList<>();
         String query = "SELECT * FROM `order` ORDER BY ordered_at DESC";
 
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
+        try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -112,7 +264,7 @@ public class OrderService implements IService<Order> {
                         rs.getString("status"),
                         rs.getString("payment_method"),
                         rs.getString("exact_address"),
-                        rs.getTimestamp("event_date") != null ? rs.getTimestamp("event_date").toLocalDateTime() : null, // ✅ Vérification
+                        rs.getTimestamp("event_date") != null ? rs.getTimestamp("event_date").toLocalDateTime() : null,
                         rs.getTimestamp("ordered_at") != null ? rs.getTimestamp("ordered_at").toLocalDateTime() : null,
                         rs.getDouble("total_price")
                 );
@@ -123,84 +275,103 @@ public class OrderService implements IService<Order> {
         return orderList;
     }
 
-
-    public List<Order> getAllByUser(int userId) throws SQLException {
-        List<Order> orderList = new ArrayList<>();
-        String query = "SELECT * FROM `order` WHERE user_id = ? ORDER BY ordered_at DESC"; // ✅ Filtre par user_id
-
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, userId);  // ✅ Associe uniquement aux commandes de l'utilisateur
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Order order = new Order(
-                        rs.getInt("order_id"),
-                        rs.getInt("cart_id"),
-                        rs.getInt("user_id"),
-                        rs.getString("status"),
-                        rs.getString("payment_method"),
-                        rs.getString("exact_address"),
-                        rs.getTimestamp("event_date").toLocalDateTime(),
-                        rs.getTimestamp("ordered_at").toLocalDateTime(),
-                        rs.getDouble("total_price")
-                );
-                orderList.add(order);
-            }
-        }
-        return orderList;
-    }
     public void annulerCommande(int orderId) throws SQLException {
         String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, "CANCELLED"); // ✅ Bien mettre une chaîne de caractères
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, "CANCELLED");
             stmt.setInt(2, orderId);
             stmt.executeUpdate();
-            System.out.println("✅ Commande annulée avec succès !");
+            System.out.println("✅ Commande annulée !");
         }
     }
 
-    public void updateStatus(int orderId, String newStatus) throws SQLException {
-        String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
-        Connection conn = DataSource.getInstance().getConnection(); // Récupère une nouvelle connexion
-
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, newStatus);
-            stmt.setInt(2, orderId);
-            stmt.executeUpdate();
-            System.out.println("✅ Statut mis à jour pour la commande " + orderId + " -> " + newStatus);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("Erreur lors de la mise à jour du statut.");
-        }
-    }
-
-    public void modifierStatutCommande(int orderId, String newStatus, User user) throws SQLException {
-        if (!user.getRole().equalsIgnoreCase("admin")) { // ✅ Vérification du rôle
-            System.out.println("⛔ Accès refusé : Seul un administrateur peut modifier le statut !");
+    public void updateStatus(int orderId, String newStatus, int userId) {
+        if (!isAdmin(userId)) {
+            System.err.println("❌ ERREUR: L'utilisateur avec ID " + userId + " n'a pas les droits pour modifier le statut !");
             return;
         }
 
         String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
+
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, newStatus);
             stmt.setInt(2, orderId);
-            stmt.executeUpdate();
-            System.out.println("✅ Statut de la commande mis à jour avec succès !");
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Statut mis à jour avec succès pour la commande " + orderId + " !");
+            } else {
+                System.err.println("⚠ Aucun changement détecté !");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de la mise à jour du statut !");
+        }
+    }
+    private boolean isAdmin(int userId) {
+        String query = "SELECT role FROM user WHERE id_user = ?";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                return "ADMIN".equalsIgnoreCase(role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean userExists(int userId) {
+        String query = "SELECT COUNT(*) FROM user WHERE id_user = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de la vérification de l'utilisateur !");
+        }
+        return false;
+    }
+
+    public void updateOrderStatus(int orderId, String newStatus) throws SQLException {
+        Connection connection = DataSource.getInstance().getConnection();
+        String query = "UPDATE `order` SET status = ? WHERE order_id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, newStatus);
+        preparedStatement.setInt(2, orderId);
+        preparedStatement.executeUpdate();
+    }
+
+    private void checkConnection() throws SQLException {
+        if (this.connection == null || this.connection.isClosed()) {
+            System.out.println("🔄 Réouverture de la connexion...");
+            this.connection = DataSource.getInstance().getConnection();
+        }
+    }
+    public void closeConnection() {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+                System.out.println("🔌 Connexion fermée proprement.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    public boolean commandeExisteDeja(int cartId) throws SQLException {
-        String query = "SELECT COUNT(*) FROM `order` WHERE cart_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, cartId);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1) > 0;
-        }
-    }
+
 }

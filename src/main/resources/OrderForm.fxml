@@ -65,6 +65,7 @@
                     style="-fx-background-color: #93707E; -fx-text-fill: white;
                     -fx-padding: 8px 16px; -fx-font-size: 14px;"
                     text="Fermer" />
+
         </HBox>
     </VBox>
 </AnchorPane>

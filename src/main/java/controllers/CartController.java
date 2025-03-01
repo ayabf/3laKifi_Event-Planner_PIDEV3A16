@@ -1,31 +1,26 @@
 package controllers;
 
 import Models.CartItem;
-import Models.Order;
 import Models.Product;
-import Models.User;
+import Models.session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import services.CartService;
-import services.OrderService;
 import utils.DataSource;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.sql.*;
 import java.util.Optional;
 
 public class CartController {
@@ -39,104 +34,56 @@ public class CartController {
     @FXML
     public void initialize() {
         subtotalLabel.setText("$0.00");
-
-        //User adminUser = new User(99, "123456789", false, null, "Test", "Admin", "admin_test", "admin123", "admin", "Rue des Admins, Paris", null);
-       // currentUserId = adminUser.getUserId();
-
         loadCartItems();
         cartListView.setItems(cartItems);
-        cartListView.setCellFactory(param -> new CartItemCell()); // Appliquer la cellule personnalisée
+        cartListView.setCellFactory(param -> new CartItemCell()); // ✅ Correction : Classe bien définie
         updateSubtotal();
-        cartListView.setOnMouseClicked(event -> {
-            CartItem selectedItem = cartListView.getSelectionModel().getSelectedItem();
-            if (selectedItem != null) {
-                openCartItemDetails(selectedItem);
-            }
-        });
-    }
-    private void openCartItemDetails(CartItem cartItem) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/CartItemDetails.fxml"));
-            Parent root = loader.load();
-
-            CartItemDetailsController controller = loader.getController();
-            controller.setCartItemDetails(cartItem); // Passer les infos du produit au contrôleur
-
-            Stage stage = new Stage();
-            stage.setTitle("Détails du panier");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Impossible d'afficher les détails du panier.");
-        }
     }
 
-    private void loadCartItems() {
-        cartItems.clear();
+    private int getCartIdForCurrentUser() {
+        int userId = session.id_utilisateur;
+        int cartId = -1;
 
-        String query = "SELECT p.product_id, p.name, p.price, p.image_url, cp.quantity " +
-                "FROM cart_product cp " +
-                "JOIN product p ON cp.product_id = p.product_id " +
-                "WHERE cp.cart_id = ?";
-
+        String query = "SELECT cart_id FROM cart WHERE user_id = ?";
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, 1); // Remplace par le bon cart_id
+            stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                int productId = rs.getInt("product_id");
-                String name = rs.getString("name");
-                double price = rs.getDouble("price");
-                int quantity = rs.getInt("quantity");
-                String imageUrl = rs.getString("image_url");
-
-                Product product = new Product(productId, name, "", price, 1, imageUrl);
-                CartItem item = new CartItem(product, quantity);
-                cartItems.add(item);
+            if (rs.next()) {
+                cartId = rs.getInt("cart_id");
+            } else {
+                // If the cart doesn't exist, create a new one
+                cartId = createNewCart(userId);
             }
-
-            cartListView.setItems(cartItems);
-            updateSubtotal();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("❌ Erreur lors du chargement des produits du panier !");
         }
-    }
-
-    private void updateSubtotal() {
-        double total = cartItems.stream()
-                .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
-                .sum();
-
-        subtotalLabel.setText("$" + String.format("%.2f", total));
-    }
-
-    @FXML
-    private void validateCart() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderForm.fxml"));
-            Parent root = loader.load();
-
-            OrderFormController controller = loader.getController();
-            controller.setCartDetails(1, 1, calculateTotalPrice()); // Passer les détails
-
-            Stage stage = new Stage();
-            stage.setTitle("Validation de la commande");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir le formulaire de commande.");
-        }
+        return cartId;
     }
 
     private double calculateTotalPrice() {
         return cartItems.stream().mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice()).sum();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void openOrderForm(int orderId, double totalPrice) {
         try {
@@ -157,7 +104,177 @@ public class CartController {
             showAlert("Erreur", "Impossible d'ouvrir le formulaire de commande.");
         }
     }
+    @FXML
+    private void validateCart() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderForm.fxml"));
+            Parent root = loader.load();
 
+            OrderFormController controller = loader.getController();
+            controller.setCartDetails(getCartIdForCurrentUser(), session.id_utilisateur, calculateTotalPrice());
+
+            Stage stage = new Stage();
+            stage.setTitle("Validation de la commande");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir le formulaire de commande.");
+        }
+    }
+
+    /**
+     * ✅ Creates a new cart if the user doesn't have one
+     */
+    private int createNewCart(int userId) {
+        String insertQuery = "INSERT INTO cart (user_id, total_price) VALUES (?, 0.0)";
+        String getIdQuery = "SELECT LAST_INSERT_ID() AS cart_id";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement insertStmt = conn.prepareStatement(insertQuery);
+             Statement getIdStmt = conn.createStatement()) {
+
+            insertStmt.setInt(1, userId);
+            insertStmt.executeUpdate();
+
+            ResultSet rs = getIdStmt.executeQuery(getIdQuery);
+            if (rs.next()) {
+                return rs.getInt("cart_id");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private void loadCartItems() {
+        cartItems.clear();
+        int cartId = getCartIdForCurrentUser();
+
+        // Log pour vérifier si le cartId est valide
+        System.out.println("🔍 User ID de la session: " + session.id_utilisateur);
+        System.out.println("📦 Cart ID récupéré: " + cartId);
+
+        if (cartId <= 0) {
+            System.err.println("❌ Aucun panier trouvé pour cet utilisateur !");
+            return;
+        }
+
+        String query = "SELECT p.product_id, p.name, p.price, p.image_url, cp.quantity " +
+                "FROM cart_product cp " +
+                "JOIN product p ON cp.product_id = p.product_id " +
+                "WHERE cp.cart_id = ?";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, cartId);
+            ResultSet rs = stmt.executeQuery();
+
+            boolean hasItems = false;
+            while (rs.next()) {
+                hasItems = true;
+                Product product = new Product(rs.getInt("product_id"), rs.getString("name"), "",
+                        rs.getDouble("price"), 1, rs.getString("image_url"));
+                cartItems.add(new CartItem(product, rs.getInt("quantity")));
+
+                // Log des produits ajoutés
+                System.out.println("🛒 Produit ajouté au panier : " + product.getName() +
+                        " | Quantité: " + rs.getInt("quantity") +
+                        " | Prix: " + product.getPrice());
+            }
+
+            if (!hasItems) {
+                System.out.println("⚠ Aucun produit trouvé dans le panier !");
+            }
+
+            cartListView.setItems(cartItems);
+            updateSubtotal();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du chargement du panier !");
+        }
+    }
+
+
+    private void updateSubtotal() {
+        double total = cartItems.stream()
+                .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
+                .sum();
+        subtotalLabel.setText("$" + String.format("%.2f", total));
+    }
+
+    private void updateCartItemInDB(CartItem item) {
+        try {
+            int cartId = getCartIdForCurrentUser();
+            new CartService().updateCartItem(cartId, item.getProduct().getProductId(), item.getQuantity(), item.getProduct().getPrice());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteCartItemFromDB(CartItem itemToRemove) {
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM cart_product WHERE cart_id = ? AND product_id = ?")) {
+
+            int cartId = getCartIdForCurrentUser();
+            stmt.setInt(1, cartId);
+            stmt.setInt(2, itemToRemove.getProduct().getProductId());
+
+            int rowsDeleted = stmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                cartItems.remove(itemToRemove);
+                updateSubtotal();
+                cartListView.refresh();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getAvailableStock(int productId) {
+        String query = "SELECT available_quantity FROM stock WHERE stock_id = (SELECT stock_id FROM product WHERE product_id = ?)";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, productId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("available_quantity");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private void showDeleteConfirmation(CartItem itemToRemove) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation de suppression");
+        alert.setHeaderText(null);
+        alert.setContentText("Voulez-vous retirer *" + itemToRemove.getProduct().getName() + "* du panier ?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            deleteCartItemFromDB(itemToRemove);
+        }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * ✅ Classe interne pour gérer l'affichage des articles dans le ListView
+     */
     private class CartItemCell extends ListCell<CartItem> {
         @Override
         protected void updateItem(CartItem item, boolean empty) {
@@ -168,35 +285,34 @@ public class CartController {
                 setGraphic(null);
             } else {
                 HBox cellContainer = new HBox(15);
-                cellContainer.getStyleClass().add("cart-item");
+                cellContainer.setAlignment(Pos.CENTER_LEFT); // ✅ Alignement des éléments
 
-                // ✅ Chargement de l'image du produit
+                // 🖼️ Image du produit
                 ImageView productImage = new ImageView();
                 productImage.setFitWidth(60);
                 productImage.setFitHeight(60);
                 productImage.setPreserveRatio(true);
-                productImage.setStyle("-fx-border-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);");
-
 
                 try {
                     if (item.getProduct().getImageUrl() != null && !item.getProduct().getImageUrl().isEmpty()) {
                         productImage.setImage(new Image(item.getProduct().getImageUrl()));
                     } else {
-                        productImage.setImage(new Image("images/default.png")); // Image par défaut
+                        productImage.setImage(new Image("images/default.png"));
                     }
                 } catch (Exception e) {
                     productImage.setImage(new Image("images/default.png"));
                 }
 
+                // 🏷️ Infos du produit
                 Label productName = new Label(item.getProduct().getName());
-                productName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                productName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
                 Label productPrice = new Label("$" + item.getProduct().getPrice());
-                productPrice.setStyle("-fx-font-size: 16px;");
+                productPrice.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
 
                 Label quantityLabel = new Label(String.valueOf(item.getQuantity()));
-                quantityLabel.setStyle("-fx-font-size: 14px;");
 
+                // ➖ Bouton pour diminuer la quantité
                 Button minusButton = new Button("-");
                 minusButton.setOnAction(event -> {
                     if (item.getQuantity() > 1) {
@@ -207,135 +323,42 @@ public class CartController {
                     }
                 });
 
+                // ➕ Bouton pour augmenter la quantité
                 Button plusButton = new Button("+");
                 plusButton.setOnAction(event -> {
                     int availableStock = getAvailableStock(item.getProduct().getProductId());
-
                     if (item.getQuantity() < availableStock) {
                         item.setQuantity(item.getQuantity() + 1);
-                        try {
-                            new CartService().updateCartItem(1, item.getProduct().getProductId(), item.getQuantity(), item.getProduct().getPrice());
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
+                        updateCartItemInDB(item);
                         updateSubtotal();
                         cartListView.refresh();
-                    } else {
-                        // Afficher une alerte si la quantité dépasse le stock disponible
-                        showAlert("Stock insuffisant", "Vous ne pouvez pas ajouter plus d'unités que la quantité disponible en stock.");
                     }
                 });
 
-
-                // ✅ Suppression de l'article avec une icône
+                // 🗑️ Icône de suppression bien ajustée
                 ImageView deleteIcon = new ImageView(new Image("images/delete-icon.png"));
-                deleteIcon.setFitWidth(24);
+                deleteIcon.setFitWidth(24);  // ✅ Ajustement de la taille
                 deleteIcon.setFitHeight(24);
                 deleteIcon.setPreserveRatio(true);
-                deleteIcon.setStyle("-fx-cursor: hand;");
+
                 deleteIcon.setOnMouseClicked(event -> showDeleteConfirmation(item));
 
+                // ✅ Ajout d'un effet au survol
+                deleteIcon.setOnMouseEntered(event -> deleteIcon.setStyle("-fx-opacity: 0.7;"));
+                deleteIcon.setOnMouseExited(event -> deleteIcon.setStyle("-fx-opacity: 1.0;"));
+
+                // 📌 Organisation des éléments
                 HBox quantityBox = new HBox(5, minusButton, quantityLabel, plusButton);
-                cellContainer.getChildren().addAll(productImage, productName, quantityBox, productPrice,deleteIcon);
+                quantityBox.setAlignment(Pos.CENTER);
+
+                // 🌟 On pousse l'icône de suppression vers la droite
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+
+                cellContainer.getChildren().addAll(productImage, productName, quantityBox, productPrice, spacer, deleteIcon);
                 setGraphic(cellContainer);
             }
         }
-    }
 
-    private void updateCartItemInDB(CartItem item) {
-        try {
-            new CartService().updateCartItem(1, item.getProduct().getProductId(), item.getQuantity(), item.getProduct().getPrice());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showDeleteConfirmation(CartItem itemToRemove) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation de suppression");
-        alert.setHeaderText(null);
-        alert.setContentText("Voulez-vous vraiment retirer **" + itemToRemove.getProduct().getName() + "** du panier ?");
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #f4f4f4;");
-        dialogPane.lookup(".content.label").setStyle("-fx-text-fill: #333;");
-        dialogPane.lookup(".button-bar").setStyle("-fx-background-color: #ffffff;");
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            deleteCartItemFromDB(itemToRemove);
-        }
-    }
-
-    private void deleteCartItemFromDB(CartItem itemToRemove) {
-        try {
-            Connection conn = DataSource.getInstance().getConnection();
-
-            if (conn == null || conn.isClosed()) {
-                System.err.println("⚠ Connexion fermée ! Suppression annulée.");
-                return;
-            }
-
-            String query = "DELETE FROM cart_product WHERE cart_id = ? AND product_id = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                stmt.setInt(1, 1); // Remplace par le bon cart_id
-                stmt.setInt(2, itemToRemove.getProduct().getProductId());
-
-                int rowsDeleted = stmt.executeUpdate();
-
-                if (rowsDeleted > 0) {
-                    cartItems.remove(itemToRemove);
-                    updateSubtotal();
-                    cartListView.refresh();
-                    System.out.println("✅ Produit supprimé de la base : " + itemToRemove.getProduct().getName());
-                } else {
-                    System.err.println("⚠ Aucun produit supprimé !");
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("❌ Erreur lors de la suppression du produit en base !");
-        }
-    }
-    private int getAvailableStock(int productId) {
-        String query = "SELECT available_quantity FROM stock WHERE stock_id = (SELECT stock_id FROM product WHERE product_id = ?)";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, productId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("available_quantity");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("❌ Erreur lors de la récupération du stock disponible !");
-        }
-        return 0; // Valeur par défaut si une erreur se produit
-    }
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    private double getTotalPriceFromCart(int cartId) {
-        String query = "SELECT total_price FROM cart WHERE cart_id = ?";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, cartId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getDouble("total_price");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("❌ Erreur lors de la récupération du prix total du panier !");
-        }
-        return 0.0; // Valeur par défaut en cas d'erreur
     }
 }

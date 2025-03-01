@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controllers.ChatController"
+      spacing="10"
+      style="-fx-padding: 15px; -fx-background-color: #f7f7f7;">
+
+    <!-- ✅ Barre supérieure avec nom d'utilisateur et statut -->
+    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #3498db; -fx-padding: 10px;">
+        <ImageView fx:id="profileImage" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@images/AdminIcon.png"/>
+            </image>
+        </ImageView>
+        <VBox>
+            <Label fx:id="chatTitle" text="Chat en ligne" style="-fx-font-size: 16px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            <Label fx:id="statusLabel" text="En ligne" style="-fx-text-fill: #dff9fb; -fx-font-size: 12px;"/>
+        </VBox>
+    </HBox>
+
+    <!-- ✅ Zone de chat -->
+    <Label fx:id="dateLabel" text="Date et heure" style="-fx-font-size: 14px; -fx-text-fill: #555;"/>
+    <ScrollPane fx:id="chatScroll" fitToWidth="true">
+        <VBox fx:id="chatList" spacing="10"/>
+    </ScrollPane>
+
+    <!-- ✅ Zone de saisie et envoi -->
+    <HBox spacing="10" style="-fx-padding: 10px; -fx-background-color: white;">
+        <TextField fx:id="messageField" promptText="Écrire un message..." HBox.hgrow="ALWAYS" style="-fx-background-radius: 20px; -fx-padding: 10px;"/>
+        <Button fx:id="sendBtn" text="Envoyer" onAction="#sendMessage" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20px;"/>
+    </HBox>
+
+    <!-- ✅ Liste des utilisateurs connectés -->
+    <VBox spacing="5" style="-fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-color: #ddd; -fx-border-width: 0px 0px 0px 1px;">
+        <Label text="Utilisateurs en ligne" style="-fx-font-weight: bold;"/>
+        <ListView fx:id="userList" prefWidth="150" />
+    </VBox>
+
+    <!-- ✅ Bouton retour -->
+    <Button text="Retour" onAction="#backToSidebar" style="-fx-background-color: #ff4757; -fx-text-fill: white;" />
+</VBox>

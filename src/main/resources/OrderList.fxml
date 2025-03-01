@@ -4,40 +4,41 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="530.0" prefWidth="688.0" stylesheets="@css/styles.css"
-            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane prefHeight="530.0" prefWidth="688.0"
+            stylesheets="@css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.OrderListController">
 
     <!-- ✅ Conteneur Principal -->
     <VBox layoutX="50" layoutY="20" prefWidth="650" spacing="15" alignment="CENTER">
 
         <!-- 🏷️ Titre Centré -->
-        <Label text="Mes Commandes"
+        <Label text="📦 Mes Commandes"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-alignment: center;"/>
-
+        <Button text="Tableau de Bord" onAction="#openAdminDashboardC"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;"/>
         <!-- 🔍 Barre de Recherche -->
-        <TextField fx:id="searchField"
-                   promptText="Rechercher une commande..."
+        <TextField fx:id="searchField" promptText="Rechercher une commande..."
                    onKeyReleased="#searchOrders"
-                   prefHeight="35.0" prefWidth="400.0"
-                   style="-fx-font-size: 14px; -fx-padding: 8px; -fx-border-radius: 8px;"/>
+                   style="-fx-padding: 8px; -fx-font-size: 14px; -fx-border-color: #ddd; -fx-background-radius: 5px;"/>
 
         <!-- 📜 Liste des Commandes -->
-        <ScrollPane fitToWidth="true" prefHeight="350" prefWidth="600">
+        <ScrollPane fitToWidth="true" prefHeight="350" prefWidth="600" style="-fx-background-color: transparent;">
             <VBox fx:id="orderListContainer" spacing="10">
                 <padding>
-                    <Insets bottom="10" left="10" right="10" top="10" />
+                    <Insets bottom="10" left="10" right="10" top="10"/>
                 </padding>
             </VBox>
+
         </ScrollPane>
 
         <!-- ✅ Boutons "Reload" et "Close" en bas -->
         <HBox spacing="20" alignment="CENTER">
-            <Button text="🔄 Reload" onAction="#reloadOrders"
-                    style="-fx-background-color: #BCA2BF; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
+            <Button text="🔄 Recharger" onAction="#reloadOrders"
+                    style="-fx-background-color: #8E44AD; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px; -fx-background-radius: 5px;"/>
 
-            <Button text="❌ Close" onAction="#closeWindow"
-                    style="-fx-background-color: #CEBEC9; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px;"/>
+            <Button text="❌ Fermer" onAction="#closeWindow"
+                    style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 12px; -fx-background-radius: 5px;"/>
         </HBox>
 
     </VBox>

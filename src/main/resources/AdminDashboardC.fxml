@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.chart.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AdminDashboardCController"
+      styleClass="root"
+      stylesheets="@css/dashboard.css"
+      prefWidth="1200" prefHeight="800">
+
+    <!-- Header avec fond dégradé et icônes -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="30" right="30" top="15" bottom="15"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <FontAwesomeIconView glyphName="BAR_CHART" size="2em" fill="WHITE"/>
+            <Label text="Admin Dashboard" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <HBox spacing="15" alignment="CENTER" styleClass="nav-buttons-container">
+            <Button onAction="#handleLogout" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="SIGN_OUT" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Déconnexion" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+        </HBox>
+    </HBox>
+
+    <!-- Contenu principal -->
+    <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" styleClass="content-area">
+        <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane">
+            <VBox spacing="30" styleClass="dashboard-container">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <!-- Section Statistiques -->
+                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="SHOPPING_CART" size="2em"/>
+                        </StackPane>
+                        <Label text="Commandes Totales" styleClass="card-title"/>
+                        <Label fx:id="totalOrdersLabel" styleClass="card-value" text="0"/>
+                    </VBox>
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="HOURGLASS_HALF" size="2em"/>
+                        </StackPane>
+                        <Label text="En Attente" styleClass="card-title"/>
+                        <Label fx:id="pendingOrdersLabel" styleClass="card-value" text="0"/>
+                    </VBox>
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="CHECK_CIRCLE" size="2em"/>
+                        </StackPane>
+                        <Label text="Confirmées" styleClass="card-title"/>
+                        <Label fx:id="confirmedOrdersLabel" styleClass="card-value" text="0"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Nouveaux Indicateurs de Performance -->
+                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="LINE_CHART" size="2em"/>
+                        </StackPane>
+                        <Label text="Performance du Site" styleClass="card-title"/>
+                        <Label fx:id="sitePerformanceLabel" styleClass="card-value" text="99%"/>
+                    </VBox>
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="CLOCK_O" size="2em"/>
+                        </StackPane>
+                        <Label text="Temps Moyen d'Acceptation" styleClass="card-title"/>
+                        <Label fx:id="orderAcceptanceTimeLabel" styleClass="card-value" text="3 min"/>
+                    </VBox>
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="MONEY" size="2em"/>
+                        </StackPane>
+                        <Label text="Revenu sur le Site" styleClass="card-title"/>
+                        <Label fx:id="siteRevenuePercentageLabel" styleClass="card-value" text="65%"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Graphique des commandes par statut -->
+                <VBox spacing="10" styleClass="chart-container">
+                    <Label text="Statistiques des Commandes" styleClass="section-header"/>
+                    <BarChart fx:id="ordersByStatusChart">
+                        <xAxis>
+                            <CategoryAxis label="Statut"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Nombre de Commandes"/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </StackPane>
+</VBox>

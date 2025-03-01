@@ -2,24 +2,32 @@ package Models;
 
 public class User {
     private int id_user;
-    private String numTel;
-    private boolean blocked;
-    private String blockEndDate;
+    private int numTel;
+
+    public User(int userId, String firstName, String username, String username1, String s, Object biography, String address, String profileImagePath, String email, int numTel) {
+    }
+
+
+    public int getNumTel() {
+        return numTel;
+    }
+
+    public void setNumTel(int numTel) {
+        this.numTel = numTel;
+    }
+
     private String lastName;
     private String firstName;
     private String username;
     private String password;
-    private String role;
+    private Role role;
+
     private String address;
     private String profileImagePath;
+    private String email;
 
-    public User(int id_user, String numTel, boolean blocked, String blockEndDate, String lastName,
-                String firstName, String username, String password, String role,
-                String address, String profileImagePath) {
-        this.id_user = id_user;
-        this.numTel = numTel;
-        this.blocked = blocked;
-        this.blockEndDate = blockEndDate;
+    public User(String lastName, String firstName, String username, String password, Role role,
+                String biography, String address, String profileImagePath, String email, int num) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.username = username;
@@ -27,55 +35,135 @@ public class User {
         this.role = role;
         this.address = address;
         this.profileImagePath = profileImagePath;
+        this.email = email;
+        this.numTel = num;
+
+
     }
 
-    public int getUserId() { return id_user; }
-    public void setUserId(int userId) { this.id_user = userId; }
 
-    public String getNumTel() { return numTel; }
-    public void setNumTel(String numTel) { this.numTel = numTel; }
+    public User(int s, String lastName, String firstName, String username, String password, Role role,
+                String biography, String address, String profileImagePath, String email, int num) {
+        this.id_user = s;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.username = username;
+        this.password = password;
+        this.role = role;
 
-    public boolean isBlocked() { return blocked; }
-    public void setBlocked(boolean blocked) { this.blocked = blocked; }
+        this.address = address;
+        this.profileImagePath = profileImagePath;
+        this.email = email;
+        this.numTel = num;
 
-    public String getBlockEndDate() { return blockEndDate; }
-    public void setBlockEndDate(String blockEndDate) { this.blockEndDate = blockEndDate; }
+    }
+    // Constructors, getters, setters, toString, etc.
+//(last_name, first_name, email, password, role, address)
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public User(String lastName, String firstName, String username, Role role, String password, String address, String email, int numTel) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.password = password;
+        this.role = role;
+        this.address = address;
+        this.email = email;
+        this.username = username;
+        this.numTel = numTel;
+    }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public User() {
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public String getProfileImagePath() { return profileImagePath; }
-    public void setProfileImagePath(String profileImagePath) { this.profileImagePath = profileImagePath; }
-
-    // Méthode d'affichage
     @Override
     public String toString() {
         return "User{" +
-                "userId=" + id_user +
-                ", numTel='" + numTel + '\'' +
-                ", blocked=" + blocked +
-                ", blockEndDate='" + blockEndDate + '\'' +
+                "id_user=" + id_user +
                 ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", username='" + username + '\'' +
-                ", role='" + role + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+
                 ", address='" + address + '\'' +
                 ", profileImagePath='" + profileImagePath + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getId() {
+        return id_user;
+    }
+
+    public void setId(int id) {
+        this.id_user = id;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getProfileImagePath() {
+        return profileImagePath;
+    }
+
+    public void setProfileImagePath(String profileImagePath) {
+        this.profileImagePath = profileImagePath;
+    }
+
+
 }

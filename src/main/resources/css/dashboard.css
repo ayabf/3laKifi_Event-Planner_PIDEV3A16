@@ -1,0 +1,63 @@
+/* Palette de couleurs mise à jour */
+.root {
+    -fx-background-color: #fff;
+}
+
+/* Barre de navigation */
+.header-bar {
+    -fx-background-color: linear-gradient(to right, #533C56, #BCA2BF);
+    -fx-padding: 15px;
+}
+.header-title {
+    -fx-font-size: 20px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Cartes de statistiques */
+.cards-container {
+    -fx-spacing: 20;
+    -fx-padding: 20;
+}
+.dashboard-card {
+    -fx-background-color: #BCA2BF;
+    -fx-border-radius: 10px;
+    -fx-padding: 20;
+    -fx-min-width: 200px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+}
+.card-title {
+    -fx-font-size: 16px;
+    -fx-text-fill: #533C56;
+}
+.card-value {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #9B707E;
+}
+
+/* Icônes */
+.icon-container {
+    -fx-background-color: #533C56;
+    -fx-border-radius: 50%;
+    -fx-padding: 10px;
+}
+
+/* Graphique */
+.chart-container {
+    -fx-background-color: #CEBEC9;
+    -fx-border-radius: 10px;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5);
+}
+
+/* Mise à jour des couleurs du graphique */
+.default-color0.chart-bar {
+    -fx-bar-fill: #533C56 !important;
+}
+.default-color1.chart-bar {
+    -fx-bar-fill: #9B707E !important;
+}
+.default-color2.chart-bar {
+    -fx-bar-fill: #BCA2BF !important;
+}

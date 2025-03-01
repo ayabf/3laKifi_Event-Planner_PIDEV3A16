@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrderDetailsController">
+    <children>
+        <VBox alignment="CENTER" spacing="15" layoutX="50" layoutY="50">
+            <Label text="Détails de la Commande" style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+            <Label fx:id="orderIdLabel" style="-fx-font-size: 16px;" />
+            <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px;" />
+            <Label fx:id="orderStatusLabel" style="-fx-font-size: 16px;" />
+            <Label fx:id="eventDateLabel" style="-fx-font-size: 16px;" />
+            <ImageView fx:id="qrCodeImageView" fitWidth="250" fitHeight="250" />
+        </VBox>
+    </children>
+</AnchorPane>

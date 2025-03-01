@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="controllers.AdminDashboardController" 
+      styleClass="root" 
+      stylesheets="@styles/global.css"
+      prefWidth="1200" prefHeight="800">
+    
+    <!-- Header with gradient background -->
+    <HBox styleClass="header-bar" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="30" right="30" top="15" bottom="15"/>
+        </padding>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <FontAwesomeIconView glyphName="CALENDAR" size="2em" fill="WHITE"/>
+            <Label text="3laKifi Events" styleClass="header-title"/>
+        </HBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <HBox spacing="15" alignment="CENTER" styleClass="nav-buttons-container">
+            <Button onAction="#handleBackOffice" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="DESKTOP" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Back Office" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleHome" styleClass="nav-button, nav-button-active">
+                <graphic>
+                    <FontAwesomeIconView glyphName="HOME" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Accueil" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleViewAllEvents" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="CALENDAR" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Voir les événements" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleManageBookings" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TICKET" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Gérer les réservations" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleViewAllLocations" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="MAP_MARKER" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Voir les emplacements" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+            <Button onAction="#handleLogout" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="SIGN_OUT" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Déconnexion" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+        </HBox>
+    </HBox>
+
+    <!-- Main Content with smooth scrolling -->
+    <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" styleClass="content-area">
+        <ScrollPane fitToWidth="true" styleClass="edge-to-edge, custom-scroll-pane">
+            <VBox spacing="30" styleClass="dashboard-container">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <!-- Welcome Section -->
+                <VBox spacing="10" styleClass="welcome-section">
+                    <Label text="Welcome to Admin Dashboard" styleClass="welcome-header"/>
+                    <Label text="Monitor your events, bookings, and locations efficiently" styleClass="welcome-subtext"/>
+                </VBox>
+
+                <!-- Dashboard Cards with hover effects -->
+                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
+                    <VBox styleClass="dashboard-card, events-card" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="25" right="30" bottom="25" left="30"/>
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <StackPane styleClass="icon-container, events-icon">
+                                <FontAwesomeIconView glyphName="CALENDAR" size="2em"/>
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label text="Total Events" styleClass="card-title"/>
+                                <Label fx:id="totalEventsLabel" styleClass="card-value" text="0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="dashboard-card, bookings-card" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="25" right="30" bottom="25" left="30"/>
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <StackPane styleClass="icon-container, bookings-icon">
+                                <FontAwesomeIconView glyphName="TICKET" size="2em"/>
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label text="Total Bookings" styleClass="card-title"/>
+                                <Label fx:id="totalBookingsLabel" styleClass="card-value" text="0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                    <VBox styleClass="dashboard-card, locations-card" HBox.hgrow="ALWAYS">
+                        <padding>
+                            <Insets top="25" right="30" bottom="25" left="30"/>
+                        </padding>
+                        <HBox alignment="CENTER_LEFT" spacing="15">
+                            <StackPane styleClass="icon-container, locations-icon">
+                                <FontAwesomeIconView glyphName="MAP_MARKER" size="2em"/>
+                            </StackPane>
+                            <VBox spacing="5">
+                                <Label text="Total Locations" styleClass="card-title"/>
+                                <Label fx:id="totalLocationsLabel" styleClass="card-value" text="0"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- Events Table Section -->
+                <VBox spacing="15" styleClass="table-container">
+                    <Label text="Recent Events" styleClass="section-header"/>
+                    <TableView fx:id="eventsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="eventNameColumn" text="Event Name"/>
+                            <TableColumn fx:id="eventDateColumn" text="Date"/>
+                            <TableColumn fx:id="eventCityColumn" text="City"/>
+                            <TableColumn fx:id="eventCapacityColumn" text="Capacity"/>
+                            <TableColumn fx:id="eventStatusColumn" text="Status"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+
+                <!-- Locations Table Section -->
+                <VBox spacing="15" styleClass="table-container">
+                    <Label text="Available Locations" styleClass="section-header"/>
+                    <TableView fx:id="locationsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="locationNameColumn" text="Location Name"/>
+                            <TableColumn fx:id="locationCityColumn" text="City"/>
+                            <TableColumn fx:id="locationCapacityColumn" text="Capacity"/>
+                            <TableColumn fx:id="locationPriceColumn" text="Price"/>
+                            <TableColumn fx:id="locationStatusColumn" text="Status"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+
+                <!-- Quick Actions Section -->
+                <VBox spacing="20" styleClass="quick-actions-section">
+                    <Label text="Quick Actions" styleClass="section-header"/>
+                    <HBox spacing="20" alignment="CENTER">
+                        <Button text="View All Events" onAction="#handleViewAllEvents" styleClass="action-button, events-action">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="CALENDAR" size="1.2em" fill="WHITE"/>
+                            </graphic>
+                        </Button>
+                        <Button text="View All Bookings" onAction="#handleManageBookings" styleClass="action-button, bookings-action">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="TICKET" size="1.2em" fill="WHITE"/>
+                            </graphic>
+                        </Button>
+                        <Button text="View All Locations" onAction="#handleViewAllLocations" styleClass="action-button, locations-action">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="MAP_MARKER" size="1.2em" fill="WHITE"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </StackPane>
+
+    <!-- Footer with gradient -->
+    <HBox styleClass="footer-bar" alignment="CENTER">
+        <padding>
+            <Insets top="20" right="30" bottom="20" left="30"/>
+        </padding>
+        <VBox alignment="CENTER" spacing="10">
+            <Label styleClass="footer-text" text="© 2024 3laKifi Events. All rights reserved."/>
+            <HBox spacing="30" alignment="CENTER" styleClass="footer-links">
+                <Label styleClass="footer-link" text="Privacy Policy"/>
+                <Label styleClass="footer-link" text="Terms of Service"/>
+                <Label styleClass="footer-link" text="Contact Us"/>
+            </HBox>
+        </VBox>
+    </HBox>
+</VBox> 

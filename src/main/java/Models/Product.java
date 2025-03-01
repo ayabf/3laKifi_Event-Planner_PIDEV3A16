@@ -2,86 +2,104 @@ package Models;
 
 public class Product {
     private int productId;
+    private String reference;  // Unique reference
     private String name;
     private String description;
-    private double price;
+    private float price;
     private int stockId;
     private String imageUrl;
+    private String category;
+    private int idUser;
+
+    public Product() {}
+
+    public Product(int productId, String reference, String name, String description, float price, int stockId, String imageUrl, String category, int idUser) {
+        this.productId = productId;
+        this.reference = reference;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stockId = stockId;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.idUser = idUser;
+    }
+
+    public Product(String name, int stockId, float price, String imageUrl) {
+        this.name = name;
+        this.stockId = stockId;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
+
+    public Product(String reference, String name, String description, float price, int stockId, String imageUrl, String category, int idUser) {
+        this.reference = reference;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stockId = stockId;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.idUser = idUser;
+    }
+
+    public Product(int productId, String name, double price, int stockId, String imageUrl) {
+        this.productId = productId;
+        this.name = name;
+        this.price = (float) price; // S'assurer que c'est un float
+        this.stockId = stockId;
+        this.imageUrl = imageUrl;
+    }
+
 
     public Product(int productId, String name, String description, double price, int stockId, String imageUrl) {
         this.productId = productId;
         this.name = name;
         this.description = description;
-        this.price = price;
+        this.price = (float) price; // Convertir double en float
         this.stockId = stockId;
         this.imageUrl = imageUrl;
-
-        System.out.println("📢 Création du produit : " + name + " | Prix : " + this.price);
-        if (this.name == null || this.price == 0.0) {
-            System.err.println("⚠ ERREUR : `name` est null ou `price` est incorrect !");
-        }
     }
 
-    public Product(int productId, String name, double price, String defaultDescription, String defaultImage) {
-        this(productId, name, defaultDescription, price, 0, defaultImage);
-    }
+    public int getProductId() { return productId; }
+    public void setProductId(int productId) { this.productId = productId; }
 
-    public int getProductId() {
-        return productId;
-    }
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public float getPrice() { return price; }
+    public void setPrice(float price) { this.price = price; }
 
-    public String getDescription() {
-        return description;
-    }
+    public int getStockId() { return stockId; }
+    public void setStockId(int stockId) { this.stockId = stockId; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public double getPrice() {
-        return price;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public int getIdUser() { return idUser; }
+    public void setIdUser(int idUser) { this.idUser = idUser; }
 
-    public int getStockId() {
-        return stockId;
-    }
-
-    public void setStockId(int stockId) {
-        this.stockId = stockId;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
     @Override
     public String toString() {
         return "Product{" +
                 "productId=" + productId +
+                ", reference='" + reference + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", stockId=" + stockId +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", category='" + category + '\'' +
+                ", idUser=" + idUser +
                 '}';
     }
 }
