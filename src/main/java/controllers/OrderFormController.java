@@ -101,6 +101,8 @@ public class OrderFormController {
 
 
     public void setCartDetails(int cartId, int userId, double totalPrice) {
+        System.out.println("✅ setCartDetails() appelé avec - Cart ID: " + cartId + ", User ID: " + userId + ", Total: " + totalPrice);
+
         if (userId <= 0) {
             System.err.println("❌ ERREUR: userId est invalide !");
             return;
