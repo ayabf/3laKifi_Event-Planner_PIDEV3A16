@@ -481,3 +481,106 @@
     -fx-text-fill: #533C56;
 }
 
+
+/* 🌟 Conteneur principal */
+.vbox {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 12px;
+    -fx-padding: 30px;
+    -fx-spacing: 20px;
+    -fx-pref-width: 500px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 12, 0, 0, 5);
+}
+
+/* 🌟 Conteneur de chaque champ */
+.hbox-field {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 10px;
+    -fx-pref-width: 400px;
+    -fx-border-color: #99707e; /* Mountbatten Pink */
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+    -fx-background-color: #ffffff;
+    -fx-position-shape: true;
+}
+/* 🌟 Labels d'erreur (Rouge) */
+.label-error {
+    -fx-text-fill: #e74c3c; /* Rouge vif pour les erreurs */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+/* 🌟 Placeholder flottant */
+.label-floating {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #99707e; /* Mountbatten Pink */
+    -fx-translate-y: -20px; /* Monte le texte */
+    -fx-translate-x: 10px; /* Décale légèrement à gauche */
+}
+
+/* 🌟 TextField */
+.text-field, .date-picker {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-pref-width: 320px;
+}
+
+/* 🌟 Effet de Focus */
+.text-field:focused, .date-picker:focused {
+    -fx-effect: dropshadow(three-pass-box, rgba(83, 60, 86, 0.4), 5, 0, 0, 2);
+}
+/* ✅ Container des promos */
+.promo-container {
+    -fx-background-color: #dbc0d0; /* Thistle */
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* ✅ Grille des promos */
+.promo-grid {
+    -fx-padding: 10px;
+    -fx-background-color: transparent;
+}
+
+/* ✅ Carte d'un code promo */
+.promo-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #99707e; /* Mountbatten Pink */
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+    -fx-spacing: 8px;
+    -fx-min-width: 200px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 5, 0, 0, 3);
+}
+
+/* ✅ Titre du code promo */
+.promo-code {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533c56; /* English Violet */
+}
+
+/* ✅ Détails du code promo */
+.promo-discount, .promo-expiration {
+    -fx-font-size: 12px;
+    -fx-text-fill: #4a4a4a;
+}
+
+/* ✅ Bouton Supprimer */
+.promo-delete-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 12px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.promo-delete-button:hover {
+    -fx-background-color: #c0392b;
+}

@@ -2,37 +2,44 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.PromoAdminController">
+            fx:controller="controllers.PromoAdminController"
+            stylesheets="@css/styles.css">
 
-    <VBox alignment="CENTER" spacing="10" prefWidth="400" prefHeight="400"
-          style="-fx-padding: 20px; -fx-background-color: #f4f4f4; -fx-border-radius: 10px;">
+    <VBox alignment="CENTER" spacing="20" prefWidth="500" prefHeight="500"
+          style="-fx-padding: 30px; -fx-background-color: white; -fx-border-radius: 12px;
+                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 12, 0, 0, 5);">
 
-        <Label text="🎟️ Ajouter un Code Promo" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <!-- Titre -->
+        <Label text="🎟️ Ajouter un Code Promo" styleClass="label-title"/>
 
         <!-- Champ Code Promo -->
-        <TextField fx:id="promoCodeField" promptText="Code promo ex: PROMO10"
-                   style="-fx-font-size: 14px; -fx-padding: 8px;"/>
-        <Label fx:id="errorCodeLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="hbox-field">
+            <Label text="📌 Code :" styleClass="label"/>
+            <TextField fx:id="promoCodeField" promptText="Ex: PROMO10" styleClass="text-field"/>
+        </HBox>
+        <Label fx:id="errorCodeLabel" text="" styleClass="label-error"/>
 
         <!-- Champ Réduction (%) -->
-        <TextField fx:id="percentageField" promptText="Réduction (%)"
-                   style="-fx-font-size: 14px; -fx-padding: 8px;"/>
-        <Label fx:id="errorPercentageLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="hbox-field">
+            <Label text="💲 Réduction :" styleClass="label"/>
+            <TextField fx:id="percentageField" promptText="Ex: 10%" styleClass="text-field"/>
+        </HBox>
+        <Label fx:id="errorPercentageLabel" text="" styleClass="label-error"/>
 
         <!-- Champ Date d'expiration -->
-        <DatePicker fx:id="expirationDatePicker" promptText="Date d'expiration"/>
-        <Label fx:id="errorDateLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="hbox-field">
+            <Label text="📅 Expire le :" styleClass="label"/>
+            <DatePicker fx:id="expirationDatePicker" promptText="Sélectionner une date" styleClass="text-field"/>
+        </HBox>
+        <Label fx:id="errorDateLabel" text="" styleClass="label-error"/>
 
-        <!-- Bouton d'ajout -->
+        <!-- Bouton Ajouter -->
         <Button text="➕ Ajouter Promo" fx:id="addPromoButton"
-                style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px;"
-                onAction="#addPromo"/>
-
+                onAction="#addPromo" styleClass="button"/>
     </VBox>
-
 
 </AnchorPane>

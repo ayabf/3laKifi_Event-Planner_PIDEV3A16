@@ -84,7 +84,6 @@ public class PromoAdminController {
             return;
         }
 
-        // Vérification finale avant insertion
         if (code.isEmpty() || percentageText.isEmpty() || expirationDate == null) {
             if (code.isEmpty()) errorCodeLabel.setText("⚠️ Ce champ est obligatoire.");
             if (percentageText.isEmpty()) errorPercentageLabel.setText("⚠️ Ce champ est obligatoire.");
@@ -95,25 +94,35 @@ public class PromoAdminController {
         try {
             double pourcentage = Double.parseDouble(percentageText);
 
-            // Vérification de l'existence du code promo
+            // Vérifie si le code promo existe déjà
             if (serviceCodePromo.existeDeja(code)) {
-                showErrorAlert("Code Promo Existant", "⚠️ Ce code promo existe déjà dans la base de données !");
+                showErrorAlert("Code Promo Existant", "⚠️ Ce code promo existe déjà !");
                 return;
             }
 
             CodePromo promo = new CodePromo(code, pourcentage, Date.valueOf(expirationDate));
+            CodePromo savedPromo = serviceCodePromo.ajouterCodePromo(promo); // Ajout en BD
 
-            if (ajouterCodePromo(promo)) {
+            if (savedPromo != null) {
+                // Ajoute immédiatement la carte promo dans l'interface
+                adminDashboardCController.addPromoCard(savedPromo);
+
                 showSuccessAlert("Ajout Réussi", "✅ Le code promo a été ajouté avec succès !");
                 clearFields();
             } else {
-                showErrorAlert("Erreur", "❌ Une erreur est survenue lors de l'ajout.");
+                showErrorAlert("Erreur", "❌ Une erreur est survenue.");
             }
 
         } catch (NumberFormatException e) {
             showErrorAlert("Valeur Invalide", "⚠️ Le pourcentage doit être un nombre valide.");
         }
     }
+    private AdminDashboardCController adminDashboardCController;
+
+    public void setAdminDashboardCController(AdminDashboardCController controller) {
+        this.adminDashboardCController = controller;
+    }
+
     /** ✅ Affiche une alerte de succès */
     private void showSuccessAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -133,19 +142,24 @@ public class PromoAdminController {
 
         alert.showAndWait();
     }
-
-
     public boolean ajouterCodePromo(CodePromo promo) {
         String query = "INSERT INTO code_promo (code_promo, pourcentage, date_expiration) VALUES (?, ?, ?)";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, promo.getCode());
-            stmt.setDouble(2, promo.getPourcentage());
-            stmt.setDate(3, new java.sql.Date(promo.getDateExpiration().getTime()));
+        try (Connection conn = DataSource.getInstance().getConnection()) {
+            if (conn == null || conn.isClosed()) {
+                System.err.println("⚠️ Connexion fermée ! Impossible d'ajouter le code promo.");
+                return false;
+            }
 
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, promo.getCode());
+                stmt.setDouble(2, promo.getPourcentage());
+                stmt.setDate(3, new java.sql.Date(promo.getDateExpiration().getTime()));
+
+                int rowsInserted = stmt.executeUpdate();
+                return rowsInserted > 0;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

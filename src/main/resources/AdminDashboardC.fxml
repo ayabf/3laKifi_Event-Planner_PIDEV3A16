@@ -36,7 +36,7 @@
                     <FontAwesomeIconView glyphName="TICKET" size="1.5em" fill="WHITE"/>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Gérer les Codes Promo" styleClass="custom-tooltip"/>
+                    <Tooltip text="Add Promo Code" styleClass="custom-tooltip"/>
                 </tooltip>
             </Button>
             <Button onAction="#handleLogout" styleClass="nav-button">
@@ -58,17 +58,7 @@
                     <Insets top="40" right="40" bottom="40" left="40"/>
                 </padding>
 
-                <!-- Section Statistiques -->
-                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
-                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
-                        <StackPane styleClass="icon-container">
-                            <FontAwesomeIconView glyphName="TICKET" size="2em"/>
-                        </StackPane>
-                        <Label text="Codes Promo" styleClass="card-title"/>
-                        <Button text="Gérer" onAction="#openPromoAdmin"
-                                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
-                    </VBox>
-                </HBox>
+
                 <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
                     <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
                         <StackPane styleClass="icon-container">
@@ -130,6 +120,28 @@
                         </yAxis>
                     </BarChart>
                 </VBox>
+                <!-- Section Statistiques -->
+                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="TICKET" size="2em"/>
+                        </StackPane>
+                        <Label text="Promo Code" styleClass="card-title"/>
+                        <Button text="➕ Add Promo" onAction="#openPromoAdmin"
+                                styleClass="promo-add-button"/>
+
+                        <VBox spacing="15" styleClass="promo-container">
+                            <Label text="📜 Available Promo" styleClass="section-header"/>
+
+                            <!-- Conteneur sous forme de tableau -->
+                            <FlowPane fx:id="promoGrid" hgap="20" vgap="20" styleClass="promo-grid"/>
+                        </VBox>
+
+
+
+
+                    </VBox>
+                </HBox>
             </VBox>
         </ScrollPane>
     </StackPane>

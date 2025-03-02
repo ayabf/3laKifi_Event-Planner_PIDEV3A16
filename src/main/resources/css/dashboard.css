@@ -61,3 +61,75 @@
 .default-color2.chart-bar {
     -fx-bar-fill: #BCA2BF !important;
 }
+/* ✅ Conteneur des codes promo */
+.promo-container {
+    -fx-background-color: #dbc0d0; /* Thistle */
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* ✅ Grid des cartes promo */
+.promo-grid {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+/* ✅ Carte promo */
+.promo-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #99707e; /* Mountbatten Pink */
+    -fx-border-radius: 10px;
+    -fx-padding: 15px;
+    -fx-spacing: 8px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 5, 0, 0, 3);
+}
+
+/* ✅ Texte du code promo */
+.promo-code {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533c56; /* English Violet */
+}
+
+/* ✅ Détails de la promo */
+.promo-discount, .promo-expiration {
+    -fx-font-size: 12px;
+    -fx-text-fill: #4a4a4a;
+}
+
+/* ✅ Bouton Supprimer */
+.promo-delete-button {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 12px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.promo-delete-button:hover {
+    -fx-background-color: #c0392b;
+}
+/* ✅ Bouton Ajouter */
+.promo-add-button {
+    -fx-background-color: #533c56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 20px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+/* ✅ Effet au survol */
+.promo-add-button:hover {
+    -fx-background-color: #99707e; /* Mountbatten Pink */
+}
+
+/* ✅ Effet de clic */
+.promo-add-button:pressed {
+    -fx-background-color: #bca2bf; /* Lilac */
+}

@@ -1,5 +1,6 @@
 package controllers;
 
+import Models.CodePromo;
 import Models.Order;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,9 +12,17 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
+import services.ServiceCodePromo;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,8 +55,18 @@ public class AdminDashboardCController {
     private Label siteRevenuePercentageLabel;
 
     @FXML
+    private FlowPane promoGrid;
+    private ServiceCodePromo serviceCodePromo = new ServiceCodePromo(); // Service pour récupérer les codes promo
+
+    @FXML
     public void initialize() {
         loadStatistics();
+        loadPromoCards();
+
+    }
+    public void addPromoCard(CodePromo promo) {
+        VBox promoCard = createPromoCard(promo);
+        promoGrid.getChildren().add(promoCard);
     }
 
     private void loadStatistics() {
@@ -152,13 +171,61 @@ public class AdminDashboardCController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/PromoAdmin.fxml"));
             Parent root = loader.load();
 
+            // Récupérer le contrôleur de la fenêtre PromoAdmin
+            PromoAdminController promoController = loader.getController();
+            promoController.setAdminDashboardCController(this); // Passer l'instance actuelle
+
             Stage stage = new Stage();
             stage.setTitle("Gestion des Codes Promo");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    @FXML
+    private ListView<CodePromo> promoListView;
+
+    private void loadPromoCards() {
+        List<CodePromo> promoList = serviceCodePromo.getAllPromo(); // Récupère la liste des promos
+
+        promoGrid.getChildren().clear(); // Nettoie les anciennes données
+
+        for (CodePromo promo : promoList) {
+            VBox promoCard = createPromoCard(promo);
+            promoGrid.getChildren().add(promoCard);
+        }
+    }
+
+    // Création d'une carte promo sous forme de tableau
+    private VBox createPromoCard(CodePromo promo) {
+        VBox card = new VBox(8);
+        card.getStyleClass().add("promo-card");
+        card.setAlignment(Pos.CENTER);
+        card.setMinWidth(220); // Largeur fixe pour chaque carte
+        card.setMaxWidth(220);
+
+        Label codeLabel = new Label("📌 " + promo.getCode());
+        codeLabel.getStyleClass().add("promo-code");
+
+        Label discountLabel = new Label("💲 " + promo.getPourcentage() + "% de réduction");
+        discountLabel.getStyleClass().add("promo-discount");
+
+        Label expirationLabel = new Label("📅 Expire le : " + promo.getDateExpiration());
+        expirationLabel.getStyleClass().add("promo-expiration");
+
+        Button deleteButton = new Button("❌ Supprimer");
+        deleteButton.getStyleClass().add("promo-delete-button");
+        deleteButton.setOnAction(event -> deletePromo(promo));
+
+        card.getChildren().addAll(codeLabel, discountLabel, expirationLabel, deleteButton);
+        return card;
+    }
+
+    // Suppression d'un code promo
+    private void deletePromo(CodePromo promo) {
+        serviceCodePromo.deletePromo(promo.getId());
+        loadPromoCards(); // Rafraîchir l'affichage après suppression
+    }
 }

@@ -11,18 +11,30 @@ import java.util.List;
 public class ServiceCodePromo {
     private Connection conn = DataSource.getInstance().getConnection();
 
-    public void ajouterCodePromo(CodePromo codePromo) {
-        String query = "INSERT INTO code_promo (code_promo, pourcentage, date_expiration) VALUES (?, ?, ?)"; // ✅ Correction ici
+    /** ✅ Ajoute un code promo avec une connexion sécurisée */
+    public CodePromo ajouterCodePromo(CodePromo codePromo) {
+        String query = "INSERT INTO code_promo (code_promo, pourcentage, date_expiration) VALUES (?, ?, ?)";
 
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setString(1, codePromo.getCode());
             ps.setDouble(2, codePromo.getPourcentage());
             ps.setDate(3, new java.sql.Date(codePromo.getDateExpiration().getTime()));
-            ps.executeUpdate();
-            System.out.println("🎉 Code promo ajouté avec succès !");
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int newId = rs.getInt(1);
+                    codePromo.setId(newId);
+                    return codePromo; // ✅ Retourne l'objet mis à jour
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 
@@ -58,19 +70,58 @@ public class ServiceCodePromo {
         }
         return null;
     }
+    /** ✅ Vérifie si un code promo existe */
     public boolean existeDeja(String code) {
         String query = "SELECT COUNT(*) FROM code_promo WHERE code_promo = ?";
         try (Connection conn = DataSource.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, code);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0; // ✅ Retourne true si au moins un enregistrement existe
+                return rs.getInt(1) > 0; // ✅ Retourne true si le code existe déjà
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    /** ✅ Récupère tous les codes promo */
+    public List<CodePromo> getAllPromo() {
+        List<CodePromo> promos = new ArrayList<>();
+        String query = "SELECT * FROM code_promo";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                promos.add(new CodePromo(
+                        rs.getInt("id"),
+                        rs.getString("code_promo"),
+                        rs.getDouble("pourcentage"),
+                        rs.getDate("date_expiration")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return promos;
+    }
+    /** ✅ Supprime un code promo */
+    public void deletePromo(int id) {
+        String query = "DELETE FROM code_promo WHERE id = ?";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            System.out.println("✅ Code promo supprimé avec succès !");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
