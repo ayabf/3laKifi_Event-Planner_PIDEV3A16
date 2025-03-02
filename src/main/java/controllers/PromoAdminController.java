@@ -25,6 +25,7 @@ public class PromoAdminController {
     @FXML private Label errorDateLabel;
 
     private final ServiceCodePromo serviceCodePromo = new ServiceCodePromo();
+    @FXML private Button addPromoButton;
 
     @FXML
     private void initialize() {
@@ -72,14 +73,12 @@ public class PromoAdminController {
             errorDateLabel.setText(""); // ✅ Efface l'erreur si OK
         }
     }
-
     @FXML
     private void addPromo() {
         String code = promoCodeField.getText().trim();
         String percentageText = percentageField.getText().trim();
         LocalDate expirationDate = expirationDatePicker.getValue();
 
-        // Vérifie si une erreur est affichée, et empêche l'ajout
         if (!errorCodeLabel.getText().isEmpty() || !errorPercentageLabel.getText().isEmpty() || !errorDateLabel.getText().isEmpty()) {
             return;
         }
@@ -94,34 +93,56 @@ public class PromoAdminController {
         try {
             double pourcentage = Double.parseDouble(percentageText);
 
-            // Vérifie si le code promo existe déjà
-            if (serviceCodePromo.existeDeja(code)) {
-                showErrorAlert("Code Promo Existant", "⚠️ Ce code promo existe déjà !");
-                return;
-            }
+            if (promoToUpdate == null) {
+                // ✅ Mode Ajout
+                if (serviceCodePromo.existeDeja(code)) {
+                    showErrorAlert("Code Promo Existant", "⚠️ Ce code promo existe déjà !");
+                    return;
+                }
 
-            CodePromo promo = new CodePromo(code, pourcentage, Date.valueOf(expirationDate));
-            CodePromo savedPromo = serviceCodePromo.ajouterCodePromo(promo); // Ajout en BD
+                CodePromo promo = new CodePromo(code, pourcentage, Date.valueOf(expirationDate));
+                CodePromo savedPromo = serviceCodePromo.ajouterCodePromo(promo);
 
-            if (savedPromo != null) {
-                // Ajoute immédiatement la carte promo dans l'interface
-                adminDashboardCController.addPromoCard(savedPromo);
+                if (savedPromo != null) {
+                    adminDashboardCController.addPromoCard(savedPromo);
+                    showSuccessAlert("Ajout Réussi", "✅ Le code promo a été ajouté avec succès !");
+                    clearFields();
+                } else {
+                    showErrorAlert("Erreur", "❌ Une erreur est survenue.");
+                }
 
-                showSuccessAlert("Ajout Réussi", "✅ Le code promo a été ajouté avec succès !");
-                clearFields();
             } else {
-                showErrorAlert("Erreur", "❌ Une erreur est survenue.");
+                // 🔄 Mode Mise à Jour
+                promoToUpdate.setCode(code);
+                promoToUpdate.setPourcentage(pourcentage);
+                promoToUpdate.setDateExpiration(Date.valueOf(expirationDate));
+
+                if (serviceCodePromo.updatePromo(promoToUpdate)) {
+                    showSuccessAlert("Mise à Jour Réussie", "✅ Le code promo a été mis à jour !");
+                    adminDashboardCController.loadPromoCards(); // Met à jour l'affichage
+                    clearFields();
+                    promoToUpdate = null;
+                    addPromoButton.setText("➕ Ajouter Promo");
+                } else {
+                    showErrorAlert("Erreur", "❌ Impossible de mettre à jour.");
+                }
             }
 
         } catch (NumberFormatException e) {
             showErrorAlert("Valeur Invalide", "⚠️ Le pourcentage doit être un nombre valide.");
         }
     }
+
+
+
+
+
     private AdminDashboardCController adminDashboardCController;
 
     public void setAdminDashboardCController(AdminDashboardCController controller) {
         this.adminDashboardCController = controller;
     }
+
 
     /** ✅ Affiche une alerte de succès */
     private void showSuccessAlert(String title, String message) {
@@ -165,6 +186,18 @@ public class PromoAdminController {
             return false;
         }
     }
+    private CodePromo promoToUpdate = null;
+    public void updatePromo(CodePromo promo) {
+        promoToUpdate = promo;
+        promoCodeField.setText(promo.getCode());
+        percentageField.setText(String.valueOf(promo.getPourcentage()));
+
+        // Correction ici :
+        expirationDatePicker.setValue(promo.getDateExpirationAsLocalDate());
+
+        addPromoButton.setText("🔄 Modifier Promo");
+    }
+
 
     private void clearFields() {
         promoCodeField.clear();

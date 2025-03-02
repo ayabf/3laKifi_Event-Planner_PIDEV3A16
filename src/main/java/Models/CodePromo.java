@@ -10,6 +10,11 @@ public class CodePromo {
     private Date dateCreation;
     private Date dateExpiration;
 
+
+    public LocalDate getDateExpirationAsLocalDate() {
+        return new java.sql.Date(dateExpiration.getTime()).toLocalDate();
+    }
+
     // ✅ Constructeur complet
     public CodePromo(int id, String code, double pourcentage, Date dateCreation, Date dateExpiration) {
         this.id = id;

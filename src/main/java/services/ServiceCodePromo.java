@@ -124,4 +124,21 @@ public class ServiceCodePromo {
         }
     }
 
+    public boolean updatePromo(CodePromo promo) {
+        String query = "UPDATE code_promo SET code_promo = ?, pourcentage = ?, date_expiration = ? WHERE id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, promo.getCode());
+            stmt.setDouble(2, promo.getPourcentage());
+            stmt.setDate(3, new java.sql.Date(promo.getDateExpiration().getTime()));
+            stmt.setInt(4, promo.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
