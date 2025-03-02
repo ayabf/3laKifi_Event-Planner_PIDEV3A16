@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -128,6 +129,21 @@ public class AdminDashboardCController {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("❌ Erreur lors du chargement de la page de connexion vers Order Management!");
+        }
+    }
+
+    public void goBackToWelcome(javafx.event.ActionEvent actionEvent) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcomeC.fxml"));
+            Parent root = loader.load();
+
+            // Récupérer la scène actuelle et remplacer son contenu
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du retour à la page d'accueil !");
         }
     }
 }

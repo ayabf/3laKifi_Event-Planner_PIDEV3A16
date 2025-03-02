@@ -34,6 +34,10 @@ public class sidebarAdmin {
 UserService userService=new UserService();
     @FXML
     private ListView<String> userList;
+    @FXML
+    private void goToWelcomePage() {
+        openNewWindow("/welcomeC.fxml", "Bienvenue !");
+    }
 
 
 
@@ -232,6 +236,24 @@ UserService userService=new UserService();
     }
 
 
+
+    private void openNewWindow(String fxmlPath, String title) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            if (loader.getLocation() == null) {
+                throw new IOException("❌ Le fichier FXML n'a pas été trouvé : " + fxmlPath);
+            }
+
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors du chargement du fichier FXML : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 
 

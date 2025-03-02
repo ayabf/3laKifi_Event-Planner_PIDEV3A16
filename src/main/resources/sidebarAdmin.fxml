@@ -173,15 +173,17 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button layoutX="11.0" layoutY="314.0" mnemonicParsing="false" onAction="#directToCart" prefHeight="30.0" prefWidth="180.0" text="Commande">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@images/UserIcon.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+
+                                        <Button layoutX="11.0" layoutY="314.0" mnemonicParsing="false" text="Commande" onAction="#goToWelcomePage">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@images/UserIcon.png"/>
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+
 
                                     </children>
                                 </AnchorPane>

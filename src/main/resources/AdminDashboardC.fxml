@@ -23,6 +23,15 @@
         </HBox>
         <Region HBox.hgrow="ALWAYS"/>
         <HBox spacing="15" alignment="CENTER" styleClass="nav-buttons-container">
+            <Button onAction="#goBackToWelcome" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="ARROW_LEFT" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Retour à l'accueil" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
+
             <Button onAction="#handleLogout" styleClass="nav-button">
                 <graphic>
                     <FontAwesomeIconView glyphName="SIGN_OUT" size="1.5em" fill="WHITE"/>
@@ -78,7 +87,7 @@
                     </VBox>
                     <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
                         <StackPane styleClass="icon-container">
-                            <FontAwesomeIconView glyphName="CLOCK_O" size="2em"/>
+                            <FontAwesomeIconView glyphName="CLOCK" size="2em"/>
                         </StackPane>
                         <Label text="Temps Moyen d'Acceptation" styleClass="card-title"/>
                         <Label fx:id="orderAcceptanceTimeLabel" styleClass="card-value" text="3 min"/>

@@ -5,9 +5,11 @@ import Models.Product;
 import Models.session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 import services.CartService;
 import utils.DataSource;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.Optional;
 
@@ -271,6 +274,24 @@ public class CartController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    @FXML
+    private void goBackToWelcome(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/welcomeC.fxml"));
+            Parent root = loader.load();
+
+            // Récupérer la scène actuelle
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root)); // Remplacer la scène actuelle
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du retour à la page d'accueil !");
+        }
+    }
+
+
 
     /**
      * ✅ Classe interne pour gérer l'affichage des articles dans le ListView

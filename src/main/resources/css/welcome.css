@@ -1,0 +1,70 @@
+/* ✅ Styles pour la page de bienvenue */
+
+.root {
+    -fx-background-color: #ffffff; /* Fond blanc */
+}
+
+.welcome-header {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533C56; /* English Violet */
+}
+
+.welcome-subtext {
+    -fx-font-size: 16px;
+    -fx-text-fill: #99707E; /* Mountbatten Pink */
+}
+
+.welcome-icon {
+    -fx-fill: #533C56; /* English Violet */
+}
+
+/* ✅ Boutons */
+.action-button {
+    -fx-font-size: 16px;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.client-button {
+    -fx-background-color: #BCA2BF; /* Lilac */
+}
+
+.admin-button {
+    -fx-background-color: #99707E; /* Mountbatten Pink */
+}
+
+.client-button:hover {
+    -fx-background-color: #A089B0; /* Teinte plus foncée */
+}
+
+.admin-button:hover {
+    -fx-background-color: #875F6A; /* Teinte plus foncée */
+}
+
+/* ✅ Bouton de déconnexion */
+.text-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-padding: 8px 16px;
+    -fx-font-size: 14px;
+}
+
+.text-button:hover {
+    -fx-background-color: #432E46; /* Teinte plus foncée */
+}
+
+/* ✅ Bouton retour */
+.back-button {
+    -fx-background-color: #533C56; /* English Violet */
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+}
+
+.back-button:hover {
+    -fx-background-color: #432E46; /* Teinte plus foncée */
+}
