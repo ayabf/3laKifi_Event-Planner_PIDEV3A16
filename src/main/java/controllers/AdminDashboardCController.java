@@ -146,4 +146,19 @@ public class AdminDashboardCController {
             System.err.println("❌ Erreur lors du retour à la page d'accueil !");
         }
     }
+    @FXML
+    private void openPromoAdmin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/PromoAdmin.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Gestion des Codes Promo");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -15,8 +15,6 @@
         <!-- 🏷️ Titre Centré -->
         <Label text="📦 Mes Commandes"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-alignment: center;"/>
-        <Button text="Tableau de Bord" onAction="#openAdminDashboardC"
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8px 16px;"/>
         <!-- 🔍 Barre de Recherche -->
         <TextField fx:id="searchField" promptText="Rechercher une commande..."
                    onKeyReleased="#searchOrders"

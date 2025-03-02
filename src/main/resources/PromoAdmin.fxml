@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PromoAdminController">
+
+    <VBox alignment="CENTER" spacing="10" prefWidth="400" prefHeight="400"
+          style="-fx-padding: 20px; -fx-background-color: #f4f4f4; -fx-border-radius: 10px;">
+
+        <Label text="🎟️ Ajouter un Code Promo" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+        <!-- Champ Code Promo -->
+        <TextField fx:id="promoCodeField" promptText="Code promo ex: PROMO10"
+                   style="-fx-font-size: 14px; -fx-padding: 8px;"/>
+        <Label fx:id="errorCodeLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+
+        <!-- Champ Réduction (%) -->
+        <TextField fx:id="percentageField" promptText="Réduction (%)"
+                   style="-fx-font-size: 14px; -fx-padding: 8px;"/>
+        <Label fx:id="errorPercentageLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+
+        <!-- Champ Date d'expiration -->
+        <DatePicker fx:id="expirationDatePicker" promptText="Date d'expiration"/>
+        <Label fx:id="errorDateLabel" text="" style="-fx-text-fill: red; -fx-font-size: 12px;"/>
+
+        <!-- Bouton d'ajout -->
+        <Button text="➕ Ajouter Promo" fx:id="addPromoButton"
+                style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-size: 14px;"
+                onAction="#addPromo"/>
+
+    </VBox>
+
+
+</AnchorPane>

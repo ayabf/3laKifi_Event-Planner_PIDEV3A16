@@ -31,7 +31,14 @@
                     <Tooltip text="Retour à l'accueil" styleClass="custom-tooltip"/>
                 </tooltip>
             </Button>
-
+            <Button onAction="#openPromoAdmin" styleClass="nav-button">
+                <graphic>
+                    <FontAwesomeIconView glyphName="TICKET" size="1.5em" fill="WHITE"/>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Gérer les Codes Promo" styleClass="custom-tooltip"/>
+                </tooltip>
+            </Button>
             <Button onAction="#handleLogout" styleClass="nav-button">
                 <graphic>
                     <FontAwesomeIconView glyphName="SIGN_OUT" size="1.5em" fill="WHITE"/>
@@ -52,6 +59,16 @@
                 </padding>
 
                 <!-- Section Statistiques -->
+                <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
+                    <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                        <StackPane styleClass="icon-container">
+                            <FontAwesomeIconView glyphName="TICKET" size="2em"/>
+                        </StackPane>
+                        <Label text="Codes Promo" styleClass="card-title"/>
+                        <Button text="Gérer" onAction="#openPromoAdmin"
+                                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    </VBox>
+                </HBox>
                 <HBox spacing="25" alignment="CENTER" styleClass="cards-container">
                     <VBox styleClass="dashboard-card" HBox.hgrow="ALWAYS">
                         <StackPane styleClass="icon-container">

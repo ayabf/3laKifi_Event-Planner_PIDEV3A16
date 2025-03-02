@@ -7,6 +7,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderService {
 
@@ -107,7 +108,16 @@ public class OrderService {
 
 
 
+    public List<Order> searchOrdersByUser(int userId, String keyword) throws SQLException {
+        List<Order> allOrders = getAllByUser(userId);
 
+        return allOrders.stream()
+                .filter(order -> order.getStatus().toLowerCase().contains(keyword.toLowerCase()) ||
+                        order.getExactAddress().toLowerCase().contains(keyword.toLowerCase()) ||
+                        (order.getEventDate() != null && order.getEventDate().toString().contains(keyword)) ||
+                        String.valueOf(order.getTotalPrice()).contains(keyword))
+                .collect(Collectors.toList());
+    }
 
 
 

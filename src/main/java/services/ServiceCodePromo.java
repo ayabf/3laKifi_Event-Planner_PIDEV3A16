@@ -58,4 +58,19 @@ public class ServiceCodePromo {
         }
         return null;
     }
+    public boolean existeDeja(String code) {
+        String query = "SELECT COUNT(*) FROM code_promo WHERE code_promo = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, code);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // ✅ Retourne true si au moins un enregistrement existe
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

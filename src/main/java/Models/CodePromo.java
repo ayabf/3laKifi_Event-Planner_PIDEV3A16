@@ -1,5 +1,6 @@
 package Models;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class CodePromo {
@@ -34,6 +35,13 @@ public class CodePromo {
 
     // ✅ Constructeur par défaut
     public CodePromo() {}
+
+    public CodePromo(String code, double pourcentage, Date dateExpiration) {
+        this.code = code;
+        this.pourcentage = pourcentage;
+        this.dateExpiration = dateExpiration;
+    }
+
 
     // ✅ Getters et Setters
     public int getId() { return id; }

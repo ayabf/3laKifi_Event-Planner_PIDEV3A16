@@ -24,6 +24,7 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderListController {
 
@@ -101,17 +102,23 @@ public class OrderListController {
     @FXML
     private void searchOrders() {
         String keyword = searchField.getText().toLowerCase().trim();
-        if (allOrders == null || allOrders.isEmpty()) return;
 
-        ObservableList<Order> filteredOrders = allOrders.filtered(order ->
-                order.getStatus().toLowerCase().contains(keyword) ||
-                        order.getExactAddress().toLowerCase().contains(keyword) ||
-                        (order.getEventDate() != null && order.getEventDate().toString().contains(keyword)) ||
-                        String.valueOf(order.getTotalPrice()).contains(keyword)
-        );
+        if (keyword.isEmpty()) {
+            displayOrders(allOrders); // Affiche toutes les commandes si aucun mot-clé n'est saisi
+            return;
+        }
 
-        displayOrders(filteredOrders);
+        try {
+            int userId = session.id_utilisateur;
+            List<Order> filteredOrders = orderService.searchOrdersByUser(userId, keyword);
+            displayOrders(FXCollections.observableArrayList(filteredOrders));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de récupérer les commandes filtrées.");
+        }
     }
+
+
 
     @FXML
     private void reloadOrders() {
