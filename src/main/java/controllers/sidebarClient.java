@@ -3,6 +3,7 @@ package controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -224,6 +225,26 @@ UserService userService=new UserService();
             // Gérer les erreurs de chargement de la page de connexion
         }
 
+    }
+    @FXML
+    private void directToCommande(ActionEvent event) {
+        openNewScene("/welcomeClient.fxml", "Client Orders", event);
+    }
+
+    private void openNewScene(String fxmlPath, String title, ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+
+            // Remplacer la scène actuelle
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Error loading FXML: " + fxmlPath);
+        }
     }
 }
 

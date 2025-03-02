@@ -34,10 +34,7 @@ public class sidebarAdmin {
 UserService userService=new UserService();
     @FXML
     private ListView<String> userList;
-    @FXML
-    private void goToWelcomePage() {
-        openNewWindow("/welcomeC.fxml", "Bienvenue !");
-    }
+
 
 
 
@@ -368,7 +365,10 @@ UserService userService=new UserService();
     }
 
 
-
+    @FXML
+    private void goToWelcomePage() {
+        openNewWindow("/welcomeC.fxml", "Bienvenue !");
+    }
 
 
 
