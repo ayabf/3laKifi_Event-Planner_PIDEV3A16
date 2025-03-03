@@ -1,6 +1,8 @@
 package services;
 
+import Models.CartItem;
 import Models.Order;
+import Models.Product;
 import utils.DataSource;
 
 import java.sql.*;
@@ -101,6 +103,74 @@ public class OrderService {
             System.err.println("❌ Erreur lors de l'ajout de la commande !");
         }
     }
+    public boolean confirmOrder(int orderId) {
+        System.out.println("📌 Méthode confirmOrder() appelée pour Order ID: " + orderId);
+
+        String updateQuery = "UPDATE `order` SET status = 'CONFIRMED' WHERE order_id = ?";
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, orderId);
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Commande confirmée : " + orderId);
+
+                // 🔄 Mise à jour du stock après confirmation de la commande
+                List<CartItem> items = getCartItemsForOrder(orderId);
+                StockService stockService = new StockService();
+
+                for (CartItem item : items) {
+                    System.out.println("🔄 Mise à jour du stock pour " + item.getProduct().getName());
+                    boolean stockUpdated = stockService.updateStock(item.getProduct().getProductId(), item.getQuantity());
+
+                    if (stockUpdated) {
+                        System.out.println("✅ Stock mis à jour pour " + item.getProduct().getName());
+                    } else {
+                        System.err.println("🚨 Échec de mise à jour du stock !");
+                    }
+                }
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+    private List<CartItem> getCartItemsForOrder(int orderId) {
+        List<CartItem> items = new ArrayList<>();
+        String query = "SELECT p.product_id, p.name, p.price, cp.quantity " +
+                "FROM cart_product cp " +
+                "JOIN product p ON cp.product_id = p.product_id " +
+                "WHERE cp.cart_id = (SELECT cart_id FROM `order` WHERE order_id = ?)";
+
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, orderId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("name"),
+                        "",
+                        rs.getDouble("price"),
+                        1,
+                        ""
+                );
+                CartItem cartItem = new CartItem(product, rs.getInt("quantity"));
+                items.add(cartItem);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
 
 
 

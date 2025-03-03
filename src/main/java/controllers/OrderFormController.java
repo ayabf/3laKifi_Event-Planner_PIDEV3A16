@@ -118,10 +118,8 @@ public class OrderFormController {
         totalPriceLabel.setText("$" + totalPrice);
     }
 
-
     @FXML
     private void validateOrder() {
-
         LocalDate selectedDate = eventDatePicker.getValue();
         String address = addressField.getText();
         String paymentMethod = paymentMethodBox.getValue();
@@ -135,6 +133,7 @@ public class OrderFormController {
             errorAddress.setVisible(false);
             addressField.setStyle("-fx-border-color: green;");
         }
+
         if (paymentMethod == null) {
             errorPayment.setVisible(true);
             paymentMethodBox.setStyle("-fx-border-color: red;");
@@ -143,6 +142,7 @@ public class OrderFormController {
             errorPayment.setVisible(false);
             paymentMethodBox.setStyle("-fx-border-color: green;");
         }
+
         if (selectedDate == null || selectedDate.isBefore(LocalDate.now())) {
             errorDate.setVisible(true);
             eventDatePicker.setStyle("-fx-border-color: red;");
@@ -151,69 +151,41 @@ public class OrderFormController {
             errorDate.setVisible(false);
             eventDatePicker.setStyle("-fx-border-color: green;");
         }
-        if (selectedHour < 0 || selectedMinute < 0) {
-            errorTime.setVisible(true);
-            isValid = false;
-        } else {
-            errorTime.setVisible(false);
-        }
+
         if (!isValid) {
             return;
         }
 
-        if (selectedDate == null || address.isEmpty() || paymentMethod == null) {
-            showAlert("Erreur", "Veuillez remplir tous les champs !");
-            return;
-        }
-        // ✅ Vérification de l'utilisateur et du panier avant de passer la commande
-        if (session.id_utilisateur <= 0) {
-            System.err.println("❌ ERREUR: L'utilisateur n'est pas défini !");
-            showAlert("Erreur", "Utilisateur non défini. Veuillez vous reconnecter.");
-            return;
-        }
         int cartId = getCartIdForUser(session.id_utilisateur);
         System.out.println("🎯 Cart ID trouvé pour utilisateur " + session.id_utilisateur + " : " + cartId);
 
         if (cartId <= 0) {
-            System.out.println("⚠ Aucun panier trouvé, création d'un nouveau panier...");
             cartId = orderService.creerNouveauPanier(session.id_utilisateur);
         }
+
         if (orderService.commandeExisteDeja(cartId)) {
-            showAlertAndRedirect("Erreur", "Une commande existe déjà pour ce panier !");
+            showAlert("Erreur", "Une commande existe déjà pour ce panier !");
             return;
         }
-// Vérifier si le panier contient des produits avant de créer la commande
+
         if (!orderService.panierContientProduits(cartId)) {
             showAlert("Erreur", "Votre panier est vide. Ajoutez des produits avant de valider la commande !");
             return;
         }
 
-        System.out.println("📅 Date sélectionnée : " + (selectedDate != null ? selectedDate.toString() : "null"));
-
         LocalDateTime eventDateTime = LocalDateTime.of(selectedDate, LocalTime.of(selectedHour, selectedMinute));
-        System.out.println("📅 Date sauvegardée : " + eventDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-        System.out.println("🔍 Vérification de session.id_utilisateur : " + session.id_utilisateur);
-
-        // 📌 Créer et enregistrer la commande
         Order newOrder = new Order(cartId, userId, "PENDING", totalPrice, eventDateTime, address, paymentMethod);
-        System.out.println("🔄 Cart ID avant appel à ajouter() : " + newOrder.getCartId());
-        System.out.println("🔄 User ID avant appel à ajouter() : " + newOrder.getUserId());
-        System.out.println("🔄 Total Price avant appel à ajouter() : " + newOrder.getTotalPrice());
-
-        System.out.println("🎯 Cart ID trouvé pour utilisateur " + session.id_utilisateur + " : " + cartId);
-        if (cartId <= 0) {
-            System.out.println("⚠ Aucun panier trouvé, création d'un nouveau panier...");
-            cartId = orderService.creerNouveauPanier(session.id_utilisateur);
-        }
-
-
-
         orderService.ajouter(newOrder);
-        showAlertAndRedirect("Succès", "Commande validée !");
-        openOrderListPage();
 
+        // 🔥 Mise à jour du stock après validation
+        orderService.confirmOrder(newOrder.getOrderId());
+
+        showAlert("Succès", "Commande validée et stock mis à jour !");
+        openOrderListPage();
     }
+
+
     private void showAlertAndRedirect(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

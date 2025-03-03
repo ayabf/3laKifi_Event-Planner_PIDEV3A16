@@ -107,4 +107,33 @@ public class StockService implements IService<Stock> {
         }
         return stocks;
     }
+    public boolean updateStock(int productId, int quantityOrdered) {
+        String query = "UPDATE stock SET available_quantity = available_quantity - ? WHERE stock_id = (SELECT stock_id FROM product WHERE product_id = ?) AND available_quantity >= ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, quantityOrdered);
+            stmt.setInt(2, productId);
+            stmt.setInt(3, quantityOrdered);
+
+            System.out.println("🔄 Mise à jour du stock pour productId: " + productId + " | Quantité commandée: " + quantityOrdered);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("✅ Stock mis à jour avec succès pour productId: " + productId);
+                return true;
+            } else {
+                System.err.println("🚨 Échec de mise à jour du stock ! Stock insuffisant ou produit introuvable.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+
+
+
 }

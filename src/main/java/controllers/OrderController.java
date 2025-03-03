@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class OrderController {
+    private final OrderService orderService = new OrderService();
 
     @FXML private Label orderIdLabel;
     @FXML private Label totalPriceLabel;
@@ -49,6 +50,7 @@ public class OrderController {
 
     @FXML
     private void confirmOrder() {
+
         String eventDate = (eventDatePicker.getValue() != null) ? eventDatePicker.getValue().toString() : "";
         String address = addressField.getText();
         String paymentMethod = paymentMethodBox.getValue();
@@ -58,23 +60,25 @@ public class OrderController {
             return;
         }
 
-        String updateQuery = "UPDATE `order` SET payment_method = ?, address = ?, event_date = ?, status = 'Confirmed' WHERE order_id = ?";
-        try (Connection conn = DataSource.getInstance().getConnection();
-             PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+        try {
+            OrderService orderService = new OrderService();
+            orderService.updateOrderStatus(orderId, "CONFIRMED");
 
-            stmt.setString(1, paymentMethod);
-            stmt.setString(2, address);
-            stmt.setString(3, eventDate);
-            stmt.setInt(4, orderId);
+            // 🔥 Appel de confirmOrder() pour mettre à jour le stock
+            boolean stockUpdated = orderService.confirmOrder(orderId);
 
-            stmt.executeUpdate();
-            showAlert("Succès", "Commande confirmée avec succès !");
+            if (stockUpdated) {
+                showAlert("Succès", "Commande confirmée et stock mis à jour !");
+            } else {
+                showAlert("Attention", "Commande confirmée, mais mise à jour du stock échouée.");
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Erreur", "Impossible de confirmer la commande.");
         }
     }
+
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -184,6 +188,8 @@ public class OrderController {
 
         return orders;
     }
+
+
 
 
 }
