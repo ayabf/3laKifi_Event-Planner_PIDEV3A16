@@ -123,3 +123,55 @@
     -fx-border-color: #533C56; /* Changement de couleur de bordure lorsqu'il est sélectionné */
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2); /* Ombre légère */
 }
+/* Style de base pour la boîte de dialogue */
+.dialog-pane {
+    -fx-background-color: #f5f5f5; /* Fond clair */
+    -fx-padding: 20px;
+    -fx-border-color: #bca2bf; /* Couleur de la bordure */
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 5); /* Ombre légère */
+}
+
+/* Style pour le ComboBox */
+.combo-box {
+    -fx-background-color: #ffffff; /* Fond blanc */
+    -fx-border-color: #bca2bf; /* Couleur de la bordure */
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #533C56; /* Couleur du texte */
+}
+
+.combo-box:hover {
+    -fx-border-color: #533C56; /* Changement de couleur de bordure au survol */
+}
+
+.combo-box:focused {
+    -fx-border-color: #533C56; /* Changement de couleur de bordure lorsqu'il est sélectionné */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 0, 0, 0, 2); /* Ombre légère */
+}
+
+/* Style pour le bouton "Traduire" */
+.translate-button {
+    -fx-background-color: #bca2bf; /* Couleur de fond */
+    -fx-text-fill: white; /* Couleur du texte */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.translate-button:hover {
+    -fx-background-color: #533C56; /* Changement de couleur au survol */
+}
+
+.translate-button:pressed {
+    -fx-background-color: #3e2c41; /* Changement de couleur lors du clic */
+}
+
+

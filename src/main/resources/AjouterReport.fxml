@@ -1,44 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane style="-fx-background-color: #bca2bf;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterReportController">
+<AnchorPane style="-fx-background-color: #bca2bf;" stylesheets="styles/Publication-style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterReportController">
     <children>
-        <Text fill="WHITE" fontSmoothingType="LCD" layoutX="24.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Report a publication" wrappingWidth="329.336669921875">
-            <font>
-                <Font size="24.0" />
-            </font>
-        </Text>
-        <Text layoutX="32.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title:" wrappingWidth="63.96441650390625">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Text>
-        <Text layoutX="31.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" wrappingWidth="106.36444091796875">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Text>
-        <Text layoutX="32.0" layoutY="300.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:" wrappingWidth="85.56439208984375">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Text>
-        <Button fx:id="btnCancel" layoutX="293.0" layoutY="322.0" onAction="#cancelReport" prefWidth="120" style="-fx-background-color: #cebec9; -fx-text-fill: black;" text="Cancel" />
+        <!-- Fond avec dégradé -->
+        <Rectangle arcHeight="20.0" arcWidth="20.0" fill="#533C56" height="400.0" layoutX="0.0" layoutY="0.0" stroke="TRANSPARENT" strokeType="INSIDE" width="600.0">
+            <effect>
+                <DropShadow blurType="GAUSSIAN" color="#00000080" height="10.0" radius="10.0" width="10.0" />
+            </effect>
+        </Rectangle>
 
-        <Button layoutX="426.0" layoutY="323.0" mnemonicParsing="false" onAction="#ajouterReport" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #533C56;" text="Save" textFill="#fff9f9" />
-        <TextField fx:id="titlePublicationTextfield" layoutX="150.0" layoutY="81.0" prefHeight="26.0" prefWidth="254.0" style="-fx-background-color: #cebec9;" />
-        <TextField fx:id="descriptionReportTextfield" layoutX="152.0" layoutY="123.0" prefHeight="66.0" prefWidth="254.0" style="-fx-background-color: #cebec9;" />
-        <TextField fx:id="UsernameTextfield" layoutX="152.0" layoutY="280.0" prefHeight="26.0" prefWidth="254.0" style="-fx-background-color: #cebec9;" />
-        <TextField fx:id="reasonReportTextfield" layoutX="152.0" layoutY="215.0" prefHeight="26.0" prefWidth="254.0" style="-fx-background-color: #cebec9;" />
-        <Text layoutX="32.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reason:" wrappingWidth="63.96441650390625">
-            <font>
-                <Font size="18.0" />
-            </font>
-        </Text>
+        <!-- Contenu principal -->
+        <VBox alignment="TOP_LEFT" layoutX="20.0" layoutY="20.0" spacing="10.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+
+            <!-- Titre -->
+            <Text fill="WHITE" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="Report a publication" wrappingWidth="329.336669921875">
+                <font>
+                    <Font name="Arial" size="24.0" />
+                </font>
+            </Text>
+
+            <!-- Champ Titre -->
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Title:" wrappingWidth="63.96441650390625">
+                <font>
+                    <Font name="Arial" size="16.0" />
+                </font>
+            </Text>
+            <TextField fx:id="titlePublicationTextfield" prefHeight="30.0" prefWidth="300.0" promptText="Enter title" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
+
+            <!-- Champ Description -->
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" wrappingWidth="106.36444091796875">
+                <font>
+                    <Font name="Arial" size="16.0" />
+                </font>
+            </Text>
+            <TextField fx:id="descriptionReportTextfield" prefHeight="80.0" prefWidth="300.0" promptText="Enter description" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
+
+            <!-- Champ Reason -->
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Reason:" wrappingWidth="63.96441650390625">
+                <font>
+                    <Font name="Arial" size="16.0" />
+                </font>
+            </Text>
+            <TextField fx:id="reasonReportTextfield" prefHeight="30.0" prefWidth="300.0" promptText="Enter reason" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
+
+            <!-- Champ Username -->
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Username:" wrappingWidth="85.56439208984375">
+                <font>
+                    <Font name="Arial" size="16.0" />
+                </font>
+            </Text>
+            <TextField fx:id="UsernameTextfield" prefHeight="30.0" prefWidth="300.0" promptText="Enter username" style="-fx-background-color: #FFFFFF; -fx-background-radius: 5;" />
+
+            <!-- Boutons -->
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                <Button fx:id="btnCancel" onAction="#cancelReport" prefWidth="120" style="-fx-background-color: #cebec9; -fx-background-radius: 5; -fx-text-fill: black;" text="Cancel">
+                    <effect>
+                        <DropShadow blurType="GAUSSIAN" color="#00000040" height="5.0" radius="5.0" width="5.0" />
+                    </effect>
+                </Button>
+                <Button fx:id="save" onAction="#ajouterReport" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #533C56; -fx-background-radius: 5; -fx-text-fill: WHITE;" text="Save">
+                    <effect>
+                        <DropShadow blurType="GAUSSIAN" color="#00000040" height="5.0" radius="5.0" width="5.0" />
+                    </effect>
+                </Button>
+            </HBox>
+        </VBox>
     </children>
 </AnchorPane>

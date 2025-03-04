@@ -2,18 +2,17 @@ package controllers;
 
 import Models.Publications;
 import Models.session;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import services.ServicePublications;
+import services.TranslationService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -23,38 +22,33 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AfficherPublication2Controller {
 
     @FXML
-    private ScrollPane scrollPane;
-
-    @FXML
     private VBox vboxContainer;
 
     @FXML
-    private TextField textRecherchPublication; // ✅ Champ de recherche
+    private TextField textRecherchPublication;
 
     private final ServicePublications servicePublications = new ServicePublications();
-    private List<Publications> allPublications; // ✅ Stocke toutes les publications
+    private List<Publications> allPublications;
 
     @FXML
     void initialize() {
         System.out.println("🔹 Initialisation de l'affichage des publications...");
         try {
-            allPublications = servicePublications.getAll(); // ✅ Charge toutes les publications
-            afficherPublications(allPublications); // ✅ Affiche les publications
+            allPublications = servicePublications.getAll();
+            afficherPublications(allPublications);
         } catch (Exception e) {
             System.err.println("❌ Erreur lors du chargement des publications : " + e.getMessage());
         }
     }
 
-    /**
-     * ✅ Affiche les publications données
-     */
     private void afficherPublications(List<Publications> publications) {
-        vboxContainer.getChildren().clear(); // Nettoyer l'affichage
+        vboxContainer.getChildren().clear();
 
         if (publications.isEmpty()) {
             Label noPublications = new Label("Aucune publication disponible.");
@@ -63,13 +57,10 @@ public class AfficherPublication2Controller {
         }
 
         for (Publications pub : publications) {
-            ajouterPublication(pub); // ✅ Afficher chaque publication
+            ajouterPublication(pub);
         }
     }
 
-    /**
-     * ✅ Recherche une publication par titre avec `Stream`
-     */
     @FXML
     void searchPublication(ActionEvent event) {
         if (allPublications == null) {
@@ -78,17 +69,13 @@ public class AfficherPublication2Controller {
         }
 
         String searchText = textRecherchPublication.getText().trim().toLowerCase();
-
         List<Publications> filteredList = allPublications.stream()
                 .filter(pub -> pub.getTitle() != null && pub.getTitle().toLowerCase().contains(searchText))
                 .collect(Collectors.toList());
 
-        afficherPublications(filteredList); // ✅ Afficher les résultats filtrés
+        afficherPublications(filteredList);
     }
 
-    /**
-     * ✅ Ajoute une publication sous forme de carte
-     */
     private void ajouterPublication(Publications pub) {
         HBox card = new HBox();
         card.setSpacing(10);
@@ -96,7 +83,6 @@ public class AfficherPublication2Controller {
         card.setStyle("-fx-background-color: #ffffff; -fx-border-color: #d1d1d1; -fx-border-radius: 10px; " +
                 "-fx-padding: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);");
 
-        // ImageView pour afficher l'image
         ImageView imageView = new ImageView();
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
@@ -112,11 +98,10 @@ public class AfficherPublication2Controller {
             imageView.setImage(new Image("https://via.placeholder.com/100"));
         }
 
-        // VBox pour afficher le titre, description et utilisateur
         VBox textContainer = new VBox();
         textContainer.setSpacing(5);
 
-        Label titleLabel = new Label("📌 " + pub.getTitle());
+        Label titleLabel = new Label("Title: " + pub.getTitle());
         titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
         Label descriptionLabel = new Label(pub.getDescription());
@@ -131,7 +116,6 @@ public class AfficherPublication2Controller {
 
         textContainer.getChildren().addAll(titleLabel, descriptionLabel, userLabel, dateLabel);
 
-        // Espaceur pour aligner les boutons à droite
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -141,26 +125,30 @@ public class AfficherPublication2Controller {
         int userId = session.id_utilisateur;
 
         if (pub.getId_user() == userId) {
-            // Bouton Modifier
-            Button editButton = new Button("\uE02F"); // Dripicons 'pencil'
+            Button editButton = new Button("\uE02F");
             editButton.setStyle("-fx-font-family: 'Dripicons-v2'; -fx-font-size: 16px; -fx-background-color: #bca2bf; " +
                     "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 5px;");
             editButton.setOnAction(event -> modifierPublication(pub));
 
-            // Bouton Supprimer
-            Button deleteButton = new Button("\uE053"); // Dripicons 'trash'
+            Button deleteButton = new Button("\uE053");
             deleteButton.setStyle("-fx-font-family: 'Dripicons-v2'; -fx-font-size: 16px; -fx-background-color: #bca2bf; " +
                     "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 5px;");
             deleteButton.setOnAction(event -> supprimerPublication(pub));
 
             buttonsContainer.getChildren().addAll(editButton, deleteButton);
         } else {
-            // ✅ Bouton Traduire (uniquement si ce n'est pas l'utilisateur connecté)
-            Button translateButton = new Button("🌍");
-            translateButton.setStyle("-fx-background-color: #bca2bf; -fx-text-fill: white; -fx-border-radius: 5px;");
-            translateButton.setOnAction(event -> traduirePublication(pub, descriptionLabel));
+            Button translateButton = new Button("\uE064");
+            translateButton.setStyle("-fx-font-family: 'Dripicons-v2'; -fx-font-size: 20px; -fx-background-color: #bca2bf; " +
+                    "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 8px;");
+            translateButton.setOnAction(event -> afficherBoiteTraduction(titleLabel, descriptionLabel, pub));
 
-            buttonsContainer.getChildren().add(translateButton);
+
+            Button reportButton = new Button("\uE063"); // Icône de signalement
+            reportButton.setStyle("-fx-font-family: 'Dripicons-v2'; -fx-font-size: 20px; -fx-background-color: #bca2bf; " +
+                    "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 8px;");
+            reportButton.setOnAction(event -> signalerPublication(pub));
+
+            buttonsContainer.getChildren().addAll(translateButton, reportButton);
         }
 
         card.getChildren().addAll(imageView, textContainer, spacer, buttonsContainer);
@@ -168,15 +156,80 @@ public class AfficherPublication2Controller {
     }
 
     /**
-     * ✅ Fonction de traduction (simulée)
+     * ✅ Signale une publication et ouvre un formulaire de signalement.
      */
-    private void traduirePublication(Publications pub, Label descriptionLabel) {
-        System.out.println("🔄 Traduction de la publication : " + pub.getTitle());
+    private void signalerPublication(Publications pub) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterReport.fxml"));
+            Parent root = loader.load();
 
-        // Simuler une traduction (remplacez ceci par un appel API comme Google Translate)
-        String traduction = "[Traduction] " + pub.getDescription();
-        descriptionLabel.setText(traduction);
+            AjouterReportController controller = loader.getController();
+            controller.initData(pub);
+
+            Stage stage = new Stage();
+            stage.setTitle("Report a publication");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors de l'ouverture du formulaire de signalement : " + e.getMessage());
+        }
     }
+
+
+    private void afficherBoiteTraduction(Label titleLabel, Label descriptionLabel, Publications pub) {
+        Stage translationStage = new Stage();
+        translationStage.setTitle("Choisissez une langue");
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(20));
+        vbox.setStyle("-fx-background-color: #f5f5f5;");
+
+        Scene scene = new Scene(vbox, 300, 150);
+        scene.getStylesheets().add(getClass().getResource("/styles/Publication-style.css").toExternalForm());
+
+        Map<String, String> languageMap = Map.of(
+                "Anglais", "en", "Français", "fr", "Espagnol", "es",
+                "Allemand", "de", "Arabe", "ar",
+                "Russe", "ru", "Italien", "it"
+        );
+
+        ComboBox<String> languageComboBox = new ComboBox<>();
+        languageComboBox.setItems(FXCollections.observableArrayList(languageMap.keySet()));
+        languageComboBox.setPromptText("Select a language");
+        languageComboBox.setStyle("-fx-font-size: 14px;");
+        languageComboBox.getStyleClass().add("combo-box");
+
+        Button translateButton = new Button("Translate");
+        translateButton.getStyleClass().add("translate-button");
+        translateButton.setOnAction(event -> {
+            String selectedLanguage = languageComboBox.getValue();
+            if (selectedLanguage != null) {
+                String languageCode = languageMap.get(selectedLanguage);
+                traduirePublication(pub, titleLabel, descriptionLabel, languageCode);
+                translationStage.close();
+            }
+        });
+
+        vbox.getChildren().addAll(languageComboBox, translateButton);
+
+        translationStage.setScene(scene);
+        translationStage.initModality(Modality.APPLICATION_MODAL);
+        translationStage.show();
+    }
+
+
+    private void traduirePublication(Publications pub, Label titleLabel, Label descriptionLabel, String languageCode) {
+        // Traduire le titre
+        String traductionTitre = TranslationService.translateText(pub.getTitle(), languageCode);
+        titleLabel.setText("Title: " + traductionTitre);
+
+        // Traduire la description
+        String traductionDescription = TranslationService.translateText(pub.getDescription(), languageCode);
+        descriptionLabel.setText(traductionDescription);
+    }
+
+
 
 
 
