@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Publications {
     private int publication_id,id_user;
-    private String title,description,image_url;
+    private String title,description,image_url,statut;
     private LocalDate publication_date;
     private List <Comments> comments;
     public Publications(String hhh, String bc, String ggggg, String number) {}
@@ -107,5 +107,13 @@ public class Publications {
                 ", publication_date=" + publication_date +
                 ", comments=" + comments +
                 '}';
+    }
+
+    public void setStatut(String statut) {
+        this.statut =statut;
+    }
+
+    public String getStatut() {
+        return statut;
     }
 }

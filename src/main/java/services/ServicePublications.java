@@ -23,19 +23,31 @@ public class ServicePublications {
             System.err.println("❌ Connexion à la base de données non disponible.");
             return;
         }
-        String req = "INSERT INTO publications (title, description, image_url, id_user, publication_date) VALUES (?, ?, ?, ?, CURRENT_DATE)";
+
+        // Vérification des mots inappropriés avant l'ajout
+        boolean titreInapproprie = ProfanityCheckerService.containsProfanity(publications.getTitle());
+        boolean descriptionInappropriee = ProfanityCheckerService.containsProfanity(publications.getDescription());
+
+        String statut = (titreInapproprie || descriptionInappropriee) ? "Inappropriate" : null;
+        publications.setStatut(statut);
+
+        // ✅ Ajout avec le statut
+        String req = "INSERT INTO publications (title, description, image_url, id_user, publication_date, statut) VALUES (?, ?, ?, ?, CURRENT_DATE, ?)";
 
         try (PreparedStatement ps = cnx.prepareStatement(req)) {
             ps.setString(1, publications.getTitle());
             ps.setString(2, publications.getDescription());
             ps.setString(3, publications.getImage_url());
             ps.setInt(4, session.id_utilisateur);
+            ps.setString(5, statut);  // Ajout du statut
+
             ps.executeUpdate();
-            System.out.println("✅ Publication ajoutée avec succès !");
+            System.out.println("✅ Publication ajoutée avec succès ! (Statut : " + statut + ")");
         } catch (SQLException ex) {
             System.err.println("❌ Erreur lors de l'ajout de la publication : " + ex.getMessage());
         }
     }
+
 
     /**
      * ✅ Modifie une publication existante.
@@ -166,4 +178,19 @@ public class ServicePublications {
         }
         return "Utilisateur inconnu";
     }
+    public void update(Publications pub) {
+        String sql = "UPDATE publications SET statut = ? WHERE publication_id = ?";
+
+        try (PreparedStatement pstmt = cnx.prepareStatement(sql)) {
+            pstmt.setString(1, pub.getStatut());
+            pstmt.setInt(2, pub.getPublication_id());
+
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Mise à jour statut : " + rowsUpdated + " ligne(s) modifiée(s).");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

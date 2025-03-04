@@ -4,6 +4,7 @@ import Models.Publications;
 import Models.session;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import services.ProfanityCheckerService;
 import services.ServicePublications;
 import services.TranslationService;
 import javafx.event.ActionEvent;
@@ -77,6 +78,21 @@ public class AfficherPublication2Controller {
     }
 
     private void ajouterPublication(Publications pub) {
+        // Vérifier si le titre ou la description contient des mots inappropriés
+        boolean titreInapproprie = ProfanityCheckerService.containsProfanity(pub.getTitle());
+        boolean descriptionInappropriee = ProfanityCheckerService.containsProfanity(pub.getDescription());
+
+        // Mettre à jour le statut de la publication en fonction du contenu
+        if (titreInapproprie || descriptionInappropriee) {
+            pub.setStatut("Inappropriate");
+        } else {
+            pub.setStatut(null);
+        }
+
+        // Enregistrer la publication avec le statut mis à jour
+        servicePublications.update(pub);
+
+        // Continuer avec l'ajout de la publication à l'interface utilisateur
         HBox card = new HBox();
         card.setSpacing(10);
         card.setPadding(new Insets(10));
@@ -142,7 +158,6 @@ public class AfficherPublication2Controller {
                     "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 8px;");
             translateButton.setOnAction(event -> afficherBoiteTraduction(titleLabel, descriptionLabel, pub));
 
-
             Button reportButton = new Button("\uE063"); // Icône de signalement
             reportButton.setStyle("-fx-font-family: 'Dripicons-v2'; -fx-font-size: 20px; -fx-background-color: #bca2bf; " +
                     "-fx-text-fill: white; -fx-padding: 4px; -fx-border-radius: 8px;");
@@ -154,6 +169,7 @@ public class AfficherPublication2Controller {
         card.getChildren().addAll(imageView, textContainer, spacer, buttonsContainer);
         vboxContainer.getChildren().add(card);
     }
+
 
     /**
      * ✅ Signale une publication et ouvre un formulaire de signalement.
@@ -252,6 +268,14 @@ public class AfficherPublication2Controller {
      * ✅ Modifie une publication.
      */
     private void modifierPublication(Publications pub) {
+        boolean titreInapproprie = ProfanityCheckerService.containsProfanity(pub.getTitle());
+        boolean descriptionInappropriee = ProfanityCheckerService.containsProfanity(pub.getDescription());
+
+        if (titreInapproprie || descriptionInappropriee) {
+            pub.setStatut("Inappropriate");
+        } else {
+            pub.setStatut(null);
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ModifierPublication.fxml"));
             Parent root = loader.load();

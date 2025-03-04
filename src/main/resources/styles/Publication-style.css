@@ -174,4 +174,56 @@
     -fx-background-color: #3e2c41; /* Changement de couleur lors du clic */
 }
 
+/* Style de base pour l'AnchorPane */
+.root {
+    -fx-background-color: #f4f4f4; /* Couleur de fond */
+}
 
+/* Style pour la barre latérale */
+.sidebar {
+    -fx-background-color: #533C56; /* Couleur de fond */
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+}
+
+/* Style pour le titre du dashboard */
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: white; /* Couleur du texte */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0);
+}
+
+/* Style pour les boutons de navigation */
+.nav-button {
+    -fx-background-color: #6A4C6D; /* Couleur de fond */
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 0);
+    -fx-cursor: hand;
+}
+
+.nav-button:hover {
+    -fx-background-color: #7A5C7D; /* Changement de couleur au survol */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0);
+}
+
+.nav-button:pressed {
+    -fx-background-color: #4A3C4D; /* Changement de couleur lors du clic */
+}
+
+/* Style pour le contenu principal */
+.content {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+}
+
+/* Style pour le titre du contenu */
+.content-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #2E2E2E; /* Couleur du texte */
+}
