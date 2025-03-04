@@ -1,7 +1,6 @@
 package controllers;
 
 import Models.Publications;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,11 +34,27 @@ public class AjouterPublicationController {
     private TextField UsernameTextfield;
 
     @FXML
-    private ImageView imageView;
+    private ImageView publicationImage; // 🔹 Remplace imageView par publicationImage
 
-    private final ServicePublications servicePublications = new ServicePublications();
     @FXML
     private Button cancelPublication;
+
+    private final ServicePublications servicePublications = new ServicePublications();
+
+    @FXML
+    void initialize() {
+        System.out.println("🔹 Vérification du chargement du CSS...");
+
+        titlePublicationTextfield.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.getStylesheets().add(
+                        getClass().getResource("/styles/AjouterPublication-style.css").toExternalForm()
+                );
+                System.out.println("✅ Style CSS chargé avec succès !");
+            }
+        });
+    }
+
 
     @FXML
     void ajouterPublication(ActionEvent event) {
@@ -48,7 +63,6 @@ public class AjouterPublicationController {
         String imageUrl = UrltitlePublicationTextfield.getText().trim();
         String username = UsernameTextfield.getText().trim();
 
-        // ✅ Vérification des champs obligatoires
         if (title.isEmpty() || description.isEmpty() || imageUrl.isEmpty() || username.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Tous les champs sont obligatoires !");
             return;
@@ -56,16 +70,15 @@ public class AjouterPublicationController {
 
         if (!servicePublications.utilisateurExiste(username)) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "❌ L'utilisateur '" + username + "' n'existe pas !");
-            return; // ❌ Arrêter l'ajout si l'utilisateur n'existe pas
+            return;
         }
 
         try {
-
             Publications newPublication = new Publications(title, description, imageUrl, 1);
             servicePublications.ajouter(newPublication);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "✅ Publication ajoutée avec succès !");
-            clearFields(); // Effacer les champs après l'ajout
-        } catch (SQLException e) {
+            clearFields();
+        } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de l'ajout de la publication !");
             e.printStackTrace();
         }
@@ -73,32 +86,34 @@ public class AjouterPublicationController {
 
     @FXML
     void importPublication(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
+        try {
+            FileChooser fileChooser = new FileChooser();
 
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+            );
 
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
-        );
+            File file = fileChooser.showOpenDialog(new Stage());
 
-        // 🔹 Ouvrir l'explorateur de fichiers
-        File file = fileChooser.showOpenDialog(new Stage());
-
-        if (file != null) {
-            String imagePath = file.toURI().toString();
-            UrltitlePublicationTextfield.setText(imagePath);
-            imageView.setImage(new Image(imagePath));
-        } else {
-            System.out.println("Aucune image sélectionnée.");
+            if (file != null) {
+                String imagePath = file.toURI().toString();
+                UrltitlePublicationTextfield.setText(imagePath);
+                publicationImage.setImage(new Image(imagePath)); // 🔹 Afficher l'image dans publicationImage
+                System.out.println("📸 Image sélectionnée : " + imagePath);
+            } else {
+                System.out.println("❌ Aucune image sélectionnée.");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Erreur lors de l'import de l'image : " + e.getMessage());
         }
     }
-
 
     private void clearFields() {
         titlePublicationTextfield.clear();
         descriptionPublicationTextfield.clear();
         UrltitlePublicationTextfield.clear();
         UsernameTextfield.clear();
-        imageView.setImage(null);
+        publicationImage.setImage(null);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String content) {
@@ -110,32 +125,9 @@ public class AjouterPublicationController {
     }
 
     @FXML
-    void initialize() {
-        assert UrltitlePublicationTextfield != null : "fx:id=\"UrltitlePublicationTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
-        assert UsernameTextfield != null : "fx:id=\"UsernameTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
-        assert descriptionPublicationTextfield != null : "fx:id=\"descriptionPublicationTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
-        assert titlePublicationTextfield != null : "fx:id=\"titlePublicationTextfield\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
-        assert imageView != null : "fx:id=\"imageView\" was not injected: check your FXML file 'AjouterPublication.fxml'.";
-    }
-    @FXML
     private void cancelPublication(ActionEvent event) {
-        try {
-            // Charger l'interface AfficherPublication.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherPublication.fxml"));
-            Parent root = loader.load();
-
-            // Récupérer la scène actuelle et la fermer
-            Stage currentStage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            currentStage.close();
-
-            // Ouvrir la nouvelle scène
-            Stage stage = new Stage();
-            stage.setTitle("Liste des Publications");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.err.println("❌ Erreur lors de l'ouverture de AfficherPublication.fxml : " + e.getMessage());
-        }
+        Stage stage = (Stage) cancelPublication.getScene().getWindow();
+        stage.close();
+        System.out.println("🚪 Fenêtre AjouterPublication fermée.");
     }
 }

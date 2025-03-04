@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="Infinity" maxWidth="Infinity" prefHeight="890.0" prefWidth="600.0"
+            style="-fx-background-color: #FFFFFF;" styleClass="post-background"
+            stylesheets="styles/Publication-style.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.AfficherPublication2Controller">
+
+   <!-- Barre supérieure -->
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="65.0" spacing="20.0" style="-fx-background-color: #cebec9;" BorderPane.alignment="CENTER">
+         <children>
+
+            <!-- Bouton Recherche -->
+            <Button mnemonicParsing="false" onAction="#searchPublication" prefHeight="32.0" prefWidth="46.0"
+                    style="-fx-background-color: #bca2bf; -fx-font-family: 'Dripicons-v2'; -fx-font-size: 14px;"
+                    styleClass="round-button" text="" textFill="#fffdfd" />
+
+            <Pane HBox.hgrow="ALWAYS">
+               <children>
+                  <TextField fx:id="textRecherchPublication" layoutX="-16.0" layoutY="17.0" prefHeight="32.0" prefWidth="180.0"
+                             promptText="Search for a publication..." styleClass="text-recherche" />
+               </children>
+            </Pane>
+
+            <!-- Boutons de navigation -->
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+               <children>
+                  <!-- Bouton Retour à l'accueil -->
+                  <Button mnemonicParsing="false" onAction="#returnAcceuil" prefHeight="45.0" prefWidth="45.0"
+                          style="-fx-background-color: #bca2bf; -fx-font-family: 'Dripicons-v2'; -fx-font-size: 14px;"
+                          styleClass="round-button" text="" textFill="#fffdfd" />
+
+                  <!-- Bouton Ajouter une publication -->
+                  <Button mnemonicParsing="false" onAction="#addPublication" prefHeight="45.0" prefWidth="45.0"
+                          style="-fx-background-color: #bca2bf; -fx-font-family: 'Dripicons-v2'; -fx-font-size: 14px;"
+                          styleClass="round-button" text="" textFill="#fffdfd" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+
+   <!-- Zone centrale avec ScrollPane ajustable -->
+   <center>
+      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="Infinity" maxWidth="Infinity">
+         <content>
+            <VBox fx:id="vboxContainer" maxHeight="Infinity" maxWidth="Infinity" spacing="10" style="-fx-padding: 10px;">
+               <children>
+                  <!-- Message par défaut si aucune publication -->
+                  <Label style="-fx-font-size: 14px; -fx-text-fill: #666; -fx-padding: 10px;" text="Aucune publication disponible." />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+
+</BorderPane>

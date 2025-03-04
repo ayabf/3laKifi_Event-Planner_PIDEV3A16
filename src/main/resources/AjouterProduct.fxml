@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="15" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AjouterProductController"
+      style="-fx-background-color: #f5f5f5; -fx-padding: 20px; -fx-border-radius: 10px; -fx-border-color: #ccc;">
+
+    <Label text="Ajouter un Produit"
+           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <GridPane hgap="10" vgap="10" style="-fx-background-color: white; -fx-padding: 20px; -fx-border-radius: 8px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);">
+        <Label text="Nom :" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtName" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Entrez le nom du produit" />
+
+        <Label text="Description :" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtDescription" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Entrez la description"/>
+
+        <Label text="Prix :" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="Ex: 19.99" />
+
+        <Label text="Stock ID :" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtStockId" GridPane.columnIndex="1" GridPane.rowIndex="3" promptText="ID du stock associé"/>
+
+        <Label text="Image URL :" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtImageUrl" GridPane.columnIndex="1" GridPane.rowIndex="4" promptText="URL de l'image du produit"/>
+
+        <Label text="Catégorie :" GridPane.columnIndex="0" GridPane.rowIndex="5" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtCategory" GridPane.columnIndex="1" GridPane.rowIndex="5" promptText="Catégorie du produit"/>
+
+        <Label text="ID Utilisateur :" GridPane.columnIndex="0" GridPane.rowIndex="6" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="txtUserId" GridPane.columnIndex="1" GridPane.rowIndex="6" promptText="ID de l'utilisateur" />
+    </GridPane>
+
+    <VBox spacing="10">
+        <Button fx:id="btnAddProduct" onAction="#ajouterProduct" text="➕ Ajouter le Produit"
+                style="-fx-background-color: #bca2bf; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+
+        <Button fx:id="btnAfficherProducts" onAction="#afficherProducts" text="📋 Voir les Produits"
+                style="-fx-background-color: #533c56; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8;" />
+    </VBox>
+
+</VBox>

@@ -1,10 +1,7 @@
 package controllers;
 
 import Models.Publications;
-import Models.Reports;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.stage.FileChooser;
 import services.ServicePublications;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,8 +10,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import javafx.scene.image.ImageView;
+
+import java.io.File;
+import javafx.scene.image.Image;
+
 
 public class ModifierPublicationController {
 
@@ -23,6 +23,7 @@ public class ModifierPublicationController {
     @FXML private TextField UrltitlePublicationTextfield;
     @FXML private Button btnUpdate;
     @FXML private Button btnCancel;
+    @FXML private ImageView imagePublication;
 
     private final ServicePublications servicePublications = new ServicePublications();
     private Publications currentPublication;
@@ -63,7 +64,7 @@ public class ModifierPublicationController {
 
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Publication mise à jour avec succès !");
             fermerFenetre();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Échec de la mise à jour de la publication !");
             e.printStackTrace();
         }
@@ -88,30 +89,28 @@ public class ModifierPublicationController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+
     @FXML
-    private void btnCancel(ActionEvent actionEvent) {
-        try {
-            // Charger l'interface AfficherPublication.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherPublication.fxml"));
-            Parent root = loader.load();
+    private void importPublication(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
 
-            // Récupérer la scène actuelle et la fermer
-            Stage currentStage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
-            currentStage.close();
+        // 🔹 Ajout de filtres pour ne sélectionner que les fichiers image
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
 
-            // Ouvrir la nouvelle scène
-            Stage stage = new Stage();
-            stage.setTitle("Liste des Publications");
-            stage.setScene(new Scene(root));
-            stage.show();
+        // 🔹 Ouvrir l'explorateur de fichiers pour sélectionner une image
+        File file = fileChooser.showOpenDialog(null);
 
-        } catch (IOException e) {
-            System.err.println("❌ Erreur lors de l'ouverture de AfficherPublication.fxml : " + e.getMessage());
+        if (file != null) {
+            String imagePath = file.toURI().toString(); // Convertir le chemin en format URI
+            UrltitlePublicationTextfield.setText(imagePath); // ✅ Mettre à jour le champ texte
+            imagePublication.setImage(new Image(imagePath)); // ✅ Afficher l'image dans `imagePublication`
+            System.out.println("📸 Image sélectionnée : " + imagePath);
+        } else {
+            System.out.println("❌ Aucune image sélectionnée.");
         }
     }
-
-
-    public void updatePublicationStatus(ActionEvent actionEvent) {
-
-    }
 }
+
+

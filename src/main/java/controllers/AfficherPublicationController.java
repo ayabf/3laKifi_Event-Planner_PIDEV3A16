@@ -102,7 +102,7 @@ public class AfficherPublicationController {
                 publicationContainer.getChildren().add(publicationBox);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("❌ Erreur lors de l'affichage des publications : " + e.getMessage());
         }
     }
@@ -114,7 +114,7 @@ public class AfficherPublicationController {
         try {
             servicePublications.supprimer(publicationId);
             afficherPublications(); // Recharger la liste après suppression
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("❌ Erreur lors de la suppression de la publication : " + e.getMessage());
         }
     }

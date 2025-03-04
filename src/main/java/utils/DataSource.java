@@ -5,19 +5,21 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DataSource {
-    private Connection cnx;
     private static DataSource instance;
-
-    private String url = "jdbc:mysql://localhost:3306/"; // Assure-toi que c'est correct
-    private String user = "root"; // Remplace par ton utilisateur MySQL
-    private String password = ""; // Mets ton mot de passe ici
+    private Connection conn;
+    private String url = "jdbc:mysql://localhost:3306/";
+    private String username = "root";
+    private String password = "";
 
     private DataSource() {
         try {
-            cnx = DriverManager.getConnection(url, user, password);
-            System.out.println("✅ Connecté à la base de données !");
-        } catch (SQLException ex) {
-            System.err.println("❌ Erreur de connexion à la base de données : " + ex.getMessage());
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(url, username, password);
+            System.out.println("✅ Connected to database successfully!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("❌ MySQL JDBC Driver not found: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("❌ Error connecting to database: " + e.getMessage());
         }
     }
 
@@ -30,14 +32,25 @@ public class DataSource {
 
     public Connection getConnection() {
         try {
-            if (cnx == null || cnx.isClosed()) {
-                System.out.println("⚠ Connexion MySQL fermée ! Tentative de reconnexion...");
-                cnx = DriverManager.getConnection(url, user, password);
-                System.out.println("✅ Connexion rétablie !");
+            if (conn == null || conn.isClosed()) {
+                conn = DriverManager.getConnection(url, username, password);
+                System.out.println("✅ Database connection reestablished!");
             }
         } catch (SQLException e) {
-            System.err.println("❌ Impossible de reconnecter à la base de données : " + e.getMessage());
+            System.out.println("❌ Error getting database connection: " + e.getMessage());
         }
-        return cnx;
+        return conn;
+    }
+
+    public void closeConnection() {
+        if (conn != null) {
+            try {
+                conn.close();
+                System.out.println("✅ Database connection closed successfully!");
+            } catch (SQLException e) {
+                System.out.println("❌ Error closing database connection: " + e.getMessage());
+            }
+        }
     }
 }
+

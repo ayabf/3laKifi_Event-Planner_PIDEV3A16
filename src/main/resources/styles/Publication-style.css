@@ -1,0 +1,125 @@
+.post-background{
+    -fx-background-color: #fff;
+    -fx-background-radius: 15;
+    -fx-effect: dropShadow(three-pass-box,rgba(0,0,0,0.1),5.0,0.0,0.0,5.0);
+}
+.reactions-container{
+    -fx-background-color: #fff;
+    -fx-background-radius: 50;
+    -fx-effect: dropShadow(three-pass-box,rgba(0,0,0,0.1),5.0,0.0,0.0,5.0);
+    -fx-border-width: 1;
+    -fx-border-color: #B8B9BB;
+    -fx-border-radius: 50;
+}
+.top-border{
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: #606266;
+}
+.round-button{
+    -fx-background-color: #F0F2F5;
+    -fx-background-radius: 50;
+
+}
+.root {
+    -fx-background-color: yellow;
+}
+.hbox {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d1d1d1;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+.button {
+    -fx-background-color: #b8a9b3;
+    -fx-text-fill: white;
+    -fx-padding: 5px;
+    -fx-border-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #b8a9b3;
+}
+@font-face {
+    font-family: "Arial";
+}
+
+/* Style de base pour les boutons */
+.button {
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 5, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-padding: 5px 10px;
+}
+
+/* Style pour le bouton "Annuler" */
+.cancel-button {
+    -fx-background-color: #cebec9;
+    -fx-text-fill: #533C56;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #b8a9b3;
+    -fx-text-fill: #3e2c41;
+}
+
+/* Style pour le bouton "Sauvegarder" */
+.save-button {
+    -fx-background-color: #533C56;
+    -fx-text-fill: white;
+}
+
+.save-button:hover {
+    -fx-background-color: #3e2c41;
+    -fx-text-fill: #f0f0f0;
+}
+
+/* Style pour le bouton "Importer" */
+.import-button {
+    -fx-background-color: #cebec9;
+    -fx-text-fill: #533C56;
+}
+
+.import-button:hover {
+    -fx-background-color: #b8a9b3;
+    -fx-text-fill: #3e2c41;
+}
+
+/* Style des champs de texte */
+.text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+    -fx-border-color: #533C56;
+}
+/* Style de base pour le TextField */
+.text-recherche {
+    -fx-background-color: #FFFFFF; /* Fond blanc */
+    -fx-background-radius: 20; /* Coins arrondis */
+    -fx-border-color: #bca2bf; /* Couleur de la bordure */
+    -fx-border-radius: 20; /* Coins arrondis pour la bordure */
+    -fx-border-width: 2; /* Épaisseur de la bordure */
+    -fx-padding: 5 10 5 10; /* Padding intérieur */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-text-fill: #533C56; /* Couleur du texte */
+    -fx-prompt-text-fill: #999999; /* Couleur du texte d'invite (placeholder) */
+}
+
+/* Effet de survol */
+.text-recherche:hover {
+    -fx-border-color: #533C56; /* Changement de couleur de bordure au survol */
+}
+
+/* Effet lorsque le TextField est en focus */
+.text-recherche:focused {
+    -fx-border-color: #533C56; /* Changement de couleur de bordure lorsqu'il est sélectionné */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 2); /* Ombre légère */
+}

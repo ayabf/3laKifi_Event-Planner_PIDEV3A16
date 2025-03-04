@@ -2,6 +2,7 @@ package services;
 
 import Models.ReportStatus;
 import Models.Reports;
+import Models.session;
 import utils.DataSource;
 
 import java.sql.*;
@@ -12,18 +13,18 @@ public class ServiceReports {
     Connection cnx = DataSource.getInstance().getConnection();
 
     public ServiceReports() {}
-
+    int user_id= session.id_utilisateur;
     public List<Reports> getAll() throws SQLException {
         List<Reports> reports = new ArrayList<>();
 
         // 🔹 Correction : Ajout du titre de publication et du username
-        String req = """
-            SELECT r.report_id, r.publication_id, p.title AS publicationTitle, 
-                   r.id_user, u.username, r.description, r.status, r.report_date 
-            FROM reports r
-            JOIN publications p ON r.publication_id = p.publication_id
-            JOIN user u ON r.id_user = u.id_user
-        """;
+        String req = "SELECT r.report_id = ? , r.publication_id = ? , p.title = ? AS publicationTitle , " +
+                "r.id_user = ? , u.username = ? AS username, r.description, r.status, r.report_date " +
+                "FROM reports r " +
+                "JOIN publications p ON r.publication_id = p.publication_id " +
+                "JOIN user u ON r.id_user = u.id_user " +
+                "WHERE r.id_user = ?";
+
 
         try (Statement stm = cnx.createStatement();
              ResultSet rs = stm.executeQuery(req)) {

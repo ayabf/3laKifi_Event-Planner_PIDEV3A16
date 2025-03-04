@@ -1,0 +1,75 @@
+/* ✅ Fenêtre principale */
+#mainContainer {
+    -fx-background-color: #f7f7f7;
+}
+
+/* ✅ Barre supérieure */
+#titleBar {
+    -fx-background-color: #3498db;
+    -fx-padding: 10px;
+}
+
+/* ✅ Titre et statut */
+#chatTitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+#statusLabel {
+    -fx-text-fill: #dff9fb;
+    -fx-font-size: 12px;
+}
+
+/* ✅ Zone de chat */
+#chatContainer {
+    -fx-padding: 15px;
+    -fx-background-color: #f7f7f7;
+}
+
+/* ✅ Messages */
+.message {
+    -fx-padding: 10px;
+    -fx-background-radius: 15px;
+    -fx-font-size: 14px;
+}
+
+.sender {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-alignment: center-right;
+}
+
+.receiver {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: black;
+    -fx-alignment: center-left;
+}
+
+/* ✅ Barre de message */
+#messageField {
+    -fx-background-radius: 20px;
+    -fx-padding: 10px;
+}
+
+/* ✅ Bouton Envoyer */
+#sendBtn {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 20px;
+}
+
+#sendBtn:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* ✅ Emoji et boutons */
+#emojiBtn {
+    -fx-background-color: transparent;
+}
+
+/* ✅ Liste des utilisateurs */
+#userList {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ddd;
+}
