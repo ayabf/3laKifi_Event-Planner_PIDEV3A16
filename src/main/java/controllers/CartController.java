@@ -1,9 +1,6 @@
 package controllers;
 
-import Models.CartItem;
-import Models.CodePromo;
-import Models.Product;
-import Models.session;
+import Models.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,7 +23,7 @@ import utils.DataSource;
 
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public class CartController {
@@ -40,6 +37,7 @@ public class CartController {
     private Label discountLabel;
     @FXML
     private Button applyPromoButton;
+
 
     private double subtotal = 0.0;
     private double discount = 0.0;
@@ -479,6 +477,8 @@ public class CartController {
         }
 
     }
+
+
 
 
 
