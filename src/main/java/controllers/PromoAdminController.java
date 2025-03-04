@@ -3,6 +3,7 @@ package controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import services.SMSService;
 import services.ServiceCodePromo;
 import Models.CodePromo;
 import utils.DataSource;
@@ -92,6 +93,7 @@ public class PromoAdminController {
 
         try {
             double pourcentage = Double.parseDouble(percentageText);
+            SMSService smsService = new SMSService(); // ✅ Service SMS
 
             if (promoToUpdate == null) {
                 // ✅ Mode Ajout
@@ -106,6 +108,11 @@ public class PromoAdminController {
                 if (savedPromo != null) {
                     adminDashboardCController.addPromoCard(savedPromo);
                     showSuccessAlert("Ajout Réussi", "✅ Le code promo a été ajouté avec succès !");
+
+                    // 📲 Envoi du SMS après l'ajout
+                    String smsMessage = "🎉 Nouveau Code Promo : " + code + " | -" + pourcentage + "% jusqu'au " + expirationDate + ". Profitez-en !";
+                    smsService.sendSMS(smsMessage);
+
                     clearFields();
                 } else {
                     showErrorAlert("Erreur", "❌ Une erreur est survenue.");
@@ -119,7 +126,12 @@ public class PromoAdminController {
 
                 if (serviceCodePromo.updatePromo(promoToUpdate)) {
                     showSuccessAlert("Mise à Jour Réussie", "✅ Le code promo a été mis à jour !");
-                    adminDashboardCController.loadPromoCards(); // Met à jour l'affichage
+                    adminDashboardCController.loadPromoCards();
+
+                    // 📲 Envoi du SMS après la mise à jour
+                    String smsMessage = "🔄 Code Promo mis à jour : " + code + " | -" + pourcentage + "% jusqu'au " + expirationDate + ". Ne le ratez pas !";
+                    smsService.sendSMS(smsMessage);
+
                     clearFields();
                     promoToUpdate = null;
                     addPromoButton.setText("➕ Ajouter Promo");
@@ -132,6 +144,7 @@ public class PromoAdminController {
             showErrorAlert("Valeur Invalide", "⚠️ Le pourcentage doit être un nombre valide.");
         }
     }
+
 
 
 
