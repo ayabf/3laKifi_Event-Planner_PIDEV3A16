@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="453.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/21.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UserListContoller">
+<AnchorPane prefHeight="453.0" prefWidth="688.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.UserListContoller">
     <fx:include source="sidebarAdmin.fxml" />
 
     <ListView fx:id="usersListView" layoutX="205.0" layoutY="74.0" prefHeight="380.0" prefWidth="569.0" />

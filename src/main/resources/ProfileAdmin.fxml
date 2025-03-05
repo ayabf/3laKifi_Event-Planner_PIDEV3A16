@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Line?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.ProfileAdmin"
+            fx:controller="Controllers.ProfileAdmin"
             prefHeight="400.0" prefWidth="600.0">
     <fx:include source="sidebarAdmin.fxml" />
     <AnchorPane layoutX="211.0" layoutY="38.0" prefHeight="402.0" prefWidth="458.0" style="-fx-background-color: #ececec;">

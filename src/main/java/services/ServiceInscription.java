@@ -6,7 +6,7 @@
 package services;
 
 import Models.Inscription;
-import utils.DataSource;
+import utils.MaConnexion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ServiceInscription {
     
-    Connection cnx = DataSource.getInstance().getConnection();
+    Connection cnx = MaConnexion.getInstance().getConn();
     private Object connexion;
     PreparedStatement stmt;
     PreparedStatement ste;
