@@ -126,14 +126,14 @@ public class Event {
     }
 
     public int getId_user() {
-        return user != null ? user.getId() : 0;
+        return user != null ? user.getId_user() : 0;
     }
 
     public void setId_user(int id_user) {
         if (this.user == null) {
             this.user = new User();
         }
-        this.user.setId(id_user);
+        this.user.setId_user(id_user);
     }
 
     @Override

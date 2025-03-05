@@ -4,9 +4,6 @@ public class User {
     private int id_user;
     private int numTel;
 
-    public User(int userId, String firstName, String username, String username1, String s, Object biography, String address, String profileImagePath, String email, int numTel) {
-    }
-
 
     public int getNumTel() {
         return numTel;
@@ -33,6 +30,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+
         this.address = address;
         this.profileImagePath = profileImagePath;
         this.email = email;
@@ -40,7 +38,6 @@ public class User {
 
 
     }
-
 
     public User(int s, String lastName, String firstName, String username, String password, Role role,
                 String biography, String address, String profileImagePath, String email, int num) {
@@ -61,7 +58,7 @@ public class User {
 //(last_name, first_name, email, password, role, address)
 
 
-    public User(String lastName, String firstName, String username, Role role, String password, String address, String email, int numTel) {
+    public User(String lastName, String firstName,String username, Role role,String password ,String address, String email,int numTel ) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.password = password;
@@ -147,6 +144,9 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+
+
 
 
     public String getAddress() {

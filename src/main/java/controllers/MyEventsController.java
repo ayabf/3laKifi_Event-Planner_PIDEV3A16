@@ -1,7 +1,6 @@
 package controllers;
 
 import Models.Event;
-import Models.session;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class MyEventsController {
     @FXML private TableView<Event> eventsTable;
@@ -40,7 +38,6 @@ public class MyEventsController {
 
     @FXML
     void initialize() {
-        System.out.println("Initializing MyEventsController with user ID: " + session.id_utilisateur);
         initializeColumns();
         loadEvents();
         setupSearch();
@@ -50,18 +47,18 @@ public class MyEventsController {
     private void initializeColumns() {
         eventNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         eventDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-        eventStartDateColumn.setCellValueFactory(cellData ->
-                javafx.beans.binding.Bindings.createStringBinding(
-                        () -> cellData.getValue().getStart_date().format(dateFormatter)
-                ));
-        eventEndDateColumn.setCellValueFactory(cellData ->
-                javafx.beans.binding.Bindings.createStringBinding(
-                        () -> cellData.getValue().getEnd_date().format(dateFormatter)
-                ));
-        eventCityColumn.setCellValueFactory(cellData ->
-                javafx.beans.binding.Bindings.createStringBinding(
-                        () -> cellData.getValue().getCity().name()
-                ));
+        eventStartDateColumn.setCellValueFactory(cellData -> 
+            javafx.beans.binding.Bindings.createStringBinding(
+                () -> cellData.getValue().getStart_date().format(dateFormatter)
+            ));
+        eventEndDateColumn.setCellValueFactory(cellData -> 
+            javafx.beans.binding.Bindings.createStringBinding(
+                () -> cellData.getValue().getEnd_date().format(dateFormatter)
+            ));
+        eventCityColumn.setCellValueFactory(cellData -> 
+            javafx.beans.binding.Bindings.createStringBinding(
+                () -> cellData.getValue().getCity().name()
+            ));
         eventCapacityColumn.setCellValueFactory(new PropertyValueFactory<>("capacity"));
         eventStatusColumn.setCellValueFactory(cellData -> {
             LocalDateTime now = LocalDateTime.now();
@@ -114,11 +111,8 @@ public class MyEventsController {
     private void loadEvents() {
         try {
             eventList.clear();
-            int currentUserId = session.id_utilisateur;
-            System.out.println("Loading events for user ID: " + currentUserId);
-            List<Event> events = eventService.getEventsByUser(currentUserId);
-            System.out.println("Found " + events.size() + " events for user " + currentUserId);
-            eventList.addAll(events);
+            // TODO: Add filter for current user's events only
+            eventList.addAll(eventService.getAll());
             updateNoEventsPane();
         } catch (SQLException e) {
             showError("Error loading events", e);
@@ -135,8 +129,8 @@ public class MyEventsController {
 
                 String lowerCaseFilter = newValue.toLowerCase();
                 return event.getName().toLowerCase().contains(lowerCaseFilter) ||
-                        event.getDescription().toLowerCase().contains(lowerCaseFilter) ||
-                        event.getCity().name().toLowerCase().contains(lowerCaseFilter);
+                       event.getDescription().toLowerCase().contains(lowerCaseFilter) ||
+                       event.getCity().name().toLowerCase().contains(lowerCaseFilter);
             });
         });
         eventsTable.setItems(filteredData);
@@ -176,10 +170,10 @@ public class MyEventsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AddEvent.fxml"));
             Parent root = loader.load();
-
+            
             AddEventController controller = loader.getController();
             controller.setEventForEdit(event);
-
+            
             Stage stage = new Stage();
             stage.setTitle("Edit Event");
             Scene scene = new Scene(root);
@@ -220,4 +214,4 @@ public class MyEventsController {
         alert.showAndWait();
         e.printStackTrace();
     }
-}
+} 

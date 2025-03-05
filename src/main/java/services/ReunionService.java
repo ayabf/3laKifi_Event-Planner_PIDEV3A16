@@ -1,14 +1,14 @@
 package services;
 
 import Models.Reunion;
-import utils.DataSource;
+import utils.MaConnexion;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReunionService {
-    Connection connection= DataSource.getInstance().getConnection();
+    Connection connection= MaConnexion.getInstance().getConn();
 
     // Annuler une réunion (suppression par ID)
     public void annulerReunion(int id) {

@@ -2,7 +2,6 @@ package controllers;
 
 import Models.Event;
 import Models.Booking;
-import Models.session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,21 +29,19 @@ public class ClientDashboardController {
 
     private final ServiceEvent eventService = new ServiceEvent();
     private final ServiceBooking bookingService = new ServiceBooking();
+    private final int userId = 1; // TODO: Get this from the logged-in user's session
 
     @FXML
     public void initialize() {
-        System.out.println("Initializing ClientDashboardController with user ID: " + session.id_utilisateur);
         loadMyEvents();
         loadMyReservations();
     }
 
     private void loadMyEvents() {
         try {
-            int currentUserId = session.id_utilisateur;
-            System.out.println("Loading events for user ID: " + currentUserId);
-            List<Event> events = eventService.getEventsByUser(currentUserId);
+            List<Event> events = eventService.getEventsByUser(userId);
             myEventsContainer.getChildren().clear();
-
+            
             if (events.isEmpty()) {
                 showNoEvents(true);
             } else {
@@ -72,9 +69,9 @@ public class ClientDashboardController {
 
     private void loadMyReservations() {
         try {
-            List<Booking> bookings = bookingService.getBookingsByUser(session.id_utilisateur);
+            List<Booking> bookings = bookingService.getBookingsByUser(userId);
             myReservationsContainer.getChildren().clear();
-
+            
             if (bookings.isEmpty()) {
                 showNoReservations(true);
             } else {
@@ -230,4 +227,4 @@ public class ClientDashboardController {
         alert.setContentText(e.getMessage());
         alert.showAndWait();
     }
-}
+} 

@@ -1,14 +1,10 @@
 package services;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
-
-
-
-
 import Interfaces.InterfaceCRUD;
 import Models.Role;
 import Models.User;
-import utils.DataSource;
-
+import utils.MaConnexion;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,7 +15,7 @@ public class  UserService implements InterfaceCRUD<User> {
     private Connection connection;
 
 
-    Connection cnx = DataSource.getInstance().getConnection();
+    Connection cnx = MaConnexion.getInstance().getConn();
 
     //fonction ajouter
     @Override
@@ -219,8 +215,14 @@ public class  UserService implements InterfaceCRUD<User> {
                 utilisateur.setUsername(resultSet.getString("username"));
                 utilisateur.setPassword(resultSet.getString("password"));
 
-                // Utilisation d'une méthode pour convertir la chaîne en enum
-                utilisateur.setRole(Role.valueOf(resultSet.getString("role")));
+                String roleStr = resultSet.getString("role").toUpperCase();
+                if (roleStr.equals("CLIENT") || roleStr.equals("ADMIN") || roleStr.equals("FOURNISSEUR")) {
+                    utilisateur.setRole(Role.valueOf(roleStr));
+                } else {
+                    System.err.println("⚠️ Erreur : Valeur de rôle inconnue '" + roleStr + "'");
+                    utilisateur.setRole(Role.CLIENT); // Valeur par défaut
+                }
+
 
 
                 utilisateur.setAddress(resultSet.getString("address"));
@@ -430,33 +432,33 @@ public class  UserService implements InterfaceCRUD<User> {
     }
 
 
+
+
+
+
+
+
+
     public void ajouterAdmin(User user) {
-        String req = "INSERT INTO user (last_name, first_name, username, password, role, email, address, numTel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String req = "INSERT INTO user (last_name, first_name, username, password, role,email, address,numTel) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
 
         try (PreparedStatement preparedStatement = cnx.prepareStatement(req)) {
             preparedStatement.setString(1, user.getLastName());
             preparedStatement.setString(2, user.getFirstName());
-            preparedStatement.setString(3, user.getUsername());
+            preparedStatement.setString(3, user.getUsername()); // 🆕 Ajout de username
+            preparedStatement.setString(4, user.getPassword());
+            preparedStatement.setObject(5, user.getRole().name());
 
-            // 🔐 Crypter le mot de passe avec BCrypt
-            String hashedPassword = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
-            preparedStatement.setString(4, hashedPassword); // ✅ Utilisation du mot de passe haché
+            preparedStatement.setString(6, user.getPassword());
 
-            preparedStatement.setString(5, user.getRole().name()); // ✅ Utilisation de toString() explicite
-            preparedStatement.setString(6, user.getEmail());
             preparedStatement.setString(7, user.getAddress());
             preparedStatement.setInt(8, user.getNumTel());
 
-            // ✅ Exécuter la requête
-            int rowsAffected = preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("✅ Administrateur ajouté avec succès !");
-            } else {
-                System.out.println("⚠️ Aucune ligne ajoutée. Vérifiez les valeurs fournies.");
-            }
+            preparedStatement.executeUpdate();
+            System.out.println("✅ Administrateur ajouté avec succès !");
         } catch (SQLException ex) {
-            System.err.println("❌ Erreur lors de l'ajout de l'administrateur : " + ex.getMessage());
             ex.printStackTrace();
+            System.err.println("❌ Erreur lors de l'ajout de l'administrateur : " + ex.getMessage());
         }
     }
 
@@ -464,7 +466,6 @@ public class  UserService implements InterfaceCRUD<User> {
 
 
 
-    }
 
 
 
@@ -480,6 +481,4 @@ public class  UserService implements InterfaceCRUD<User> {
 
 
 
-
-
-
+}

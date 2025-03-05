@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReunionListController">
+<AnchorPane prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ReunionListController">
 
     <fx:include source="sidebarAdmin.fxml" />
 
@@ -32,9 +32,9 @@
         </image>
     </ImageView>
 
-    <Button layoutX="760.0" onAction="#ouvrirFenetreAjoutReunion" layoutY="40.0" prefHeight="26.0" prefWidth="28.0" style="-fx-background-color: #007BFF; -fx-border-color: #0056b3; -fx-background-radius: 10; -fx-border-radius: 10;">
+    <Button layoutX="760.0" layoutY="40.0" prefHeight="26.0" prefWidth="28.0" style="-fx-background-color: #007BFF; -fx-border-color: #0056b3; -fx-background-radius: 10; -fx-border-radius: 10;">
         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true"  preserveRatio="true">
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@images/addBTN.png" />
                 </image>
