@@ -333,7 +333,8 @@ public class OrderService {
         List<Order> orderList = new ArrayList<>();
         String query = "SELECT * FROM `order` ORDER BY ordered_at DESC";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query);
+        try (Connection conn = DataSource.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -348,12 +349,13 @@ public class OrderService {
                         rs.getTimestamp("ordered_at") != null ? rs.getTimestamp("ordered_at").toLocalDateTime() : null,
                         rs.getDouble("total_price")
                 );
-
                 orderList.add(order);
             }
         }
+
         return orderList;
     }
+
 
     public void annulerCommande(int orderId) throws SQLException {
         String query = "UPDATE `order` SET status = ? WHERE order_id = ?";

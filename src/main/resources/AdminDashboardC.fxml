@@ -107,10 +107,42 @@
                         <Label fx:id="siteRevenuePercentageLabel" styleClass="card-value" text="65%"/>
                     </VBox>
                 </HBox>
+                <VBox spacing="15" styleClass="statistics-container">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <FontAwesomeIconView glyphName="BAR_CHART" size="1.8em" fill="#4CAF50"/>
+                        <Label text="Promo Code Statistics" styleClass="section-header"/>
+                    </HBox>
+
+                    <HBox spacing="50" alignment="CENTER">
+                        <!-- 📌 PieChart pour la répartition des pourcentages -->
+                        <VBox alignment="CENTER">
+                            <Label text="Répartition des Réductions (%)" styleClass="chart-title"/>
+                            <PieChart fx:id="promoDistributionChart" prefWidth="450" prefHeight="350" styleClass="styled-piechart"/>
+                        </VBox>
+
+                        <!-- 📈 LineChart pour les codes promo actifs par mois -->
+                        <VBox alignment="CENTER">
+                            <Label text="Tendance des Codes Promo Actifs" styleClass="chart-title"/>
+                            <LineChart fx:id="promoTrendChart" prefWidth="600" prefHeight="350" styleClass="styled-linechart">
+                                <xAxis>
+                                    <CategoryAxis fx:id="promoMonthAxis" label="Mois"/>
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis fx:id="promoCountAxis" label="Nombre de Codes"/>
+                                </yAxis>
+                            </LineChart>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
 
                 <!-- Graphique des commandes par statut -->
                 <VBox spacing="10" styleClass="chart-container">
-                    <Label text="Statistiques des Commandes" styleClass="section-header"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <FontAwesomeIconView glyphName="LINE_CHART" size="1.8em" fill="#007BFF"/>
+                        <Label text="Order Statistics" styleClass="section-header"/>
+                    </HBox>
+
                     <BarChart fx:id="ordersByStatusChart">
                         <xAxis>
                             <CategoryAxis label="Statut"/>
@@ -131,17 +163,31 @@
                                 styleClass="promo-add-button"/>
 
                         <VBox spacing="15" styleClass="promo-container">
-                            <Label text="📜 Available Promo" styleClass="section-header"/>
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <FontAwesomeIconView glyphName="TAGS" size="1.8em" fill="#5A189A"/>
+                                <Label text="Available Promo Codes" styleClass="section-header"/>
+                            </HBox>
 
                             <!-- Conteneur sous forme de tableau -->
                             <FlowPane fx:id="promoGrid" hgap="20" vgap="20" styleClass="promo-grid"/>
                         </VBox>
 
-
-
-
                     </VBox>
                 </HBox>
+                <VBox spacing="20" styleClass="orders-section">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <FontAwesomeIconView glyphName="LIST_ALT" size="1.8em" fill="#1E88E5"/>
+                        <Label text="All Client Orders" styleClass="section-header"/>
+                    </HBox>
+
+                    <ScrollPane fitToWidth="true" fitToHeight="true" prefHeight="400" styleClass="custom-scroll-pane">
+                        <VBox fx:id="ordersContainer" spacing="15" styleClass="orders-container">
+                            <padding>
+                                <Insets top="15" right="15" bottom="15" left="15"/>
+                            </padding>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
             </VBox>
         </ScrollPane>
     </StackPane>

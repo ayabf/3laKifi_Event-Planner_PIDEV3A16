@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <AnchorPane prefHeight="700" prefWidth="904.0" stylesheets="@css/styles.css"
             xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.OrderFormController">
 
-    <!-- En-tête avec titre et rechargement -->
-    <HBox spacing="10" alignment="CENTER" layoutX="20" layoutY="20" prefWidth="860">
-        <Label text="Commande Validation"
-               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+    <!-- Header -->
+    <HBox style="-fx-background-color: #533C5C; -fx-padding: 15;" prefWidth="904.0">
+        <Label text="3laKifi Event Planner"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #533C5C;"/>
         <Region HBox.hgrow="ALWAYS"/> <!-- Pour pousser le bouton à droite -->
         <Button onAction="#handleReload"
-                style="-fx-background-color: #533C5C; -fx-text-fill: white;
+                style="-fx-background-color: #93707E; -fx-text-fill: white;
                 -fx-padding: 8px 16px; -fx-font-size: 14px;"
                 text="Recharger"/>
     </HBox>
 
+    <!-- Contenu principal -->
     <VBox layoutX="50" layoutY="80" prefHeight="600.0" prefWidth="819.0" spacing="15">
+        <!-- Titre du formulaire -->
+        <Label text="Validation de Commande"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
         <!-- Prix Total -->
-        <Label text="Prix Total :" />
-        <Label fx:id="totalPriceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <Label text="Prix Total :" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label fx:id="totalPriceLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #28A745;" />
 
         <!-- Date et Heure -->
         <Label text="Date et Heure de l'événement :" />
@@ -31,19 +38,20 @@
             <DatePicker fx:id="eventDatePicker" promptText="Sélectionner une date" />
             <Label fx:id="errorDate" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Date invalide !" visible="false" />
 
-            <Button fx:id="timePickerButton" onAction="#openTimePicker" text="Sélectionner l'heure" />
+            <Button fx:id="timePickerButton" onAction="#openTimePicker" text="🕒 Choisir l'heure"
+                    style="-fx-background-color: #533C5C; -fx-text-fill: white; -fx-font-weight: bold;" />
 
             <Label fx:id="selectedTimeLabel" text="Heure sélectionnée: Aucune" />
             <Label fx:id="errorTime" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Heure invalide !" visible="false" />
         </HBox>
 
         <!-- Adresse -->
-        <Label text="Full address:" />
-        <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" />
+        <Label text="Adresse complète :" />
+        <TextField fx:id="addressField" promptText="Ex: 12 Rue des Champs, Paris" style="-fx-padding: 5px;"/>
         <Label fx:id="errorAddress" style="-fx-text-fill: red; -fx-font-size: 12px;" text="Adresse invalide !" visible="false" />
 
         <!-- Méthode de paiement -->
-        <Label text="Payment method:" />
+        <Label text="Méthode de paiement :" />
         <ComboBox fx:id="paymentMethodBox">
             <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -58,14 +66,27 @@
         <!-- Boutons d'action -->
         <HBox spacing="10" alignment="CENTER">
             <Button fx:id="validateOrderButton" onAction="#validateOrder"
-                    style="-fx-background-color: #533C56; -fx-text-fill: white;
-                    -fx-font-size: 14px; -fx-padding: 8;"
-                    text="Validate the order" />
+                    style="-fx-background-color: #28A745; -fx-text-fill: white;
+                -fx-font-size: 16px; -fx-padding: 10px; -fx-font-weight: bold;"
+                    text="✔ Valider la Commande" />
+
+            <Button fx:id="modifyStatusButton"
+                    text="✏ Modifier le Statut"
+                    visible="false"
+                    style="-fx-background-color: #007BFF; -fx-text-fill: white;
+                   -fx-font-size: 16px; -fx-padding: 10px; -fx-font-weight: bold;" />
+
             <Button onAction="#handleClose"
                     style="-fx-background-color: #93707E; -fx-text-fill: white;
-                    -fx-padding: 8px 16px; -fx-font-size: 14px;"
-                    text="Fermer" />
-
+                -fx-padding: 10px; -fx-font-size: 16px; -fx-font-weight: bold;"
+                    text="❌ Fermer"/>
         </HBox>
+
     </VBox>
+
+    <!-- Footer -->
+    <HBox style="-fx-background-color: #533C5C; -fx-padding: 10;" layoutY="660" prefWidth="904.0">
+        <Label text="© 2023 3laKifi Event Planner. Tous droits réservés."
+               style="-fx-font-size: 12px; -fx-text-fill: white;"/>
+    </HBox>
 </AnchorPane>

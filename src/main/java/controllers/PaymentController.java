@@ -65,9 +65,7 @@ public class PaymentController {
             Session session = Session.create(params);
             response.redirect(session.getUrl(), 303);
             return "";
-        });  /**
-         * ✅ Route après paiement réussi (génération du QR Code pour la facture)
-         */
+        });  // ✅ Route après paiement réussi (génération du QR Code pour la facture)
         get("/payment-success", (request, response) -> {
             String orderIdParam = request.queryParams("orderId");
 
@@ -95,18 +93,11 @@ public class PaymentController {
             String invoiceUrl = "http://localhost:4242/invoice?orderId=" + orderId;
             String qrFilePath = "qrcodes/invoice_" + orderId + ".png";
 
-            try {
-                QRCodeGenerator.generateQRCodeToFile(invoiceUrl, qrFilePath, 250, 250);
-                System.out.println("✅ QR Code généré : " + qrFilePath);
-            } catch (WriterException | IOException e) {
-                e.printStackTrace();
-                return "Erreur: Impossible de générer le QR Code.";
-            }
-
             response.redirect(invoiceUrl);
             return "";
         });
 
+        // ✅ Route pour afficher la facture
         get("/invoice", (request, response) -> {
             String orderIdParam = request.queryParams("orderId");
             if (orderIdParam == null || orderIdParam.isEmpty()) {

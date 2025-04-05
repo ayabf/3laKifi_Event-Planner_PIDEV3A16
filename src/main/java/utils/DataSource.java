@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DataSource {
     private static DataSource instance;
     private Connection conn;
-    private String url = "jdbc:mysql://localhost:3306/hackpack3";
+    private String url = "jdbc:mysql://localhost:3306/hackpack6";
     private String username = "root";
     private String password = "";
 

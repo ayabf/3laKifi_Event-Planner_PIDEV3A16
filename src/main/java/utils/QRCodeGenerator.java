@@ -6,31 +6,24 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class QRCodeGenerator {
-
-    public static void generateQRCodeToFile(String text, String filePath, int width, int height) throws WriterException, IOException {
+    public static void generateQRCode(String data, String filePath, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, width, height);
 
-        // ✅ Vérifier et créer le dossier `qrcodes/` si nécessaire
-        File qrCodeDirectory = new File("qrcodes");
-        if (!qrCodeDirectory.exists()) {
-            System.out.println("📁 Création du dossier qrcodes...");
-            boolean dirCreated = qrCodeDirectory.mkdir();
-            if (!dirCreated) {
-                System.err.println("❌ Impossible de créer le dossier qrcodes !");
-                return;
-            }
+        // Vérifier et créer le dossier s'il n'existe pas
+        File qrFile = new File(filePath);
+        File directory = qrFile.getParentFile();
+        if (!directory.exists()) {
+            directory.mkdirs();
         }
 
-        Path path = FileSystems.getDefault().getPath(filePath);
+        Path path = Paths.get(filePath);
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-        System.out.println("✅ QR Code enregistré dans : " + filePath);
     }
 }

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,13 +15,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.OrderService;
 import services.StripeService;
+import utils.QRCodeGenerator;
+import javafx.scene.image.Image;
 
 import java.awt.*;
+import java.io.File;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -189,10 +194,18 @@ public class OrderListController {
             buttonBox.getChildren().add(payButton);
         }
 
+        // ✅ Ajouter un bouton "Voir QR Code" uniquement si la commande est PAYÉE
+        if ("CONFIRMED".equalsIgnoreCase(order.getStatus())) {
+            Button qrButton = new Button("Voir QR Code");
+            qrButton.setOnAction(event -> showQRCodePopup(order));
+            buttonBox.getChildren().add(qrButton);
+        }
+
         card.getChildren().addAll(totalLabel, statusLabel, eventDateLabel, addressLabel, buttonBox);
 
         return card;
     }
+
 
 
 
@@ -327,5 +340,48 @@ public class OrderListController {
             showAlert("Erreur", "Impossible d'ouvrir le tableau de bord.");
         }
     }
+    public void showQRCodePopup(Order order) {
+        try {
+            String qrFilePath = "qrcodes/order_" + order.getOrderId() + ".png";
+            String qrData =
+                    "Statut: " + order.getStatus() + "\n" +
+                    "Methode de paiement: " + order.getPaymentMethod() + "\n" +
+                    "Adresse exacte: " + order.getExactAddress() + "\n" +
+                    "Date de l'evenement: " + order.getEventDate() + "\n" +
+                    "Date de commande: " + order.getOrderedAt() + "\n" +
+                    "Total: " + order.getTotalPrice() + "\u20AC";
+
+
+
+            // 🔹 Génération du QR Code
+            QRCodeGenerator.generateQRCode(qrData, qrFilePath, 250, 250);
+
+            // Vérifier si le fichier existe
+            File qrFile = new File(qrFilePath);
+            if (!qrFile.exists()) {
+                showAlert("Erreur", "QR Code introuvable.");
+                return;
+            }
+
+            // 🔹 Affichage de l'image
+            Image qrImage = new Image(qrFile.toURI().toString());
+            ImageView qrImageView = new ImageView(qrImage);
+            qrImageView.setFitWidth(250);
+            qrImageView.setFitHeight(250);
+
+            VBox root = new VBox(10);
+            root.setAlignment(Pos.CENTER);
+            root.getChildren().addAll(new Label("QR Code de la commande"), qrImageView);
+
+            Stage qrStage = new Stage();
+            qrStage.setTitle("QR Code - Commande #" + order.getOrderId());
+            qrStage.setScene(new Scene(root, 300, 350));
+            qrStage.show();
+        } catch (Exception e) {
+            showAlert("Erreur", "Impossible d'afficher le QR Code.");
+            e.printStackTrace();
+        }
+    }
+
 
 }

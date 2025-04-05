@@ -133,3 +133,109 @@
 .promo-add-button:pressed {
     -fx-background-color: #bca2bf; /* Lilac */
 }
+/* 📌 Section Statistiques */
+.statistics-container {
+    -fx-background-color: #ffffff;
+    -fx-padding: 20px;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0.5, 0, 2);
+}
+
+/* 🏷️ Titres des graphiques */
+.chart-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #444;
+    -fx-padding: 10px;
+}
+
+/* 📊 Styles pour PieChart */
+.styled-piechart .chart-pie-label {
+    -fx-font-size: 14px;
+    -fx-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* 📈 Styles pour LineChart */
+.styled-linechart {
+    -fx-background-color: transparent;
+}
+
+.styled-linechart .chart-series-line {
+    -fx-stroke-width: 2px;
+}
+
+.styled-linechart .chart-legend {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 5px;
+    -fx-border-radius: 5px;
+}
+/* 🎨 Style du titre des sections */
+.section-header {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-padding: 8px 0;
+    -fx-font-family: "Arial Rounded MT Bold"; /* Police moderne */
+}
+/* ✅ Header */
+.header-bar {
+    -fx-background-color: linear-gradient(to right, #6A0572, #533c56);
+    -fx-padding: 15px;
+    -fx-border-radius: 8px;
+}
+
+.header-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* ✅ Bouton Add Promo */
+.primary-button {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 14px;
+    -fx-background-radius: 20px;
+}
+
+/* ✅ Section Codes Promo */
+.promo-section {
+    -fx-background-color: #F5F5F5;
+    -fx-padding: 30px;
+    -fx-border-radius: 10px;
+}
+
+.promo-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #533c56;
+}
+
+/* ✅ Grille Promo */
+.promo-grid {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 4);
+}
+.order-card {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+}
+
+.order-id {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.update-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 13px;
+}

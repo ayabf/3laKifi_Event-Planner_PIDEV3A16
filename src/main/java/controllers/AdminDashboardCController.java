@@ -9,8 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +20,7 @@ import javafx.stage.Stage;
 import services.OrderService;
 import services.ServiceCodePromo;
 import javafx.geometry.Pos;
+import java.text.SimpleDateFormat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -57,18 +57,82 @@ public class AdminDashboardCController {
     @FXML
     private FlowPane promoGrid;
     private ServiceCodePromo serviceCodePromo = new ServiceCodePromo(); // Service pour récupérer les codes promo
+    @FXML
+    private PieChart promoDistributionChart;
 
+    @FXML
+    private LineChart<String, Number> promoTrendChart;
+    @FXML
+    private CategoryAxis promoMonthAxis;
+    @FXML
+    private NumberAxis promoCountAxis;
+    @FXML
+    private VBox ordersContainer;
     @FXML
     public void initialize() {
         loadStatistics();
         loadPromoCards();
+        loadPromoCharts();
+        loadOrders();
 
     }
+    private void loadOrders() {
+        ordersContainer.getChildren().clear();
+        try {
+            List<Order> orders = orderService.getAll(); // ✅ méthode d’instance, pas statique
+
+            for (Order order : orders) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/OrderCardAdmin.fxml"));
+                Node card = loader.load();
+                OrderCardAdminController controller = loader.getController();
+                controller.setOrder(order);
+                ordersContainer.getChildren().add(card);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du chargement des commandes !");
+        }
+    }
+
     public void addPromoCard(CodePromo promo) {
         VBox promoCard = createPromoCard(promo);
         promoGrid.getChildren().add(promoCard);
     }
+    private void loadPromoCharts() {
+        List<CodePromo> promoList = serviceCodePromo.getAllPromo();
 
+        // Répartition des codes promo par pourcentage de réduction (PieChart)
+        Map<Integer, Integer> promoPercentageMap = new HashMap<>();
+        for (CodePromo promo : promoList) {
+            int discount = (int) promo.getPourcentage();
+            promoPercentageMap.put(discount, promoPercentageMap.getOrDefault(discount, 0) + 1);
+        }
+
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        for (Map.Entry<Integer, Integer> entry : promoPercentageMap.entrySet()) {
+            pieChartData.add(new PieChart.Data(entry.getKey() + "%", entry.getValue()));
+        }
+        promoDistributionChart.setData(pieChartData);
+
+        // Tendance des codes promo actifs par mois (LineChart)
+        Map<String, Integer> promoByMonth = new HashMap<>();
+        for (CodePromo promo : promoList) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = dateFormat.format(promo.getDateExpiration()); // Convertir Date en String
+            String month = dateStr.substring(5, 7);
+            promoByMonth.put(month, promoByMonth.getOrDefault(month, 0) + 1);
+        }
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Codes Promo Actifs");
+
+        for (Map.Entry<String, Integer> entry : promoByMonth.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+
+        promoTrendChart.getData().clear();
+        promoTrendChart.getData().add(series);
+    }
     private void loadStatistics() {
         try {
             // Récupérer toutes les commandes
@@ -219,7 +283,7 @@ public class AdminDashboardCController {
         deleteButton.getStyleClass().add("promo-delete-button");
         deleteButton.setOnAction(event -> deletePromo(promo));
 
-        Button editButton = new Button("✏️ Modifier");
+        Button editButton = new Button("✏ Update");
         editButton.getStyleClass().add("promo-edit-button");
         editButton.setOnAction(event -> editPromo(promo));
 

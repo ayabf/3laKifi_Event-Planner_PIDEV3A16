@@ -37,6 +37,8 @@ public class CartController {
     private Label discountLabel;
     @FXML
     private Button applyPromoButton;
+    @FXML
+    private Button myOrdersButton;
 
 
     private double subtotal = 0.0;
@@ -44,13 +46,22 @@ public class CartController {
     private ServiceCodePromo serviceCodePromo = new ServiceCodePromo();
     private ObservableList<CartItem> cartItems = FXCollections.observableArrayList();
 
+
     @FXML
     public void initialize() {
         subtotalLabel.setText("$0.00");
         loadCartItems();
         cartListView.setItems(cartItems);
-        cartListView.setCellFactory(param -> new CartItemCell()); // ✅ Correction : Classe bien définie
-        updateSubtotal();
+        cartListView.setCellFactory(param -> new CartItemCell());
+
+        cartListView.setOnMouseClicked(event -> {
+            CartItem selectedItem = cartListView.getSelectionModel().getSelectedItem();
+            if (selectedItem != null) {
+                showCartItemDetails(selectedItem);
+            }
+        });        updateSubtotal();
+
+
     }
 
     private int getCartIdForCurrentUser() {
@@ -385,6 +396,8 @@ public class CartController {
                 .mapToDouble(item -> item.getQuantity() * item.getProduct().getPrice())
                 .sum();
         subtotalLabel.setText("$" + String.format("%.2f", total));
+        System.out.println("💰 Sous-total mis à jour : $" + total);
+
     }
 
     private void updateCartItemInDB(CartItem item) {
@@ -409,6 +422,9 @@ public class CartController {
                 cartItems.remove(itemToRemove);
                 updateSubtotal();
                 cartListView.refresh();
+                System.out.println("✅ Produit supprimé avec succès : " + itemToRemove.getProduct().getName());
+            } else {
+                System.out.println("❌ Erreur: aucun produit supprimé !");
             }
 
         } catch (SQLException e) {
@@ -437,11 +453,11 @@ public class CartController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation de suppression");
         alert.setHeaderText(null);
-        alert.setContentText("Voulez-vous retirer *" + itemToRemove.getProduct().getName() + "* du panier ?");
+        alert.setContentText("Voulez-vous vraiment retirer " + itemToRemove.getProduct().getName() + " du panier ?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            deleteCartItemFromDB(itemToRemove);
+            deleteCartItemFromDB(itemToRemove); // ✅ Suppression après confirmation
         }
     }
 
@@ -454,6 +470,26 @@ public class CartController {
     }
 
 
+    private void showCartItemDetails(CartItem cartItem) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/CartItemDetails.fxml"));
+            Parent root = loader.load();
+
+            CartItemDetailsController controller = loader.getController();
+            controller.setCartItemDetails(cartItem); // Passe l'élément sélectionné au contrôleur
+
+            Stage stage = new Stage();
+            stage.setTitle("Détails du Produit");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            System.out.println("🛒 Affichage des détails pour : " + cartItem.getProduct().getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors de l'ouverture des détails du produit !");
+        }
+    }
 
 
 
@@ -537,21 +573,39 @@ public class CartController {
                 Button plusButton = new Button("+");
                 plusButton.setOnAction(event -> {
                     int availableStock = getAvailableStock(item.getProduct().getProductId());
+
+                    System.out.println("🛒 Ajout d'un produit : " + item.getProduct().getName()); // Log pour voir si le clic est bien détecté
+
                     if (item.getQuantity() < availableStock) {
                         item.setQuantity(item.getQuantity() + 1);
+
+                        // Log de vérification
+                        System.out.println("✅ Nouvelle quantité : " + item.getQuantity());
+
+                        // Mise à jour en base de données
                         updateCartItemInDB(item);
+
+                        // Recalcul du total
                         updateSubtotal();
+
+                        // Rafraîchissement de la liste
                         cartListView.refresh();
+                    } else {
+                        System.out.println("⚠ Stock insuffisant pour " + item.getProduct().getName());
+                        showAlert("Stock insuffisant", "Impossible d'ajouter plus d'articles, stock limité !");
                     }
                 });
 
-                // 🗑️ Icône de suppression bien ajustée
+
                 ImageView deleteIcon = new ImageView(new Image("images/delete-icon.png"));
                 deleteIcon.setFitWidth(24);  // ✅ Ajustement de la taille
                 deleteIcon.setFitHeight(24);
                 deleteIcon.setPreserveRatio(true);
 
-                deleteIcon.setOnMouseClicked(event -> showDeleteConfirmation(item));
+                deleteIcon.setOnMouseClicked(event -> {
+                    event.consume(); // 🔥 Empêche la propagation du clic à la ListView
+                    showDeleteConfirmation(item);
+                });
 
                 // ✅ Ajout d'un effet au survol
                 deleteIcon.setOnMouseEntered(event -> deleteIcon.setStyle("-fx-opacity: 0.7;"));
@@ -571,4 +625,21 @@ public class CartController {
         }
 
     }
+    @FXML
+    private void goToMyOrders(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/orderList.fxml")); // ✅ Assure-toi que le fichier est bien là
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Mes Commandes");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("❌ Erreur lors du chargement de la page commandes !");
+        }
+    }
+
+
 }

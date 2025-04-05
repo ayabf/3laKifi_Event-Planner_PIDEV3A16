@@ -13,7 +13,7 @@
     <VBox layoutX="50" layoutY="20" prefWidth="650" spacing="15" alignment="CENTER">
 
         <!-- 🏷️ Titre Centré -->
-        <Label text="📦 Mes Commandes"
+        <Label text="📦 My Orders"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-alignment: center;"/>
         <!-- 🔍 Barre de Recherche -->
         <TextField fx:id="searchField" promptText="Rechercher une commande..."
@@ -29,7 +29,6 @@
             </VBox>
 
         </ScrollPane>
-
         <!-- ✅ Boutons "Reload" et "Close" en bas -->
         <HBox spacing="20" alignment="CENTER">
             <Button text="🔄 Recharger" onAction="#reloadOrders"
