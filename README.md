@@ -127,8 +127,8 @@ The platform provides 5 main management modules:
 
 
 ## Acknowledgments
-This project was completed under the guidance of [Professor: Mme Ameni Rommene]
-(mail:ameni.rommene@esprit.tn) at Esprit.
+This project was completed under the guidance of [Professor: Mr Hamza Chenneaoui]
+(mail:Hamza.CHENENAOUI@esprit.tn) at Esprit.
 
 <!-- ## Here are some screenshots of our application:
 
